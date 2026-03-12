@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills 技能库</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 40px 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { color: white; text-align: center; margin-bottom: 40px; font-size: 2.5em; }
+        .back { color: white; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        .section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        .section h2 { color: #333; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #667eea; }
+        .skill-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+        .skill-card { background: #f8f9fa; border-radius: 12px; padding: 16px; transition: transform 0.2s, box-shadow 0.2s; }
+        .skill-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .skill-name { font-weight: bold; color: #667eea; margin-bottom: 8px; font-size: 1.1em; }
+        .skill-desc { color: #666; font-size: 0.9em; line-height: 1.5; }
+        .tag { display: inline-block; background: #667eea; color: white; padding: 2px 8px; border-radius: 8px; font-size: 11px; margin-right: 4px; }
+        .footer { text-align: center; color: rgba(255,255,255,0.8); margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back">← 返回工作看板</a>
+        <h1>🛠️ Skills 技能库</h1>
+        
+        <div class="section">
+            <h2>💬 通讯</h2>
+            <div class="skill-grid">
+                <div class="skill-card">
+                    <div class="skill-name">feishu-doc</div>
+                    <div class="skill-desc">飞书文档读写操作，处理云文档和 docx 链接</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">feishu-drive</div>
+                    <div class="skill-desc">飞书云存储文件管理，文件夹和云空间操作</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">feishu-wiki</div>
+                    <div class="skill-desc">飞书知识库导航，wiki 链接管理</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">discord</div>
+                    <div class="skill-desc">Discord 操作，消息发送、频道管理</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">slack</div>
+                    <div class="skill-desc">Slack 控制，消息发送、反应、回复</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">wacli</div>
+                    <div class="skill-desc">WhatsApp 消息发送和历史同步</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">imsg</div>
+                    <div class="skill-desc">iMessage/SMS 消息发送和管理</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">bluebubbles</div>
+                    <div class="skill-desc">iMessage 管理 via BlueBubbles</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📝 生产力</h2>
+            <div class="skill-grid">
+                <div class="skill-card">
+                    <div class="skill-name">notion</div>
+                    <div class="skill-desc">Notion API，创建和管理页面、数据库</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">obsidian</div>
+                    <div class="skill-desc">Obsidian 笔记库操作，Markdown 笔记自动化</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">apple-notes</div>
+                    <div class="skill-desc">Apple Notes 管理，创建、编辑、搜索、导出</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">bear-notes</div>
+                    <div class="skill-desc">Bear 笔记创建和搜索</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">things-mac</div>
+                    <div class="skill-desc">Things 3 任务管理，项目和待办事项</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">trello</div>
+                    <div class="skill-desc">Trello 看板管理，列表和卡片操作</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">session-logs</div>
+                    <div class="skill-desc">会话日志搜索和分析</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎵 音乐/音频</h2>
+            <div class="skill-grid">
+                <div class="skill-card">
+                    <div class="skill-name">spotify-player</div>
+                    <div class="skill-desc">Spotify 播放和搜索</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">sonoscli</div>
+                    <div class="skill-desc">Sonos 音箱控制，播放和音量</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">blucli</div>
+                    <div class="skill-desc">BluOS 音频系统控制</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">sag</div>
+                    <div class="skill-desc">ElevenLabs 文字转语音</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">sherpa-onnx-tts</div>
+                    <div class="skill-desc">本地离线文字转语音</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">openai-whisper</div>
+                    <div class="skill-desc">本地语音转文字 (Whisper)</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">openai-whisper-api</div>
+                    <div class="skill-desc">API 语音转文字</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🏠 智能家居</h2>
+            <div class="skill-grid">
+                <div class="skill-card">
+                    <div class="skill-name">openhue</div>
+                    <div class="skill-desc">Philips Hue 灯光控制</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>👨‍💻 开发者工具</h2>
+            <div class="skill-grid">
+                <div class="skill-card">
+                    <div class="skill-name">github</div>
+                    <div class="skill-desc">GitHub 操作，issues、PRs、代码审查</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">gh-issues</div>
+                    <div class="skill-desc">GitHub issues 管理，修复和 PR</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">coding-agent</div>
+                    <div class="skill-desc">编程任务委托，Codex/Claude Code 集成</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">skill-creator</div>
+                    <div class="skill-desc">创建和审核 AgentSkills</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">tmux</div>
+                    <div class="skill-desc">tmux 会话远程控制</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">clawhub</div>
+                    <div class="skill-desc">ClawHub CLI，搜索安装发布 skills</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🤖 AI/图像</h2>
+            <div class="skill-grid">
+                <div class="skill-card">
+                    <div class="skill-name">gemini</div>
+                    <div class="skill-desc">Gemini CLI，问答和生成</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">nano-banana-pro</div>
+                    <div class="skill-desc">Gemini 3 Pro 图像生成</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">openai-image-gen</div>
+                    <div class="skill-desc">OpenAI 图像批量生成</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">summarize</div>
+                    <div class="skill-desc">URL/文件摘要和文本提取</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🌐 生活</h2>
+            <div class="skill-grid">
+                <div class="skill-card">
+                    <div class="skill-name">weather</div>
+                    <div class="skill-desc">天气查询和预报</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">blogwatcher</div>
+                    <div class="skill-desc">博客和 RSS 订阅监控</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">ordercli</div>
+                    <div class="skill-desc">外卖订单查询</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">eightctl</div>
+                    <div class="skill-desc">Eight Sleep 智能床垫控制</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">goplaces</div>
+                    <div class="skill-desc">Google Places API 查询</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">xurl</div>
+                    <div class="skill-desc">X (Twitter) API 操作</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔐 安全/系统</h2>
+            <div class="skill-grid">
+                <div class="skill-card">
+                    <div class="skill-name">1password</div>
+                    <div class="skill-desc">1Password CLI，密码管理</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">healthcheck</div>
+                    <div class="skill-desc">主机安全加固和风险评估</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎬 媒体</h2>
+            <div class="skill-grid">
+                <div class="skill-card">
+                    <div class="skill-name">video-frames</div>
+                    <div class="skill-desc">视频帧提取</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">songsee</div>
+                    <div class="skill-desc">音频频谱和可视化生成</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">gifgrep</div>
+                    <div class="skill-desc">GIF 搜索和下载</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">camsnap</div>
+                    <div class="skill-desc">RTSP/ONVIF 摄像头截图</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📧 邮件</h2>
+            <div class="skill-grid">
+                <div class="skill-card">
+                    <div class="skill-name">himalaya</div>
+                    <div class="skill-desc">CLI 邮件管理，IMAP/SMTP</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">gog</div>
+                    <div class="skill-desc">Google Workspace，Gmail/日历/云盘</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔧 其他工具</h2>
+            <div class="skill-grid">
+                <div class="skill-card">
+                    <div class="skill-name">peekaboo</div>
+                    <div class="skill-desc">macOS UI 自动化捕获</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">nano-pdf</div>
+                    <div class="skill-desc">PDF 自然语言编辑</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">oracle</div>
+                    <div class="skill-desc">Oracle CLI，最佳实践</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">model-usage</div>
+                    <div class="skill-desc">模型使用费用统计</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">mcporter</div>
+                    <div class="skill-desc">MCP 服务器/工具调用</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">voice-call</div>
+                    <div class="skill-desc">语音通话启动</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>👧 由 Elaine 驱动 | 最后更新: 2026-03-12</p>
+        </div>
+    </div>
+</body>
+</html>
