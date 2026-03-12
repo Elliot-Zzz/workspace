@@ -1,6 +1,7 @@
 # TODO List
 
 ## 基础设施
+- [x] 搭建 XFCE 桌面 + VNC 服务
 - [ ] 搭建 FTP 服务器
 - [ ] 搭建编程环境 (Open Code / VSCode)
 - [ ] 科学上网配置
