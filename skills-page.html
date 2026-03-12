@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技能库</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        h1 { color: white; text-align: center; margin-bottom: 30px; font-size: 2em; }
+        .section { background: white; border-radius: 16px; padding: 24px; margin-bottom: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        .section h2 { color: #333; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #667eea; }
+        .skill-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+        .skill-card { background: #f8f9fa; border-radius: 12px; padding: 16px; transition: transform 0.2s; }
+        .skill-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .skill-name { font-weight: bold; color: #667eea; margin-bottom: 8px; font-size: 1.1em; }
+        .skill-desc { color: #666; font-size: 0.9em; line-height: 1.5; }
+        .skill-tag { display: inline-block; background: #667eea; color: white; padding: 2px 8px; border-radius: 8px; font-size: 11px; margin-top: 8px; }
+        .footer { text-align: center; color: rgba(255,255,255,0.8); padding: 20px; }
+        .installed { border-left: 4px solid #2ecc71; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">👧 Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="index.html">📋 任务</a>
+            <a href="skills-page.html" class="active">🛠️ 技能</a>
+            <a href="mind-switch.html">🎮 Switch</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>🛠️ 已安装技能</h1>
+        
+        <div class="section">
+            <h2>⭐ 已安装 (Workspace)</h2>
+            <div class="skill-grid">
+                <div class="skill-card installed">
+                    <div class="skill-name">self-improving-agent</div>
+                    <div class="skill-desc">AI自我改进与记忆系统 - 捕获错误、用户纠正、能力缺口，形成持续改进闭环。</div>
+                    <span class="skill-tag">v3.0.1</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📦 系统技能 (OpenClaw)</h2>
+            <div class="skill-grid">
+                <div class="skill-card">
+                    <div class="skill-name">weather</div>
+                    <div class="skill-desc">天气查询和预报 via wttr.in / Open-Meteo</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">github</div>
+                    <div class="skill-desc">GitHub 操作，issues、PRs、代码审查</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">discord</div>
+                    <div class="skill-desc">Discord 消息发送和管理</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">slack</div>
+                    <div class="skill-desc">Slack 控制，消息发送、反应</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">notion</div>
+                    <div class="skill-desc">Notion API，页面和数据库管理</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">obsidian</div>
+                    <div class="skill-desc">Obsidian 笔记库操作</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">spotify-player</div>
+                    <div class="skill-desc">Spotify 播放和搜索</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">1password</div>
+                    <div class="skill-desc">1Password CLI 密码管理</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">himalaya</div>
+                    <div class="skill-desc">CLI 邮件管理 IMAP/SMTP</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">tmux</div>
+                    <div class="skill-desc">tmux 会话远程控制</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">healthcheck</div>
+                    <div class="skill-desc">主机安全加固和风险评估</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-name">skill-creator</div>
+                    <div class="skill-desc">创建和审核 AgentSkills</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🛒 安装更多技能</h2>
+            <p style="color: #666; margin-bottom: 16px;">使用 <code>skillhub install [技能名]</code> 安装更多技能</p>
+            <p style="color: #999; font-size: 0.9em;">或访问 <a href="https://skillhub.cn" style="color: #667eea;">skillhub.cn</a> 浏览更多</p>
+        </div>
+
+        <div class="footer">
+            <p>👧 由 Elaine 驱动 🌸</p>
+        </div>
+    </div>
+</body>
+</html>

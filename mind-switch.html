@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>思维池 Switch</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        h1 { color: white; text-align: center; margin-bottom: 30px; font-size: 2em; }
+        
+        .board { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 20px; 
+            justify-content: center;
+            min-height: 400px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+        }
+        
+        .note {
+            width: 200px;
+            min-height: 180px;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            transform: rotate(-2deg);
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .note:nth-child(odd) { transform: rotate(2deg); }
+        .note:nth-child(1) { background: #fef68a; }
+        .note:nth-child(2) { background: #fecaca; }
+        .note:nth-child(3) { background: #bae6fd; }
+        .note:nth-child(4) { background: #bbf7d0; }
+        .note:nth-child(5) { background: #e9d5ff; }
+        
+        .note:hover { transform: scale(1.05) rotate(0deg); z-index: 10; }
+        
+        .note textarea {
+            width: 100%;
+            height: 120px;
+            border: none;
+            background: transparent;
+            resize: none;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .note textarea:focus { outline: none; }
+        
+        .note .pin {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .add-note {
+            width: 80px;
+            height: 80px;
+            border: 3px dashed rgba(255,255,255,0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.3s;
+            align-self: center;
+        }
+        
+        .add-note:hover {
+            border-color: white;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-save {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .btn-save:hover { background: #27ae60; }
+        
+        .btn-clear {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-clear:hover { background: #c0392b; }
+        
+        .status {
+            text-align: center;
+            color: #aaa;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 20px; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">👧 Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="index.html">📋 任务</a>
+            <a href="skills-page.html">🛠️ 技能</a>
+            <a href="mind-switch.html" class="active">🎮 Switch</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>🎮 思维池 Switch</h1>
+        
+        <div class="board" id="board">
+            <!-- 便利贴会动态生成 -->
+        </div>
+        
+        <div class="controls">
+            <button class="btn add-note" onclick="addNote()">+</button>
+            <button class="btn btn-save" onclick="saveNotes()">💾 保存</button>
+            <button class="btn btn-clear" onclick="clearNotes()">🗑️ 清空</button>
+        </div>
+        
+        <div class="status" id="status">已自动加载上次的保存</div>
+        
+        <div class="footer">
+            <p>👧 由 Elaine 驱动 🌸</p>
+        </div>
+    </div>
+
+    <script>
+        const colors = ['#fef68a', '#fecaca', '#bae6fd', '#bbf7d0', '#e9d5ff'];
+        
+        // 从 localStorage 加载
+        function loadNotes() {
+            const saved = localStorage.getItem('mind-switch-notes');
+            return saved ? JSON.parse(saved) : [
+                { text: '搭建编程环境\nOpen Code / VSCode' },
+                { text: '科学上网配置' },
+                { text: '打通华为智能家居' }
+            ];
+        }
+        
+        function render() {
+            const board = document.getElementById('board');
+            const notes = loadNotes();
+            
+            notes.forEach((note, i) => {
+                const div = document.createElement('div');
+                div.className = 'note';
+                div.style.background = colors[i % colors.length];
+                div.innerHTML = `
+                    <div class="pin"></div>
+                    <textarea placeholder="写下你的计划...">${note.text}</textarea>
+                `;
+                board.appendChild(div);
+            });
+        }
+        
+        function addNote() {
+            const board = document.getElementById('board');
+            const notes = board.querySelectorAll('.note');
+            if (notes.length >= 8) {
+                alert('最多8张便利贴！');
+                return;
+            }
+            
+            const div = document.createElement('div');
+            div.className = 'note';
+            div.style.background = colors[notes.length % colors.length];
+            div.innerHTML = `
+                <div class="pin"></div>
+                <textarea placeholder="写下你的计划..."></textarea>
+            `;
+            
+            const addBtn = board.querySelector('.add-note');
+            board.insertBefore(div, addBtn);
+        }
+        
+        function saveNotes() {
+            const board = document.getElementById('board');
+            const notes = [];
+            board.querySelectorAll('.note textarea').forEach(t => {
+                if (t.value.trim()) {
+                    notes.push({ text: t.value });
+                }
+            });
+            
+            localStorage.setItem('mind-switch-notes', JSON.stringify(notes));
+            
+            const status = document.getElementById('status');
+            status.textContent = '✅ 已保存到服务器！';
+            status.style.color = '#2ecc71';
+            
+            // 保存到文件
+            fetch('/save-notes', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(notes)
+            }).catch(() => {});
+            
+            setTimeout(() => {
+                status.textContent = '已自动加载上次的保存';
+                status.style.color = '#aaa';
+            }, 2000);
+        }
+        
+        function clearNotes() {
+            if (confirm('确定清空所有便利贴？')) {
+                localStorage.setItem('mind-switch-notes', '[]');
+                location.reload();
+            }
+        }
+        
+        render();
+    </script>
+</body>
+</html>
