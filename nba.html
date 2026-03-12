@@ -12,9 +12,10 @@
         .back { color: #fff; text-decoration: none; display: inline-block; margin-bottom: 20px; }
         .section { background: rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
         .date { color: #aaa; font-size: 0.9em; margin-bottom: 16px; }
-        .game { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+        .game { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .team { font-size: 1.2em; font-weight: bold; }
         .score { font-size: 1.5em; color: #f39c12; }
+        .winner { color: #2ecc71; }
         .footer { text-align: center; color: #666; margin-top: 40px; }
     </style>
 </head>
@@ -24,36 +25,48 @@
         <h1>🏀 NBA 战报</h1>
         
         <div class="section">
-            <div class="date">2026年3月12日</div>
-            
+            <div class="date">2026-03-11</div>
+
             <div class="game">
-                <div class="team">凯尔特人 118 - 105 勇士</div>
-                <div class="score">✅ 已结束</div>
+                <div class="team ">CLE 122</div>
+                <div class="score">vs</div>
+                <div class="team winner">ORL 128</div>
             </div>
-            
+
             <div class="game">
-                <div class="team">湖人 112 - 108 太阳</div>
-                <div class="score">✅ 已结束</div>
+                <div class="team ">TOR 111</div>
+                <div class="score">vs</div>
+                <div class="team winner">NO 122</div>
             </div>
-            
+
             <div class="game">
-                <div class="team">掘金 125 - 119 快船</div>
-                <div class="score">✅ 已结束</div>
+                <div class="team winner">NY 134</div>
+                <div class="score">vs</div>
+                <div class="team ">UTAH 117</div>
             </div>
+
+            <div class="game">
+                <div class="team ">HOU 93</div>
+                <div class="score">vs</div>
+                <div class="team winner">DEN 129</div>
+            </div>
+
+            <div class="game">
+                <div class="team winner">CHA 117</div>
+                <div class="score">vs</div>
+                <div class="team ">SAC 109</div>
+            </div>
+
+            <div class="game">
+                <div class="team ">MIN 128</div>
+                <div class="score">vs</div>
+                <div class="team winner">LAC 153</div>
+            </div>
+
         </div>
 
-        <div class="section">
-            <div class="date">赛事预告</div>
-            <div class="game">
-                <div class="team">雄鹿 vs 热火 - 明日 07:30</div>
-            </div>
-            <div class="game">
-                <div class="team">篮网 vs 76人 - 明日 07:30</div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p>👧 由 Elaine 驱动 | 最后更新: 2026-03-12</p>
+        <div class=footer>
+            <p>👧 由 Elaine 驱动 | 数据来源: ESPN</p>
         </div>
     </div>
 </body>
