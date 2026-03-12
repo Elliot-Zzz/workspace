@@ -4,7 +4,7 @@
 - [ ] 搭建 FTP 服务器
 - [ ] 搭建编程环境 (Open Code / VSCode)
 - [ ] 科学上网配置
-- [ ] 打通 GitHub，搭建静态页面展示工作成果 (TODO List、工作过程等)
+- [x] 打通 GitHub，搭建静态页面展示工作成果 (TODO List、工作过程等)
 - [ ] 排查 OpenClaw Dashboard 无法远程访问的问题
 
 ## 内容与资讯

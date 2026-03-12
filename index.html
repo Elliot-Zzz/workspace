@@ -15,6 +15,8 @@
         .task-list li { padding: 12px 0; border-bottom: 1px solid #eee; display: flex; align-items: center; }
         .task-list li:last-child { border-bottom: none; }
         .checkbox { width: 20px; height: 20px; border: 2px solid #667eea; border-radius: 4px; margin-right: 12px; display: inline-block; }
+        .checkbox.checked { background: #667eea; position: relative; }
+        .checkbox.checked::after { content: '✓'; color: white; position: absolute; left: 4px; top: -1px; font-size: 14px; }
         .sub-task { margin-left: 32px; color: #666; font-size: 0.95em; }
         .footer { text-align: center; color: rgba(255,255,255,0.8); margin-top: 40px; }
         .status { display: inline-block; background: #667eea; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; margin-left: auto; }
@@ -30,7 +32,7 @@
                 <li><span class="checkbox"></span>搭建 FTP 服务器</li>
                 <li><span class="checkbox"></span>搭建编程环境 (Open Code / VSCode)</li>
                 <li><span class="checkbox"></span>科学上网配置</li>
-                <li><span class="checkbox"></span>打通 GitHub，搭建静态页面展示工作成果</li>
+                <li><span class="checkbox checked"></span>打通 GitHub，搭建静态页面展示工作成果</li>
                 <li><span class="checkbox"></span>排查 OpenClaw Dashboard 无法远程访问的问题</li>
             </ul>
         </div>
