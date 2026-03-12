@@ -2,7 +2,7 @@
 
 ## 基础设施
 - [x] 搭建 XFCE 桌面 + VNC 服务
-- [ ] 搭建 FTP 服务器
+- [x] 搭建 FTP 服务器
 - [ ] 搭建编程环境 (Open Code / VSCode)
 - [ ] 科学上网配置
 - [x] 打通 GitHub，搭建静态页面展示工作成果 (TODO List、工作过程等)
