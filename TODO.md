@@ -4,7 +4,7 @@
 - [x] 搭建 XFCE 桌面 + VNC 服务
 - [x] 搭建 FTP 服务器
 - [ ] 搭建编程环境 (Open Code / VSCode)
-- [ ] 科学上网配置
+- [x] 科学上网配置
 - [x] 打通 GitHub，搭建静态页面展示工作成果
 - [x] 排查 OpenClaw Dashboard 无法远程访问的问题
 
