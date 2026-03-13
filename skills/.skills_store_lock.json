@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "tavily-search-skill": {
+      "name": "Tavily Search Skill",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=tavily-search-skill",
+      "source": "skillhub",
+      "version": "1.0.4"
+    },
+    "summarize": {
+      "name": "Summarize",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=summarize",
+      "source": "skillhub",
+      "version": "1.0.0"
+    }
+  }
+}
