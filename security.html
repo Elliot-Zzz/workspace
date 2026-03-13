@@ -498,7 +498,66 @@ int recv_verify(uint8_t *packet, int len) {
 }</code></pre>
         </div>
 
-        <h2>四、总结</h2>
+        <h2>四、相关诉讼案例参考</h2>
+
+        <div class="section">
+            <h3>📋 案例一：以色列公司 vs 深圳某科技公司（MAC 软件侵权案）</h3>
+            <p><strong>案情：</strong>以色列某公司拥有 WHDI 无线高清视频传输芯片的 MAC 软件著作权。深圳某公司从正规渠道购买了芯片后，将配套软件用于自己的产品，被原公司起诉侵权。</p>
+            <p><strong>结果：</strong>一审原告胜诉，被告赔偿 30 万元 + 11 万维权费用。二审<strong>翻案，被告胜诉</strong>。</p>
+            <p><strong>关键点：</strong></p>
+            <ul>
+                <li>芯片和软件"一并销售"被视为发行权用尽，购买者有权合理使用</li>
+                <li>销售合同中对第三方的限制，不能约束合同外第三方</li>
+                <li>软件与芯片"一对一绑定"关系，购买者获得的是所有权而非许可权</li>
+            </ul>
+            <div class="why-box">
+                <div class="why-box-title">💡 启示</div>
+                <p>单纯买芯片送软件的方式很难阻止二次销售和合理使用。需要在软件层面做<strong>加密绑定</strong>，使软件与产品唯一ID绑定才能运行。</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>📋 案例二：艾为电子 vs 芯海科技（IPO 期间专利战）</h3>
+            <p><strong>案情：</strong>2021 年艾为电子 IPO 关键期，竞争对手芯海科技突然发起专利诉讼，指控其压力触控芯片侵权，向客户发律师函。</p>
+            <p><strong>结果：</strong>影响 IPO 进程，最终双方和解。</p>
+            <p><strong>关键点：</strong></p>
+            <ul>
+                <li>专利诉讼成为商业竞争武器，尤其瞄准 IPO 节点</li>
+                <li>诉讼本身即使不赢，也能恶心对手</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>📋 案例三：台积电 vs 中芯国际（商业秘密）</h3>
+            <p><strong>案情：</strong>2003 年台积电指控中芯国际通过跳槽员工窃取商业秘密，侵犯多项专利。</p>
+            <p><strong>结果：</strong>2005 年和解，中芯国际支付 1.75 亿美金。2006 年台积电再次起诉，中芯国际最终<strong>赔偿 2 亿美金 + 转让 8% 股份</strong>。</p>
+            <p><strong>关键点：</strong></p>
+            <ul>
+                <li>商业秘密侵权证据难取证，但一旦认定赔偿极高</li>
+                <li>员工竞业协议和保密协议是关键证据</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>📋 案例四：芯片抄板侵权（行业潜规则）</h3>
+            <p><strong>现状：</strong>国内存在完整产业链，抄板破解费用从几百到几千元不等。</p>
+            <p><strong>维权难点：</strong></p>
+            <ul>
+                <li>证明"实质性相似"很难，需要专业鉴定</li>
+                <li>证据保全困难，对方可以随时删除</li>
+                <li>跨境维权成本极高</li>
+            </ul>
+            <div class="why-box">
+                <div class="why-box-title">💡 建议</div>
+                <p>如果发现被抄袭：<br>
+                1. 第一时间公证购买对方产品<br>
+                2. 申请法院证据保全<br>
+                3. 委托专业机构进行技术鉴定<br>
+                4. 同时从专利、著作权、商业秘密多条路径维权</p>
+            </div>
+        </div>
+
+        <h2>五、总结</h2>
         <div class="section">
             <p>在资源受限的 Cortex-M0/M3 芯片上，无法使用复杂的加密方案，但可以通过<strong>多层叠加</strong>的方式提高破解成本：</p>
             <ul>
