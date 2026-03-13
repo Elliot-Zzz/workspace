@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="elaine.png" >
+    <title>嵌入式产品加密方案</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 2em; }
+        h2 { color: #4ade80; margin: 30px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #333; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
+        .section { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .section h3 { color: #60a5fa; margin-bottom: 12px; font-size: 1.1em; }
+        .section p { color: #ccc; line-height: 1.7; margin-bottom: 12px; }
+        .warning { background: rgba(239, 68, 68, 0.15); border-left: 4px solid #ef4444; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .warning-title { color: #f87171; font-weight: bold; margin-bottom: 8px; }
+        ul { margin-left: 20px; color: #ccc; line-height: 1.8; }
+        li { margin-bottom: 8px; }
+        .chip-level { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
+        .chip-card { background: rgba(255,255,255,0.08); padding: 12px; border-radius: 8px; text-align: center; }
+        .chip-card .name { color: #fbbf24; font-weight: bold; }
+        .chip-card .desc { font-size: 0.85em; color: #999; margin-top: 4px; }
+        .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><img src="elaine.png" style="height:1.2em;vertical-align:middle;border-radius:50%;object-fit:cover;"> Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="index.html">📋 任务</a>
+            <a href="skills-page.html">🛠️ 技能</a>
+            <a href="mind-switch.html">🎮 Switch</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>🔐 嵌入式产品软件加密方案</h1>
+        <p class="subtitle">适用于 ARM Cortex-M0/M3/M4 等资源受限 MCU</p>
+
+        <div class="warning">
+            <div class="warning-title">⚠️ 免责声明</div>
+            <p>本方案仅供技术参考，无法保证完全防止破解。硬件安全需结合软件防护，必要时请咨询专业安全公司。</p>
+        </div>
+
+        <div class="section">
+            <h3>一、背景与威胁模型</h3>
+            <p>嵌入式产品面临的常见攻击手段包括：</p>
+            <ul>
+                <li><strong>电压/时钟 glitching（故障注入）</strong> — 通过短暂干扰芯片供电或时钟，使加密验证跳过执行</li>
+                <li><strong>DPA / CPA（差分功率分析）</strong> — 通过分析芯片运行时的功耗曲线推测密钥</li>
+                <li><strong>芯片 decap + 固件提取</strong> — 物理方法去除封装，用微探针直接读取 flash 内容</li>
+                <li><strong>调试接口攻击</strong> — 通过 SWD/JTAG 接口读取内存或控制执行</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>二、芯片级安全特性（选型建议）</h3>
+            <p>如果预算允许，优先选择带硬件安全特性的 MCU：</p>
+            <div class="chip-level">
+                <div class="chip-card">
+                    <div class="name">STM32L4+ 系列</div>
+                    <div class="desc">含 Secure Boot + 主动防篡改</div>
+                </div>
+                <div class="chip-card">
+                    <div class="name">NXP LPC55Sxx</div>
+                    <div class="desc">内置 Secure Boot、可信区域</div>
+                </div>
+                <div class="chip-card">
+                    <div class="name">Infineon PSoC 6</div>
+                    <div class="desc">双核架构，安全隔离区</div>
+                </div>
+                <div class="chip-card">
+                    <div class="name">TI MSP432E4</div>
+                    <div class="desc">安全启动 + 加密引擎</div>
+                </div>
+            </div>
+        </div>
+
+        <h2>三、软件层面加密方案</h2>
+
+        <div class="section">
+            <h3>1. 代码混淆</h3>
+            <p>将关键算法拆分、跳转嵌套，使反汇编难以理解：</p>
+            <ul>
+                <li>将核心算法拆分到多个不连续地址</li>
+                <li>使用函数指针间接调用，避免静态分析</li>
+                <li>插入无效跳转和垃圾代码干扰分析</li>
+                <li>编译器级别混淆（如使用 LLVM-Obfuscator）</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>2. 运行时动态解密</h3>
+            <p>关键数据不在 Flash 中以明文存储：</p>
+            <ul>
+                <li>固件关键区域使用 AES-128 加密存储</li>
+                <li>启动时从独立安全区域读取密钥进行解密</li>
+                <li>解密后的明文在内存中尽量短时间存活</li>
+                <li>使用后立即覆写清除敏感数据</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>3. 校验和反调试</h3>
+            <p>检测异常入侵并主动破坏：</p>
+            <ul>
+                <li>检测调试器连接（检查 IDR 寄存器）</li>
+                <li>关键代码段运行时计算 CRC 校验，不匹配则擦除关键数据</li>
+                <li>检测异常复位（电源 glitch 常见手段）</li>
+                <li>加入"蜜罐"代码，触发即自毁</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>4. 时间随机化</h3>
+            <p>防止通过时序分析进行 glitch 攻击：</p>
+            <ul>
+                <li>关键操作加入随机延时（微秒级随机）</li>
+                <li>加密操作前加入随机等待，打破时序相关性</li>
+                <li>使用随机填充使功耗曲线不可预测</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>5. 多级验证机制</h3>
+            <p>分散验证点，降低单点突破风险：</p>
+            <ul>
+                <li>第一级：启动时验证核心固件完整性</li>
+                <li>第二级：关键功能执行前二次验证</li>
+                <li>第三级：定期后台校验（定时器触发）</li>
+                <li>各验证密钥分开存放，禁止集中</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>6. 密钥分片管理</h3>
+            <p>密钥不存储在单一位置：</p>
+            <ul>
+                <li>将主密钥拆分为 N 份，分别存放在不同 Flash 区域</li>
+                <li>运行时通过特定算法动态拼接</li>
+                <li>每片密钥可附加特定校验（如特定位置求和）</li>
+                <li>升级时仅更换其中一片，增加兼容复杂度</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>7. 轮换密钥机制（Rotating Secret）</h3>
+            <p>每次固件升级更换加密方式：</p>
+            <ul>
+                <li>每次升级生成新的加密密钥</li>
+                <li>旧版本密钥在新版本中失效</li>
+                <li>增加回滚难度，使历史固件无法复用</li>
+                <li>与服务器配合实现一对一轮换</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>8. 通讯层加密</h3>
+            <p>产品与服务器/APP 通信安全：</p>
+            <ul>
+                <li>使用 TLS 1.2+ 或自定义轻量级加密通道</li>
+                <li>每次通信使用动态会话密钥</li>
+                <li>加入设备唯一标识 + 时间戳防重放</li>
+                <li>关键指令额外增加签名验证</li>
+            </ul>
+        </div>
+
+        <h2>四、总结</h2>
+        <div class="section">
+            <p>在资源受限的 Cortex-M0/M3 芯片上，无法使用复杂的加密方案，但可以通过<strong>多层叠加</strong>的方式提高破解成本：</p>
+            <ul>
+                <li><strong>基础层：</strong>读保护 + 加密存储 + 密钥分片</li>
+                <li><strong>进阶层：</strong>代码混淆 + 反调试 + 时间随机化</li>
+                <li><strong>高级层：</strong>动态解密 + 多级验证 + 轮换密钥</li>
+            </ul>
+            <p style="margin-top: 16px; color: #888;">目标是让破解成本高于产品利润，使抄袭者无利可图。</p>
+        </div>
+
+        <div class="footer">
+            <p>📅 更新于 2026-03-13 | 由 Elaine 整理</p>
+        </div>
+    </div>
+</body>
+</html>
