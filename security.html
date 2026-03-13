@@ -15,20 +15,26 @@
         .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
         .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
         h1 { text-align: center; margin-bottom: 10px; font-size: 2em; }
-        h2 { color: #4ade80; margin: 30px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #333; }
+        h2 { color: #4ade80; margin: 40px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #333; }
+        h3 { color: #60a5fa; margin: 25px 0 12px; font-size: 1.15em; }
         .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
         .section { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
-        .section h3 { color: #60a5fa; margin-bottom: 12px; font-size: 1.1em; }
-        .section p { color: #ccc; line-height: 1.7; margin-bottom: 12px; }
+        .section p { color: #ccc; line-height: 1.7; margin-bottom: 14px; }
         .warning { background: rgba(239, 68, 68, 0.15); border-left: 4px solid #ef4444; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; }
         .warning-title { color: #f87171; font-weight: bold; margin-bottom: 8px; }
         ul { margin-left: 20px; color: #ccc; line-height: 1.8; }
-        li { margin-bottom: 8px; }
+        li { margin-bottom: 10px; }
+        code { background: #2d2d3a; padding: 2px 6px; border-radius: 4px; color: #fbbf24; font-family: 'Consolas', monospace; font-size: 0.9em; }
+        pre { background: #1e1e2e; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; border: 1px solid #333; }
+        pre code { background: none; padding: 0; color: #a6accd; display: block; line-height: 1.6; }
+        .why-box { background: rgba(96, 165, 250, 0.1); border-left: 3px solid #60a5fa; padding: 12px 16px; margin: 12px 0; border-radius: 0 6px 6px 0; }
+        .why-box-title { color: #60a5fa; font-weight: bold; margin-bottom: 6px; }
         .chip-level { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
         .chip-card { background: rgba(255,255,255,0.08); padding: 12px; border-radius: 8px; text-align: center; }
         .chip-card .name { color: #fbbf24; font-weight: bold; }
         .chip-card .desc { font-size: 0.85em; color: #999; margin-top: 4px; }
         .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; }
+        .method-num { display: inline-block; background: #4ade80; color: #1a1a2e; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; font-weight: bold; margin-right: 8px; }
     </style>
 </head>
 <body>
@@ -44,7 +50,7 @@
 
     <div class="container">
         <h1>🔐 嵌入式产品软件加密方案</h1>
-        <p class="subtitle">适用于 ARM Cortex-M0/M3/M4 等资源受限 MCU</p>
+        <p class="subtitle">适用于 ARM Cortex-M0/M3/M4 等资源受限 MCU | 附 C 代码示例</p>
 
         <div class="warning">
             <div class="warning-title">⚠️ 免责声明</div>
@@ -85,93 +91,411 @@
             </div>
         </div>
 
-        <h2>三、软件层面加密方案</h2>
+        <h2>三、软件层面加密方案（含代码示例）</h2>
 
         <div class="section">
-            <h3>1. 代码混淆</h3>
-            <p>将关键算法拆分、跳转嵌套，使反汇编难以理解：</p>
-            <ul>
-                <li>将核心算法拆分到多个不连续地址</li>
-                <li>使用函数指针间接调用，避免静态分析</li>
-                <li>插入无效跳转和垃圾代码干扰分析</li>
-                <li>编译器级别混淆（如使用 LLVM-Obfuscator）</li>
-            </ul>
+            <h3><span class="method-num">1</span>代码混淆</h3>
+            <p>将关键算法拆分、跳转嵌套，使反汇编难以理解。攻击者看到的是一堆跳转和"垃圾"代码，无法直接看出算法逻辑。</p>
+            
+            <div class="why-box">
+                <div class="why-box-title">💡 为什么难以破解？</div>
+                <p>正常代码是线性的：<code>A → B → C → 结果</code>。混淆后变成：<code>A → 随机跳转 → 垃圾代码 → 函数指针表 → 间接调用 → 解密结果</code>。攻击者需要手动追踪每一条跳转，耗时增加 10-100 倍。</p>
+            </div>
+
+            <pre><code>// 方法1：函数指针间接调用（增加分析难度）
+typedef int (*CalcFunc)(int a, int b);
+
+int add(int a, int b) { return a + b; }
+int sub(int a, int b) { return a - b; }
+int mul(int a, int b) { return a * b; }
+
+// 函数指针数组，但索引不直接使用
+static CalcFunc funcs[] = {sub, mul, add};  // 顺序打乱
+
+// 通过计算得到索引，而不是直接写 add[2]
+int secure_calc(int type, int a, int b) {
+    int idx = (type * 7) % 3;  // 攻击者不知道这个算法
+    return funcs[idx](a, b);
+}
+
+// 方法2：插入无效代码干扰分析
+void process_key(uint8_t *key) {
+    uint8_t dummy1 = key[0] ^ 0x55;  // 垃圾代码
+    uint8_t dummy2 = key[1] + 0xAA;  // 垃圾代码
+    
+    // 真正的处理
+    for(int i = 0; i < 16; i++) {
+        key[i] = key[i] ^ 0x42;
+    }
+    
+    // 更多垃圾代码
+    volatile uint8_t waste = dummy1 + dummy2;
+    (void)waste;  // 防止优化
+}</code></pre>
         </div>
 
         <div class="section">
-            <h3>2. 运行时动态解密</h3>
-            <p>关键数据不在 Flash 中以明文存储：</p>
-            <ul>
-                <li>固件关键区域使用 AES-128 加密存储</li>
-                <li>启动时从独立安全区域读取密钥进行解密</li>
-                <li>解密后的明文在内存中尽量短时间存活</li>
-                <li>使用后立即覆写清除敏感数据</li>
-            </ul>
+            <h3><span class="method-num">2</span>运行时动态解密</h3>
+            <p>关键数据不以明文存储在 Flash 中，运行时才解密。即使攻击者读取了 Flash，看到的也只是密文。</p>
+            
+            <div class="why-box">
+                <div class="why-box-title">💡 为什么难以破解？</div>
+                <p>Flash 中存的是 <code>0xA3 0x7F 0x12...</code>，攻击者不知道密钥就无法还原。即使提取了固件，没有正确的解密 key 也无法得到原始算法。</p>
+            </div>
+
+            <pre><code>// 加密的密钥存储在 Flash（攻击者读不到明文）
+// 这段数据是用 AES 加密后的结果，密钥通过 OTP 或外部芯片提供
+const uint8_t encrypted_key[16] __attribute__((section(".encrypted"))) = {
+    0x8A, 0x7B, 0x3C, 0xD1, 0x5E, 0x9F, 0x22, 0x77,
+    0x44, 0xB1, 0x6E, 0xC3, 0x9A, 0x08, 0xF5, 0x6B
+};
+
+// 运行时解密（密钥从安全区域读取）
+void get_decrypted_key(uint8_t *out_key) {
+    // 从 OTP 或安全引导区读取原始密钥
+    uint8_t master_key[16];
+    read_from_otp_secure_region(master_key);  // 这是一个"不可能被读"的区域
+    
+    // AES 解密
+    AES_decrypt(encrypted_key, out_key, master_key);
+    
+    // 使用后立即清除（防止内存泄漏）
+    memset(master_key, 0, 16);
+}
+
+// 验证流程：每次需要用密钥时临时解密
+int verify_license(uint8_t *license_key) {
+    uint8_t real_key[16];
+    get_decrypted_key(real_key);  // 临时解密
+    
+    int result = memcmp(license_key, real_key, 16);
+    
+    // 关键：使用后立即清除！
+    memset(real_key, 0, 16);
+    
+    return result;
+}</code></pre>
         </div>
 
         <div class="section">
-            <h3>3. 校验和反调试</h3>
-            <p>检测异常入侵并主动破坏：</p>
-            <ul>
-                <li>检测调试器连接（检查 IDR 寄存器）</li>
-                <li>关键代码段运行时计算 CRC 校验，不匹配则擦除关键数据</li>
-                <li>检测异常复位（电源 glitch 常见手段）</li>
-                <li>加入"蜜罐"代码，触发即自毁</li>
-            </ul>
+            <h3><span class="method-num">3</span>校验和反调试</h3>
+            <p>检测调试器连接或代码被篡改，主动破坏数据让攻击者即使破解也无法使用。</p>
+            
+            <div class="why-box">
+                <div class="why-box-title">💡 为什么难以破解？</div>
+                <p>攻击者想调试代码来理解逻辑？但一旦检测到调试器连接，芯片会主动擦除关键数据或跳转到死循环，等于白忙一场。</p>
+            </div>
+
+            <pre><code>// 方法1：检测调试器（检查 CPU 状态寄存器）
+int check_debugger(void) {
+    // Cortex-M 的 DHCSR 调试寄存器
+    // 如果 bit0 = 1，说明调试器已连接
+    volatile uint32_t *DHCSR = (uint32_t *)0xE000EDF0;
+    if (*DHCSR & 0x00000001) {
+        return 1;  // 检测到调试器
+    }
+    return 0;
+}
+
+// 方法2：代码段 CRC 校验（检测被篡改）
+uint32_t calculate_crc(uint32_t start, uint32_t length) {
+    uint32_t crc = 0xFFFFFFFF;
+    for (uint32_t i = 0; i < length; i++) {
+        crc ^= *(uint8_t *)(start + i);
+        for (int j = 0; j < 8; j++) {
+            crc = (crc >> 1) ^ (0xEDB88320 & -(crc & 1));
+        }
+    }
+    return ~crc;
+}
+
+// 启动时和关键操作前校验
+void secure_verify(void) {
+    // 预期值：编译时计算好并固化
+    const uint32_t expected_crc = 0xDEADBEEF;
+    
+    uint32_t actual_crc = calculate_crc(0x08003000, 0x1000);  // 校验关键代码段
+    
+    if (actual_crc != expected_crc) {
+        // 代码被篡改！自毁
+        erase_flash_secure_region();      // 擦除加密密钥
+        memset((void*)0x20000000, 0, 4096);  // 清 RAM
+        while(1);  // 死循环
+    }
+}
+
+// 方法3：蜜罐函数（诱杀攻击者）
+void secret_decrypt(uint8_t *data, int len) {
+    // 这是一个假函数，攻击者破解后会调用它
+    // 但它会触发自毁
+    trigger_self_destruct();
+}
+
+// 在某处埋下陷阱
+void maybe_call_honeypot(void) {
+    // 5% 概率调用蜜罐（随机爆炸）
+    if ((RTC->TR & 0xFF) % 20 == 0) {
+        secret_decrypt(NULL, 0);
+    }
+}</code></pre>
         </div>
 
         <div class="section">
-            <h3>4. 时间随机化</h3>
-            <p>防止通过时序分析进行 glitch 攻击：</p>
-            <ul>
-                <li>关键操作加入随机延时（微秒级随机）</li>
-                <li>加密操作前加入随机等待，打破时序相关性</li>
-                <li>使用随机填充使功耗曲线不可预测</li>
-            </ul>
+            <h3><span class="method-num">4</span>时间随机化</h3>
+            <p>关键操作加入随机延时，使 glitching 攻击难以找到正确的时序窗口。</p>
+            
+            <div class="why-box">
+                <div class="why-box-title">💡 为什么难以破解？</div>
+                <p>Glitching 攻击依赖精确的时序。加入了随机延时后，攻击者需要尝试 10^6-10^9 次才可能成功一次，成本极高。</p>
+            </div>
+
+            <pre><code>// 伪随机数生成（基于 ADC 噪声，更难预测）
+uint32_t get_random_delay(uint32_t min_us, uint32_t max_us) {
+    uint32_t noise = 0;
+    // 读取 ADC 噪声作为随机种子
+    ADC1->CR |= ADC_CR_ADSTART;
+    while(!(ADC1->ISR & ADC_ISR_EOC));
+    noise = ADC1->DR;  // ADC 噪声值
+    
+    uint32_t range = max_us - min_us;
+    return min_us + (noise % range);
+}
+
+// 关键操作前加入随机延时
+void secure_critical_operation(void) {
+    // 验证通过后，不要立刻执行
+    // 加入 100-500us 随机延时
+    uint32_t delay_us = get_random_delay(100, 500);
+    delay_us(delay_us);  // 硬件延时
+    
+    // 再执行真正的操作
+    execute_critical_task();
+}
+
+// 加密操作加入随机填充（打乱功耗曲线）
+void random_delay_aes_encrypt(uint8_t *input, uint8_t *output, uint8_t *key) {
+    // 随机延时使 DPA 攻击失效
+    uint32_t delay1 = get_random_delay(50, 200);
+    delay_us(delay1);
+    
+    // 执行 AES
+    AES_encrypt(input, output, key);
+    
+    // 再加一段随机延时
+    uint32_t delay2 = get_random_delay(30, 150);
+    delay_us(delay2);
+}</code></pre>
         </div>
 
         <div class="section">
-            <h3>5. 多级验证机制</h3>
-            <p>分散验证点，降低单点突破风险：</p>
-            <ul>
-                <li>第一级：启动时验证核心固件完整性</li>
-                <li>第二级：关键功能执行前二次验证</li>
-                <li>第三级：定期后台校验（定时器触发）</li>
-                <li>各验证密钥分开存放，禁止集中</li>
-            </ul>
+            <h3><span class="method-num">5</span>多级验证机制</h3>
+            <p>分散验证点，攻击者必须全部突破才能破解，任何一处失败都会触发保护。</p>
+            
+            <div class="why-box">
+                <div class="why-box-title">💡 为什么难以破解？</div>
+                <p>传统方案只有一个验证点，破解就全部搞定。多级验证把安全分散到多个位置，攻击者需要同时突破所有关卡，难度指数级上升。</p>
+            </div>
+
+            <pre><code>// 三级验证机制
+
+// 第一级：启动验证（bootloader 阶段）
+int level1_boot_verify(void) {
+    uint32_t stored_crc = *((uint32_t *)FLASH_SIGNATURE_ADDR);
+    return check_crc(stored_crc);  // 验证固件完整性
+}
+
+// 第二级：功能级验证（每次关键操作前）
+int level2_feature_verify(uint8_t *license) {
+    // 验证 license 格式 + 签名
+    return verify_license_signature(license);
+}
+
+// 第三级：运行时随机验证（定时触发）
+int level3_runtime_verify(void) {
+    // 随机抽取某个内存区域验证完整性
+    uint32_t check_addr = get_random_ram_region();
+    return verify_ram_integrity(check_addr);
+}
+
+// 组合调用：全部通过才算成功
+int secure_activate(uint8_t *license_key) {
+    if (level1_boot_verify() != 0) return -1;  // 第一级失败
+    if (level2_feature_verify(license_key) != 0) return -2;  // 第二级失败
+    
+    // 每 10 次调用，随机触发第三级验证
+    static int call_count = 0;
+    if (++call_count % 10 == 0) {
+        if (level3_runtime_verify() != 0) return -3;  // 第三级失败
+    }
+    
+    return 0;  // 全部通过
+}</code></pre>
         </div>
 
         <div class="section">
-            <h3>6. 密钥分片管理</h3>
-            <p>密钥不存储在单一位置：</p>
-            <ul>
-                <li>将主密钥拆分为 N 份，分别存放在不同 Flash 区域</li>
-                <li>运行时通过特定算法动态拼接</li>
-                <li>每片密钥可附加特定校验（如特定位置求和）</li>
-                <li>升级时仅更换其中一片，增加兼容复杂度</li>
-            </ul>
+            <h3><span class="method-num">6</span>密钥分片管理</h3>
+            <p>密钥不存放在单一位置，攻击者即使找到一部分也无法拼出完整密钥。</p>
+            
+            <div class="why-box">
+                <div class="why-box-title">💡 为什么难以破解？</div>
+                <p>密钥被拆成 3-5 份，分别存放在 Flash 的不同位置，有的甚至通过算法临时计算。攻击者必须同时获取所有分片并知道拼接算法。</p>
+            </div>
+
+            <pre><code>// 密钥分 3 片存储
+// 分片1：直接存放在 Flash 某处
+const uint8_t key_part1[4] __attribute__((section(".key1"))) = {0x12, 0x34, 0x56, 0x78};
+
+// 分片2：通过计算得到（基于 UID）
+// 攻击者即使读到 key_part1，不知道这个算法也拼不出来
+void get_key_part2(uint8_t *out) {
+    uint32_t uid = get_chip_uid();  // 芯片唯一 ID
+    out[0] = (uid >> 24) ^ 0xAA;
+    out[1] = (uid >> 16) ^ 0x55;
+    out[2] = (uid >> 8) ^ 0xCC;
+    out[3] = uid ^ 0x33;
+}
+
+// 分片3：存在外部 EEPROM 或通过通信获取
+void get_key_part3(uint8_t *out) {
+    // 从外部安全芯片读取
+    external_secure_chip_read(0x10, out, 4);
+}
+
+// 运行时动态拼接完整密钥
+void assemble_full_key(uint8_t *full_key) {
+    // 拼接 3 个分片
+    memcpy(full_key, key_part1, 4);           // 直接拷贝
+    get_key_part2(full_key + 4);              // 动态计算
+    get_key_part3(full_key + 8);              // 外部读取
+    
+    // 可选：再做一个 XOR 混淆
+    for (int i = 0; i < 12; i++) {
+        full_key[i] ^= 0x5A;
+    }
+}</code></pre>
         </div>
 
         <div class="section">
-            <h3>7. 轮换密钥机制（Rotating Secret）</h3>
-            <p>每次固件升级更换加密方式：</p>
-            <ul>
-                <li>每次升级生成新的加密密钥</li>
-                <li>旧版本密钥在新版本中失效</li>
-                <li>增加回滚难度，使历史固件无法复用</li>
-                <li>与服务器配合实现一对一轮换</li>
-            </ul>
+            <h3><span class="method-num">7</span>轮换密钥机制</h3>
+            <p>每次固件升级更换密钥，旧版固件无法在新硬件上运行，防止历史漏洞被利用。</p>
+            
+            <div class="why-box">
+                <div class="why-box-title">💡 为什么难以破解？</div>
+                <p>即使攻击者破解了 v1.0 版本并提取了密钥，v1.1 升级后旧密钥立即失效。攻击者必须重新破解，但每次升级都换密钥，成本太高。</p>
+            </div>
+
+            <pre><code>// 版本号存储在 OTP 或专用区域
+#define CURRENT_VERSION  3
+
+// 版本密钥表（每个版本对应一个密钥）
+const uint8_t version_keys[4][16] __attribute__((section(".version_keys"))) = {
+    // v0（已废弃，密钥可公开让旧固件失效）
+    {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    // v1
+    {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00},
+    // v2
+    {0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00, 0x11},
+    // v3（当前版本）
+    {0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00, 0x11, 0x22}
+};
+
+// 升级时调用：擦除旧版本，使用新版本
+void upgrade_version(uint8_t new_version) {
+    // 从服务器获取新密钥（通过安全通道）
+    uint8_t new_key[16];
+    server_fetch_new_key(new_version, new_key);
+    
+    // 写入新密钥（写入 OTP 区域）
+    write_to_otp(CURRENT_VERSION_ADDR, new_version);
+    write_key_to_otp(new_version, new_key);
+    
+    // 旧版本密钥立即失效
+    invalidate_old_version();
+}
+
+// 运行时检查版本密钥
+int verify_version_key(uint8_t *input_key) {
+    uint8_t current_ver = read_from_otp(CURRENT_VERSION_ADDR);
+    const uint8_t *valid_key = version_keys[current_ver];
+    
+    return memcmp(input_key, valid_key, 16);
+}</code></pre>
         </div>
 
         <div class="section">
-            <h3>8. 通讯层加密</h3>
-            <p>产品与服务器/APP 通信安全：</p>
-            <ul>
-                <li>使用 TLS 1.2+ 或自定义轻量级加密通道</li>
-                <li>每次通信使用动态会话密钥</li>
-                <li>加入设备唯一标识 + 时间戳防重放</li>
-                <li>关键指令额外增加签名验证</li>
-            </ul>
+            <h3><span class="method-num">8</span>通讯层加密</h3>
+            <p>产品与服务器/APP 通信必须加密，防止中间人攻击和重放攻击。</p>
+            
+            <div class="why-box">
+                <div class="why-box-title">💡 为什么难以破解？</div>
+                <p>即使攻击者抓到了通信包，没有密钥也看不懂内容。加上时间戳和序列号，即使重放旧包也会被识别为无效。</p>
+            </div>
+
+            <pre><code>// 轻量级通信加密（适用于资源受限的 M0）
+// 使用 XOR + 时间戳 + 简单哈希
+
+typedef struct {
+    uint8_t data[32];      // 实际数据
+    uint8_t hash[4];       // 简化 HMAC
+    uint32_t timestamp;    // 时间戳
+    uint16_t sequence;     // 序列号防重放
+} SecurePacket;
+
+// 简化版 HMAC（资源受限时使用）
+void simple_hmac(uint8_t *key, uint8_t *data, int len, uint8_t *out) {
+    uint32_t h = 0x12345678;  // 初始化值
+    for (int i = 0; i < len; i++) {
+        h = h ^ (data[i] * 31 + key[i % 16]);
+        h = (h << 5) | (h >> 27);  // 循环左移
+    }
+    memcpy(out, &h, 4);
+}
+
+// 发送加密数据
+void send_secure(uint8_t *payload, int len) {
+    static uint16_t seq = 0;
+    
+    SecurePacket pkt;
+    memcpy(pkt.data, payload, len > 32 ? 32 : len);
+    pkt.timestamp = get_rtc_time();  // 获取当前时间
+    pkt.sequence = seq++;
+    
+    // 生成 HMAC（简单版）
+    uint8_t session_key[16];
+    get_session_key(session_key);  // 动态生成的会话密钥
+    simple_hmac(session_key, (uint8_t*)&pkt, sizeof(pkt) - 4, pkt.hash);
+    
+    // 发送（可能是明文，但有 hash 保护完整性）
+    uart_send((uint8_t*)&pkt, sizeof(pkt));
+}
+
+// 接收并验证
+int recv_verify(uint8_t *packet, int len) {
+    SecurePacket *pkt = (SecurePacket*)packet;
+    
+    // 1. 检查序列号（防重放）
+    if (!is_sequence_valid(pkt->sequence)) {
+        return -1;  // 可能是重放攻击
+    }
+    
+    // 2. 检查时间戳（5分钟内的包才有效）
+    uint32_t now = get_rtc_time();
+    if (abs(now - pkt->timestamp) > 300) {
+        return -2;  // 包太旧了
+    }
+    
+    // 3. 验证 HMAC
+    uint8_t session_key[16];
+    get_session_key(session_key);
+    uint8_t calc_hash[4];
+    simple_hmac(session_key, (uint8_t*)pkt, sizeof(*pkt) - 4, calc_hash);
+    
+    if (memcmp(calc_hash, pkt->hash, 4) != 0) {
+        return -3;  // 数据被篡改
+    }
+    
+    return 0;  // 验证通过
+}</code></pre>
         </div>
 
         <h2>四、总结</h2>
