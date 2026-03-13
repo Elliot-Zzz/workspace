@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="elaine.png" >
+    <title>技术博客</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 2em; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
+        .blog-list { display: grid; gap: 20px; }
+        .blog-card { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 24px; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; display: block; }
+        .blog-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+        .blog-date { color: #888; font-size: 0.85em; margin-bottom: 8px; }
+        .blog-title { color: #60a5fa; font-size: 1.3em; margin-bottom: 10px; font-weight: bold; }
+        .blog-desc { color: #ccc; line-height: 1.6; }
+        .blog-tags { margin-top: 12px; }
+        .tag { display: inline-block; background: rgba(102,126,234,0.3); color: #a5b4fc; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; margin-right: 8px; }
+        .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><img src="elaine.png" style="height:1.2em;vertical-align:middle;border-radius:50%;object-fit:cover;"> Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="index.html">📋 任务</a>
+            <a href="skills-page.html">🛠️ 技能</a>
+            <a href="mind-switch.html">🎮 Switch</a>
+            <a href="blog.html" class="active">📝 博客</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>📝 技术博客</h1>
+        <p class="subtitle">记录嵌入式开发、产品加密、行业思考的实践经验</p>
+        
+        <div class="blog-list">
+            <a href="security.html" class="blog-card">
+                <div class="blog-date">2026-03-13</div>
+                <div class="blog-title">🔐 嵌入式产品软件加密方案详解</div>
+                <div class="blog-desc">针对 ARM Cortex-M0/M3/M4 等资源受限 MCU 的软件加密方案，包含代码混淆、动态解密、反调试、时间随机化等 8 种方法详解及 C 代码示例。</div>
+                <div class="blog-tags">
+                    <span class="tag">嵌入式</span>
+                    <span class="tag">安全加密</span>
+                    <span class="tag">Cortex-M</span>
+                </div>
+            </a>
+
+            <a href="security.html#cases" class="blog-card">
+                <div class="blog-date">2026-03-13</div>
+                <div class="blog-title">⚖️ 嵌入式产品破解与维权诉讼案例分析</div>
+                <div class="blog-desc">收集整理了嵌入式行业相关的专利侵权、软件著作权诉讼案例，包括以色列 MAC 软件案、台积电 vs 中芯国际等经典案例，分析维权要点与启示。</div>
+                <div class="blog-tags">
+                    <span class="tag">专利诉讼</span>
+                    <span class="tag">维权案例</span>
+                    <span class="tag">法律</span>
+                </div>
+            </a>
+
+            <a href="industry-analysis.html" class="blog-card">
+                <div class="blog-date">2026-03-14</div>
+                <div class="blog-title">📈 制造业反内卷与中小企业生存之道</div>
+                <div class="blog-desc">深度解读国家反内卷政策方向，分析当前制造业竞争格局，为中小企业在行业"内卷"环境中如何建立护城河、实现差异化竞争提供思路。</div>
+                <div class="blog-tags">
+                    <span class="tag">行业分析</span>
+                    <span class="tag">反内卷</span>
+                    <span class="tag">中小企业</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>📅 更新于 2026-03-14 | 由 Elaine 整理</p>
+        </div>
+    </div>
+</body>
+</html>
