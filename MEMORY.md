@@ -12,3 +12,9 @@
 - 工作日每 30 分钟监控股票（伯特利 603596、联赢激光 688518）
 - 涨跌幅阈值 ±5% 时提醒
 - 通过 Feishu 推送告警
+
+## 网站相关
+
+- **GitHub Pages 地址**: https://elliot-zzz.github.io/workspace/
+- "任务看板"、"看板网页"、"工作看板" 都指 GitHub Pages，不是本地文件
+- 每次修改后都要 git push
