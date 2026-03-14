@@ -170,20 +170,55 @@
         </tr>
         </table>
 
-        <h2>六、如何使用？</h2>
+        <h2>六、命令行使用完整指南</h2>
         
-        <h3>配置 API Key</h3>
-        <pre><code>export TAVILY_API_KEY="你的API密钥"</code></pre>
-        <p>获取地址：<a href="https://app.tavily.com/api-keys" style="color:#60a5fa;">https://app.tavily.com/api-keys</a></p>
+        <h3>1. 环境配置</h3>
+        <p>将 API Key 保存到 credentials 文件，方便长期使用：</p>
+        <pre><code># 创建配置文件
+echo 'TAVILY_API_KEY="你的API密钥"' > ~/.openclaw/credentials/tavily.env
+chmod 600 ~/.openclaw/credentials/tavily.env</code></pre>
 
-        <h3>基本搜索</h3>
-        <pre><code>./search.sh "搜索关键词"
+        <h3>2. 基础命令</h3>
+        <pre><code># 加载环境变量并搜索
+source ~/.openclaw/credentials/tavily.env && ~/.openclaw/workspace/skills/tavily-search-skill/search.sh "搜索关键词"</code></pre>
 
-# 指定返回数量
-./search.sh "搜索关键词" 5
+        <h3>3. 常用参数</h3>
+        <ul>
+            <li><code>search.sh "关键词"</code> - 默认返回 10 条结果</li>
+            <li><code>search.sh "关键词" 5</code> - 指定返回 5 条结果</li>
+            <li><code>search.sh "关键词" 5 true</code> - 返回 5 条结果并包含图片</li>
+            <li><code>search.sh --usage</code> - 查看配额使用情况</li>
+            <li><code>search.sh --status</code> - 查看 API 状态</li>
+            <li><code>search.sh --toggle-paid-mode</code> - 切换付费模式</li>
+        </ul>
 
-# 查看配额
-./search.sh --usage</code></pre>
+        <h3>4. 简化写法（推荐）</h3>
+        <p>OpenClaw 用户可以直接用 skillhub 命令（会自动加载环境变量）：</p>
+        <pre><code>skillhub search "搜索关键词"</code></pre>
+
+        <h3>5. 输出示例</h3>
+        <pre><code>[INFO] Using API Key: tvly-dev-1...
+[INFO] Current plan: Researcher, remaining: 990
+[INFO] Searching: '关键词' (max_results=5)
+[DEBUG] HTTP status: 200
+[INFO] Search success | Used: 1 credit | Remaining: 990 credits
+{
+  "query": "关键词",
+  "results": [
+    {
+      "url": "https://example.com",
+      "title": "结果标题",
+      "content": "内容摘要...",
+      "score": 0.999
+    }
+  ],
+  "quota_info": {
+    "plan": "Researcher",
+    "total": 1000,
+    "used": 10,
+    "remaining": 990
+  }
+}</code></pre>
 
         <div class="highlight">
             <div class="highlight-title">💡 总结</div>
