@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="elaine.png" >
+    <title>飞书机器人开启文件上传权限 | 技术博客</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        .back { color: #60a5fa; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        .back:hover { color: #93c5fd; }
+        h1 { font-size: 2em; margin-bottom: 10px; }
+        .meta { color: #888; margin-bottom: 30px; font-size: 0.9em; }
+        .content { line-height: 1.8; color: #ccc; }
+        .content h2 { color: #60a5fa; margin: 30px 0 15px; font-size: 1.4em; }
+        .content p { margin-bottom: 15px; }
+        .content ul, .content ol { margin: 15px 0 15px 20px; }
+        .content li { margin-bottom: 8px; }
+        .content code { background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px; font-family: monospace; color: #f472b6; }
+        .content pre { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; overflow-x: auto; margin: 15px 0; }
+        .content pre code { background: none; padding: 0; color: #a5f3fc; }
+        .content a { color: #60a5fa; }
+        .tag { display: inline-block; background: rgba(102,126,234,0.3); color: #a5b4fc; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; margin-right: 8px; }
+        .warning { background: rgba(251, 191, 36, 0.2); border-left: 4px solid #fbbf24; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+        .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><img src="elaine.png" style="height:1.2em;vertical-align:middle;border-radius:50%;object-fit:cover;"> Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="index.html">📋 任务</a>
+            <a href="skills-page.html">🛠️ 技能</a>
+            <a href="mind-switch.html">🎮 Switch</a>
+            <a href="blog.html" class="active">📝 博客</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="blog.html" class="back">← 返回博客列表</a>
+        
+        <h1>📤 飞书机器人开启文件上传权限</h1>
+        <div class="meta">
+            <span class="tag">飞书</span>
+            <span class="tag">OpenClaw</span>
+            <span class="tag">权限配置</span>
+            发布于 2026-03-15
+        </div>
+
+        <div class="content">
+            <h2>🎯 问题描述</h2>
+            <p>在使用 OpenClaw 发送文件到飞书时，可能会遇到以下错误：</p>
+            <pre><code>Access denied. One of the following scopes is required: [im:resource:upload, im:resource]</code></pre>
+            <p>这意味着机器人应用没有开通文件上传的权限，需要在飞书开放平台手动申请。</p>
+
+            <h2>🔧 解决方案</h2>
+            <ol>
+                <li>打开飞书开放平台：<a href="https://open.feishu.cn/" target="_blank">https://open.feishu.cn/</a></li>
+                <li>登录后进入「应用管理」页面</li>
+                <li>找到你正在使用的 OpenClaw 机器人应用（通常是 cli_xxx 开头）</li>
+                <li>点击进入应用详情，切换到「权限管理」标签</li>
+                <li>搜索并添加以下权限：
+                    <ul>
+                        <li><code>im:resource</code> - 资源权限</li>
+                        <li><code>im:resource:upload</code> - 文件上传权限</li>
+                    </ul>
+                </li>
+                <li>提交权限申请并等待审批（如果需要）</li>
+                <li>申请通过后，机器人就可以发送文件了</li>
+            </ol>
+
+            <div class="warning">
+                <strong>⚠️ 注意：</strong>权限申请可能需要企业管理员审批。如果是自建应用，可能需要联系企业管理员开启相应权限。
+            </div>
+
+            <h2>📋 常见权限说明</h2>
+            <ul>
+                <li><code>im:message</code> - 发送消息基础权限</li>
+                <li><code>im:resource</code> - 资源管理权限</li>
+                <li><code>im:resource:upload</code> - 上传文件权限</li>
+                <li><code>im:resource:download</code> - 下载文件权限</li>
+                <li><code>im:chat</code> - 群聊管理权限</li>
+                <li><code>im:chat:readonly</code> - 群聊只读权限</li>
+            </ul>
+
+            <h2>🔗 相关链接</h2>
+            <ul>
+                <li>飞书开放平台：<a href="https://open.feishu.cn/" target="_blank">https://open.feishu.cn/</a></li>
+                <li>权限问题排查：<a href="https://open.feishu.cn/document/ugTN1YjL4UTN24CO1UjN/trouble-shooting/how-to-fix-the-99991672-error" target="_blank">错误码 99991672 处理</a></li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p><img src="elaine.png" style="height:1em;vertical-align:middle;border-radius:50%;object-fit:cover;"> 由 Elaine 驱动</p>
+        </div>
+    </div>
+</body>
+</html>
