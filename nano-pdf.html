@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="elaine.png" >
+    <title>nano-pdf 使用指南 | 技术博客</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        .back { color: #60a5fa; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        .back:hover { color: #93c5fd; }
+        h1 { font-size: 2em; margin-bottom: 10px; }
+        .meta { color: #888; margin-bottom: 30px; font-size: 0.9em; }
+        .content { line-height: 1.8; color: #ccc; }
+        .content h2 { color: #60a5fa; margin: 30px 0 15px; font-size: 1.4em; }
+        .content p { margin-bottom: 15px; }
+        .content ul, .content ol { margin: 15px 0 15px 20px; }
+        .content li { margin-bottom: 8px; }
+        .content code { background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px; font-family: monospace; color: #f472b6; }
+        .content pre { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; overflow-x: auto; margin: 15px 0; }
+        .content pre code { background: none; padding: 0; color: #a5f3fc; }
+        .content a { color: #60a5fa; }
+        .tag { display: inline-block; background: rgba(102,126,234,0.3); color: #a5b4fc; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; margin-right: 8px; }
+        .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><img src="elaine.png" style="height:1.2em;vertical-align:middle;border-radius:50%;object-fit:cover;"> Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="index.html">📋 任务</a>
+            <a href="skills-page.html">🛠️ 技能</a>
+            <a href="mind-switch.html">🎮 Switch</a>
+            <a href="blog.html" class="active">📝 博客</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="blog.html" class="back">← 返回博客列表</a>
+        
+        <h1>📄 nano-pdf 使用指南</h1>
+        <div class="meta">
+            <span class="tag">Skills</span>
+            <span class="tag">PDF</span>
+            <span class="tag">AI</span>
+            发布于 2026-03-15
+        </div>
+
+        <div class="content">
+            <h2>🎯 简介</h2>
+            <p>nano-pdf 是一个用自然语言指令编辑 PDF 的命令行工具。它基于 AI（Gemini）来理解你的修改意图并直接在 PDF 上执行编辑。</p>
+
+            <h2>📦 安装</h2>
+            <pre><code># 方法1: 使用 uv (推荐)
+uv install nano-pdf
+
+# 方法2: 使用 pip
+pip install nano-pdf</code></pre>
+
+            <h2>🚀 基本用法</h2>
+            <pre><code># 编辑 PDF 的指定页面
+nano-pdf edit document.pdf 1 "将标题改为 'Q3 Results'"
+
+# 同时编辑多页
+nano-pdf edit document.pdf 1 "修改标题" 2 "在第二段添加图表"</code></pre>
+
+            <h2>⚠️ 注意事项</h2>
+            <ul>
+                <li><strong>页码从 0 还是 1 开始？</strong> 取决于版本配置。如果结果看起来差了一页，试试另一个。</li>
+                <li><strong>输出检查</strong> 编辑后的 PDF 发送前务必检查一遍，确保内容正确。</li>
+                <li><strong>依赖</strong> 需要安装 Google Gemini API 密钥才能正常使用。</li>
+            </ul>
+
+            <h2>📋 命令行选项</h2>
+            <ul>
+                <li><code>nano-pdf edit</code> - 编辑现有 PDF</li>
+                <li><code>nano-pdf add</code> - 添加新页面</li>
+                <li><code>nano-pdf version</code> - 查看版本</li>
+            </ul>
+
+            <h2>🔗 相关链接</h2>
+            <ul>
+                <li>PyPI 主页: <a href="https://pypi.org/project/nano-pdf/" target="_blank">https://pypi.org/project/nano-pdf/</a></li>
+                <li>GitHub: <a href="https://github.com/nanobanana-squad/nano-pdf" target="_blank">https://github.com/nanobanana-squad/nano-pdf</a></li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p><img src="elaine.png" style="height:1em;vertical-align:middle;border-radius:50%;object-fit:cover;"> 由 Elaine 驱动</p>
+        </div>
+    </div>
+</body>
+</html>
