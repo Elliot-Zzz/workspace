@@ -18,6 +18,18 @@
       "zip_url": "https://lightmake.site/api/v1/download?slug=nano-pdf",
       "source": "skillhub",
       "version": "1.0.0"
+    },
+    "dingtalk-setup": {
+      "name": "DingTalk Channel Setup",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=dingtalk-setup",
+      "source": "skillhub",
+      "version": "1.0.0"
+    },
+    "dingtalk": {
+      "name": "Dingtalk",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=dingtalk",
+      "source": "skillhub",
+      "version": "1.0.0"
     }
   }
 }
