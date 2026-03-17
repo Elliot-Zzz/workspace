@@ -12,6 +12,12 @@
       "zip_url": "https://lightmake.site/api/v1/download?slug=summarize",
       "source": "skillhub",
       "version": "1.0.0"
+    },
+    "nano-pdf": {
+      "name": "Nano Pdf",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=nano-pdf",
+      "source": "skillhub",
+      "version": "1.0.0"
     }
   }
 }
