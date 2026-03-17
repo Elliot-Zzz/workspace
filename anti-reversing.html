@@ -50,7 +50,7 @@
     <div class="container">
         <a href="blog.html" class="back-link">← 返回博客列表</a>
         <h1>🛡️ 规避加密判断逻辑被发现的技术实践</h1>
-        <p class="subtitle">让破解者的分析成本高到怀疑人生</p>
+        <p class="subtitle">让破解者的分析成本高到怀疑人生 | C 语言实现</p>
 
         <div class="warning">
             <div class="warning-title">⚠️ 免责声明</div>
@@ -59,7 +59,7 @@
 
         <div class="section">
             <h3>前言</h3>
-            <p>做过软件保护的人都知道：代码混淆只是增加分析成本，真正的核心在于<strong>判断逻辑</strong>——一旦被人定位并理解，破解就只是时间问题。本文探讨如何降低判断逻辑被发现的风险。</p>
+            <p>做过软件保护的人都知道：代码混淆只是增加分析成本，真正的核心在于<strong>判断逻辑</strong>——一旦被人定位并理解，破解就只是时间问题。本文探讨如何降低判断逻辑被发现的风险，所有示例均使用 C 语言（适用于嵌入式 MCU）。</p>
         </div>
 
         <h2>1. 扁平化判断逻辑</h2>
@@ -70,310 +70,412 @@
             
             <p><strong>糟糕的做法：</strong></p>
             <pre><code>// 一眼就能看出是授权检查
-function checkLicense(key) {
+int check_license(const char *key) {
     if (!verify(key)) {
-        showTrialLimit();
-        return false;
+        show_trial_limit();
+        return 0;
     }
-    return true;
+    return 1;
 }</code></pre>
 
             <p><strong>更好的做法：</strong></p>
             <pre><code>// 分散成多个独立函数，最后混合结果
-function initApp() {
-    const a = getHardwareId();      // 获取硬件信息
-    const b = loadConfig();         // 加载配置
-    const c = calcTimeDelta();      // 计算时间差
-    const d = fetchRemoteSeed();   // 远程获取种子
-    
-    // 关键判断隐藏在混合函数中
-    const result = mix(a, b, c, d);  
-    // result 为 0 表示验证失败
-    if (result === 0) {
-        showTrialMode();
-    }
+static uint32_t mix_values(uint32_t a, uint32_t b, uint32_t c, uint32_t d) {
+    // 混合函数看起来完全像普通的数据处理
+    uint32_t result = a;
+    result ^= (b * 31337);
+    result ^= (c << 7);
+    result ^= (d * 17);
+    return result;
 }
 
-// mix 函数看起来完全无害
-function mix(...args) {
-    let sum = 0;
-    for (const arg of args) {
-        sum ^= (arg * 31337) % 0xFFFFFFFF;
+void init_app(void) {
+    uint32_t a = get_hardware_id();      // 获取硬件ID
+    uint32_t b = load_config();          // 加载配置
+    uint32_t c = calc_time_delta();      // 计算时间差
+    uint32_t d = read_flash_seed();      // 读取Flash中的种子
+    
+    // 关键判断隐藏在混合函数中
+    uint32_t result = mix_values(a, b, c, d);
+    
+    // result 为特定值表示验证失败
+    if (result == 0xDEADBEEF) {
+        show_trial_mode();
     }
-    return sum;
 }</code></pre>
         </div>
 
         <div class="section">
             <h3>1.2 延迟执行法</h3>
-            <p>判断结果不立即生效，而是延迟几步。</p>
-            <pre><code>// 延迟判断：把结果存入变量，后面某处才使用
-let authState = null;
-function someUnrelatedFunction() {
-    authState = checkAuth();
+            <p>判断结果不立即生效，而是延迟几步或存到数据结构中。</p>
+            <pre><code>// 延迟判断：把结果存入结构体，后面某处才使用
+typedef struct {
+    uint8_t flags[8];
+    uint32_t state;
+} AppContext;
+
+static AppContext g_ctx = {0};
+
+void check_auth_delayed(void) {
+    // 存到看似无关的数组里
+    g_ctx.flags[3] = verify_license();
 }
 
-// 或者更隐蔽：存到数组/对象里
-const appState = { flags: [] };
-appState.flags[7] = checkAuth();
-
-// 几千行后...
-function deepInTheCode() {
-    if (appState.flags[7]) return;  // 被跳过了
-    // 功能代码
+// 在另一个完全无关的函数里使用
+void process_data(uint8_t *buf, uint32_t len) {
+    // 几千行后...
+    if (g_ctx.flags[3]) {
+        // 正常处理
+        encrypt_and_send(buf, len);
+    } else {
+        // 受限模式
+        send_watermarked(buf, len);
+    }
 }</code></pre>
         </div>
 
         <div class="section">
             <h3>1.3 状态机法</h3>
-            <p>用状态机代替简单的 if/else。</p>
+            <p>用状态机代替简单的 if/else，让判断逻辑融入状态转移中。</p>
             <pre><code>// 简单粗暴的判断
-function run() {
+void run_feature(void) {
     if (!licensed) {
-        showWatermark();
+        show_watermark();
         return;
     }
     // 正常功能
 }
 
 // 状态机版本：让人找不到入口点
-const STATES = {
-    INIT: 0,
-    CHECK: 1,
-    DECIDE: 2,
-    EXECUTE: 3,
-    FALLBACK: 4
-};
+typedef enum {
+    STATE_INIT = 0,
+    STATE_PREPARE,
+    STATE_VERIFY,
+    STATE_EXECUTE,
+    STATE_FALLBACK
+} AppState;
 
-function stateMachine(state, data) {
-    switch(state) {
-        case STATES.INIT:
-            return { next: STATES.CHECK, data: prepareData(data) };
-        case STATES.CHECK:
+static AppState current_state = STATE_INIT;
+
+void state_machine_step(void *data) {
+    switch(current_state) {
+        case STATE_INIT:
+            prepare_data(data);
+            current_state = STATE_PREPARE;
+            break;
+            
+        case STATE_PREPARE:
+            current_state = STATE_VERIFY;
+            break;
+            
+        case STATE_VERIFY:
             // 这里才真正做判断，但看起来像普通的状态转移
-            const passed = verify(data);
-            return { next: passed ? STATES.EXECUTE : STATES.FALLBACK };
-        case STATES.EXECUTE:
-            return { next: -1 };  // 正常流程
-        case STATES.FALLBACK:
-            return { next: -1 };  // 受限流程
+            if (verify_license_internal(data)) {
+                current_state = STATE_EXECUTE;
+            } else {
+                current_state = STATE_FALLBACK;
+            }
+            break;
+            
+        case STATE_EXECUTE:
+            execute_feature(data);
+            current_state = STATE_INIT;
+            break;
+            
+        case STATE_FALLBACK:
+            execute_limited(data);
+            current_state = STATE_INIT;
+            break;
     }
 }</code></pre>
         </div>
 
-        <h2>2. 利用编译器/构建工具特性</h2>
+        <h2>2. 编译期和运行时技巧</h2>
 
         <div class="section">
-            <h3>2.1 常量折叠</h3>
-            <p>让关键判断在编译期就被算出结果，但用运行时才有的值作为 key。</p>
-            <pre><code>// 构建时替换的变量
-const BUILD_KEY = "__BUILD_KEY__";  // 替换成具体的随机值
+            <h3>2.1 宏定义混淆</h3>
+            <p>用宏把关键判断伪装成普通常量比较。</p>
+            <pre><code>// 关键常量通过计算得出
+#define CHECK_CONSTANT ((uint32_t)0x5A ^ 0x12345678)
 
-function check(key) {
-    // 混淆后的逻辑看起来像随机运算
-    return ((key * 2654435769) >>> 0) === BUILD_KEY;
+#define VALIDATE(x) (((x) * 2654435769UL) == CHECK_CONSTANT)
+
+// 使用时看起来像普通比较
+void process_command(uint32_t cmd) {
+    if (VALIDATE(cmd)) {
+        // 正常功能
+    } else {
+        // 受限
+    }
 }</code></pre>
         </div>
 
         <div class="section">
-            <h3>2.2 代码加密/解密执行</h3>
-            <p>核心逻辑加密，运行时解密。</p>
-            <pre><code>// 加密的函数体（实际使用时从服务器获取）
-const encryptedLogic = "X7q9...二进制的密文";
-const key = fetchKey();  // 动态获取key
+            <h3>2.2 代码段加密</h3>
+            <p>核心逻辑加密，运行时解密。需要配合 bootloader 或外部烧录工具。</p>
+            <pre><code>// 加密的函数体（实际使用时从外部 Flash 读取）
+const uint8_t encrypted_func[] = {
+    0xA3, 0x5F, 0x12, 0x8C, // ... 加密后的字节码
+};
 
-// 解密并执行
-const decrypted = decrypt(encryptedLogic, key);
-const fn = new Function(decrypted);
-fn();
+// 解密并执行（需要在 RAM 中运行）
+typedef void (*FuncPtr)(void);
 
-// 注意：这种方式需要配合完整性校验，否则可以直接 Hook decrypt 函数 Dump 结果</code></pre>
+void decrypt_and_execute(const uint8_t *enc, uint32_t len, uint32_t key) {
+    static uint8_t decrypted[256];  // 解密后的代码放在 RAM
+    
+    // 解密
+    for (uint32_t i = 0; i < len; i++) {
+        decrypted[i] = enc[i] ^ ((key >> (i % 4)) & 0xFF);
+    }
+    
+    // 跳转到 RAM 执行
+    FuncPtr func = (FuncPtr)decrypted;
+    func();
+}</code></pre>
         </div>
 
         <div class="section">
-            <h3>2.3 WebAssembly / 字节码</h3>
-            <p>把关键逻辑编译成 WASM，增加逆向难度。</p>
-            <pre><code>// 加载 WASM 模块
-const wasmModule = WebAssembly.compile(wasmBinary);
-const instance = new WebAssembly.Instance(wasmModule, {
-    env: { /* 接口 */ }
-});
+            <h3>2.3 函数指针跳转</h3>
+            <p>通过函数指针数组间接调用，让静态分析困难。</p>
+            <pre><code>// 函数指针数组，看起来像普通的回调注册
+static FuncPtr feature_table[4] = {
+    feature_limited_a,
+    feature_limited_b,
+    feature_limited_c,
+    feature_full
+};
 
-// 调用在 WASM 里的判断函数
-const result = instance.exports.checkLicense(key);</code></pre>
+void call_feature(uint8_t idx) {
+    if (idx < 4) {
+        // 看似普通的函数调用
+        feature_table[idx]();
+    }
+}
+
+// 判断逻辑隐藏在实际索引计算中
+uint8_t calculate_index(void) {
+    uint8_t base = get_license_level();
+    uint8_t offset = get_user_type();
+    // 复杂的索引计算
+    return (base * 3 + offset) % 4;
+}</code></pre>
         </div>
 
         <h2>3. 行为检测而非特征检测</h2>
 
         <div class="section">
-            <h3>3.1 检测调试器</h3>
-            <pre><code>// 检测调试器（Web端示例）
-function detectDebugger() {
-    // 1. 检测 devtools 是否打开
-    const start = Date.now();
-    debugger;  // 强制断点
-    const delta = Date.now() - start;
-    if (delta > 100) return true;  // 调试时会有明显延迟
+            <h3>3.1 检测调试接口</h3>
+            <pre><code>// 检测 SWD/JTAG 接口是否可用
+int detect_debugger(void) {
+    // STM32 示例：尝试解锁调试口
+    volatile uint32_t *DBGMCU_CR = (uint32_t *)0xE0042004;
     
-    // 2. 检测 Chrome DevTools Protocol
-    // 如果从 DevTools 打开页面，navigator.webdriver 会是 true
-    if (navigator.webDriver) return true;
+    // 如果能访问到调试寄存器，说明可能在调试器环境
+    uint32_t idcode = get_debug_idcode();
     
-    // 3. 检测断点
-    const originalConsole = console.log;
-    console.log = function(...args) {
-        // 被 Hook 了，说明在调试
-        throw new Error("Console hooked!");
-    };
+    // 正常的 MCU debug ID 应该是特定的
+    if (idcode != 0x12345678 && idcode != 0x0) {
+        return 1;  // 检测到调试器
+    }
+    
+    // 检测 DBG 寄存器是否被锁定
+    if ((*DBGMCU_CR & 0x07) != 0) {
+        return 1;  // 调试器已连接
+    }
+    
+    return 0;
 }</code></pre>
         </div>
 
         <div class="section">
-            <h3>3.2 检测 Hook 框架</h3>
-            <pre><code>// 检测 Function.prototype 被修改
-(function() {
-    const original = Function.prototype.call;
-    Function.prototype.call = function(...args) {
-        // 被修改了，可能在调试
-        return original.apply(this, args);
-    };
-    // 检测是否被修改
-    if (Function.prototype.call.toString().indexOf("native code") === -1) {
-        // 被 Hook 了
-    }
-})();
-
-// 检测 setTimeout/setInterval 是否被修改
-const originalSetTimeout = window.setTimeout;
-window.setTimeout = function(fn, delay) {
-    // 可能是调试工具在拦截
-    return originalSetTimeout(fn, delay);
-};</code></pre>
-        </div>
-
-        <div class="section">
-            <h3>3.3 检测模拟器/虚拟机</h3>
-            <pre><code>function detectVM() {
-    // 1. 检测屏幕分辨率是否异常
-    const screenProps = [screen.width, screen.height, screen.colorDepth];
-    if (screenProps.some(p => p === 0 || p === undefined)) return true;
+            <h3>3.2 检测断点</h3>
+            <pre><code>// 检测代码段是否被修改（检查断点）
+int detect_breakpoint(void) {
+    extern uint32_t _sidata;
+    extern uint32_t _sdata;
+    extern uint32_t _edata;
     
-    // 2. 检测硬件信息
-    const gl = document.createElement('canvas').getContext('webgl');
-    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-    if (debugInfo) {
-        const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-        // VMware, VirtualBox, QEMU 等会有特征
-        if (/VMware|VirtualBox|QEMU|llvmpipe/i.test(renderer)) return true;
+    // 计算代码段校验和
+    uint32_t checksum = 0;
+    uint32_t *start = &_sidata;
+    uint32_t *end = &_sdata;
+    
+    while (start < end) {
+        checksum ^= *start++;
     }
     
-    // 3. 检测 CPU 核心数（很多浏览器沙箱会报告假值）
-    const cores = navigator.hardwareConcurrency;
-    if (cores < 2 || cores > 64) return true;
-}</code></pre>
-        </div>
-
-        <h2>4. 服务端校验（最靠谱）</h2>
-
-        <div class="section">
-            <p>把判断逻辑放到服务器，客户端只负责展示。</p>
-            <pre><code>// 客户端：只发请求，不做判断
-async function loadFeatures() {
-    const token = getToken();
-    const response = await fetch('/api/features', {
-        headers: { 'Authorization': token }
-    });
-    const features = await response.json();
+    // 与预期校验和比较
+    static const uint32_t expected = 0xDEADBEEF;
+    if (checksum != expected) {
+        // 代码被修改了，可能被下了断点
+        return 1;
+    }
     
-    // 服务器返回什么，客户端就展示什么
-    applyFeatures(features);
+    return 0;
 }
 
-// 服务器端：完整的校验逻辑
-app.get('/api/features', async (req, res) => {
-    const user = await verifyToken(req.headers.authorization);
-    if (!user.license) {
-        // 返回受限功能
-        return res.json({ 
-            pro: false, 
-            maxProjects: 3,
-            watermark: true 
-        });
-    }
-    // 返回完整功能
-    return res.json({ 
-        pro: true, 
-        maxProjects: -1,
-        watermark: false 
-    });
-});</code></pre>
-            <p>优势：逻辑完全不可见、可以随时更新规则、可以做行为分析</p>
-        </div>
-
-        <h2>5. 综合示例：多层防御</h2>
-
-        <div class="section">
-            <pre><code>class LicenseManager {
-    constructor() {
-        this.state = this.loadState();
-    }
-    
-    // 第一层：静态检查（快速失败）
-    quickCheck() {
-        // 用分散的小判断组成
-        const checks = [
-            this.checkStorage(),
-            this.checkTime(),
-            this.checkDevice()
-        ];
-        // 全部通过才继续
-        return checks.every(c => c);
-    }
-    
-    // 第二层：运行时动态检查
-    async verify() {
-        // 发起服务器校验
-        const result = await fetch('/api/verify', {
-            body: JSON.stringify(this.collectFingerprint())
-        }).then(r => r.json());
-        
-        this.state.verified = result.valid;
-        return result.valid;
-    }
-    
-    // 第三层：行为检测
-    monitor() {
-        // 后台持续检测异常行为
-        setInterval(() => {
-            if (this.detectDebug()) {
-                this.state.compromised = true;
-            }
-        }, 5000);
-    }
-    
-    // 核心功能：根据状态决定行为
-    getFeatures() {
-        // 不直接返回 boolean，而是返回具体的功能列表
-        if (this.state.compromised) {
-            return this.getLimitedFeatures();  // 静默降级
-        }
-        if (!this.state.verified) {
-            return this.getTrialFeatures();
-        }
-        return this.getProFeatures();
-    }
+// 或者：利用指令陷阱检测
+void check_pc_sanity(void) {
+    // 故意插入的检测点
+    __asm__("nop");
+    __asm__("nop");
+    __asm__("nop");
+    // 如果这几行被下了断点，执行流程会异常
 }</code></pre>
         </div>
 
-        <h2>6. 常见误区</h2>
+        <div class="section">
+            <h3>3.3 检测电压/时钟异常</h3>
+            <pre><code>// 检测供电电压异常（Glitching 攻击）
+int detect_voltage_glitch(void) {
+    // 多次采样供电电压
+    uint32_t readings[5];
+    for (int i = 0; i < 5; i++) {
+        readings[i] = read_vdd_voltage();
+        delay_us(100);
+    }
+    
+    // 检查是否有异常波动
+    uint32_t max_v = readings[0];
+    uint32_t min_v = readings[0];
+    for (int i = 1; i < 5; i++) {
+        if (readings[i] > max_v) max_v = readings[i];
+        if (readings[i] < min_v) min_v = readings[i];
+    }
+    
+    // 正常供电波动应该很小
+    if ((max_v - min_v) > 200) {  // 200mV 阈值
+        return 1;  // 检测到异常
+    }
+    
+    return 0;
+}
+
+// 检测时钟异常
+int detect_clock_glitch(void) {
+    uint32_t start = DWT->CYCCNT;
+    delay_us(10);
+    uint32_t end = DWT->CYCCNT;
+    
+    // 正常情况下，10us 应该对应固定的时钟周期
+    // 如果被 clock glitching，周期会异常
+    uint32_t expected = SystemCoreClock / 100000;  // 10us
+    
+    if (end - start < expected / 2 || end - start > expected * 2) {
+        return 1;
+    }
+    
+    return 0;
+}</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>3.4 检测 Flash 读取</h3>
+            <pre><code>// 检测 Flash 读取异常（防止固件被直接读取）
+int detect_flash_read(void) {
+    // 在特定地址放置"陷阱"
+    volatile uint32_t *trap_addr = (uint32_t *)(FLASh_BASE + 0x1000);
+    
+    // 尝试读取一个"不应该"被读取的区域
+    uint32_t val1 = *trap_addr;
+    delay_us(1);
+    uint32_t val2 = *trap_addr;
+    
+    // 如果两次读到的值不同，说明可能被监控
+    if (val1 != val2) {
+        return 1;
+    }
+    
+    return 0;
+}
+
+// Flash 读保护检测
+int check_read_protection(void) {
+    volatile uint32_t *option_bytes = (uint32_t *)0x1FFF7800;
+    
+    // 检查 RDP 级别
+    uint32_t rdp = (*option_bytes) & 0xFF;
+    if (rdp == 0xAA) {
+        // 读保护已开启
+        return 1;
+    }
+    
+    return 0;
+}</code></pre>
+        </div>
+
+        <h2>4. 多层防御综合示例</h2>
+
+        <div class="section">
+            <pre><code>typedef struct {
+    uint8_t verified;
+    uint8_t compromised;
+    uint8_t flags[8];
+} LicenseState;
+
+static LicenseState g_license = {0};
+
+// 第一层：静态检查（快速失败）
+int quick_check(void) {
+    // 分散的小判断组成
+    int check1 = check_storage_crc();
+    int check2 = check_config_magic();
+    int check3 = check_device_id();
+    
+    // 全部通过才继续
+    return (check1 && check2 && check3);
+}
+
+// 第二层：运行时动态检查
+int verify_license(void) {
+    // 发起服务器校验（需要外设支持）
+    uint8_t result = request_server_verify();
+    g_license.verified = result;
+    return result;
+}
+
+// 第三层：行为检测
+void monitor_threats(void) {
+    static uint32_t counter = 0;
+    counter++;
+    
+    // 每 1000 次调用检测一次，避免性能影响
+    if (counter % 1000 == 0) {
+        if (detect_debugger() || 
+            detect_voltage_glitch() || 
+            detect_clock_glitch()) {
+            g_license.compromised = 1;
+        }
+    }
+}
+
+// 核心功能：根据状态决定行为
+void get_feature_list(FeatureList *list) {
+    if (g_license.compromised) {
+        // 静默降级，不告诉用户为什么
+        get_limited_features(list);
+        return;
+    }
+    
+    if (!g_license.verified) {
+        get_trial_features(list);
+        return;
+    }
+    
+    get_pro_features(list);
+}</code></pre>
+        </div>
+
+        <h2>5. 常见误区</h2>
 
         <div class="section">
             <table>
                 <tr><th>误区</th><th>真相</th></tr>
                 <tr><td>混淆越复杂越安全</td><td>只是增加分析时间，无法阻止决心破解的人</td></tr>
                 <tr><td>加壳就能保护</td><td>壳本身也是被脱的对象</td></tr>
-                <tr><td>机器码/字节码安全</td><td>虚拟机保护才靠谱，但成本高</td></tr>
                 <tr><td>一次性判断就够</td><td>多层检查比单点判断更难全面绕过</td></tr>
+                <tr><td>软件能完全保护</td><td>真正的安全需要硬件配合（如安全芯片）</td></tr>
             </table>
         </div>
 
@@ -385,9 +487,9 @@ app.get('/api/features', async (req, res) => {
                 <li>让破解成本 > 购买正版成本 = 成功</li>
                 <li>判断逻辑隐藏得越好，破解成本越高</li>
                 <li>行为检测比静态特征更难绕过</li>
-                <li>服务端校验是最终的避风港</li>
+                <li>多层防御比单点判断更难全面突破</li>
             </ul>
-            <p style="margin-top: 20px; color: #888;">真正的安全是<strong>工程问题</strong>，不是<strong>技术问题</strong>。</p>
+            <p style="margin-top: 20px; color: #888;">真正的安全是<strong>工程问题</strong>，不是<strong>技术问题</strong>。在嵌入式领域，尤其需要结合硬件安全特性（Secure Boot、TPM、安全芯片）才能达到较好的保护效果。</p>
         </div>
 
         <div class="footer">
