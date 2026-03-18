@@ -30,6 +30,12 @@
       "zip_url": "https://lightmake.site/api/v1/download?slug=dingtalk",
       "source": "skillhub",
       "version": "1.0.0"
+    },
+    "email-mail-master": {
+      "name": "Send email with Mail Master 万能邮箱助手",
+      "zip_url": "https://lightmake.site/api/v1/download?slug=email-mail-master",
+      "source": "skillhub",
+      "version": "1.0.0"
     }
   }
 }

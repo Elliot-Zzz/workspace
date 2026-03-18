@@ -1,0 +1,11 @@
+{
+  "default_mailbox": "ali",
+  "ali_email": {
+    "email": "elliotzhang@iluoqin.com",
+    "auth_password": "NG1xKBFPspLrYkU9",
+    "smtp_server": "smtp.qiye.aliyun.com",
+    "smtp_port": 465,
+    "imap_server": "imap.qiye.aliyun.com",
+    "imap_port": 993
+  }
+}
