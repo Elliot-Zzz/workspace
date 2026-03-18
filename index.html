@@ -19,10 +19,9 @@
         .task-list { list-style: none; }
         .task-list li { padding: 12px 0; border-bottom: 1px solid #eee; display: flex; align-items: center; }
         .task-list li:last-child { border-bottom: none; }
-        .checkbox { width: 20px; height: 20px; border: 2px solid #667eea; border-radius: 4px; margin-right: 12px; display: inline-block; }
+        .checkbox { width: 20px; height: 20px; border: 2px solid #667eea; border-radius: 4px; margin-right: 12px; display: inline-block; flex-shrink: 0; }
         .checkbox.checked { background: #667eea; position: relative; }
         .checkbox.checked::after { content: '✓'; color: white; position: absolute; left: 4px; top: -1px; font-size: 14px; }
-        .sub-task { margin-left: 32px; color: #666; font-size: 0.95em; }
         .footer { text-align: center; color: rgba(255,255,255,0.8); padding: 20px; }
     </style>
 </head>
@@ -59,39 +58,20 @@
                 <li><span class="checkbox checked"></span>细化专业领域方向</li>
                 <li><span class="checkbox checked"></span>每天早上汇总相关新闻/博客，输出早报</li>
                 <li><span class="checkbox"></span>重构公司官方网站，丰富内容</li>
-                <li><span class="checkbox checked"></span><a href="nba.html" style="color:#667eea;">🏀 NBA 战报</a> (每日12:30更新)</li>
+                <li><span class="checkbox checked"></span><a href="nba.html" style="color:#667eea;">🏀 NBA 战报</a> (每日12:00更新)</li>
                 <li><span class="checkbox checked"></span><a href="iran.html" style="color:#667eea;">🌍 中东局势</a> (每日18:00更新)</li>
-                <li><span class="checkbox checked"></span><a href="blog.html" style="color:#667eea;">📝 建立技术博客系统</a>
-                    <ul class="task-list">
-                        <li class="sub-task"><span class="checkbox checked"></span>嵌入式产品加密方案文章</li>
-                        <li class="sub-task"><span class="checkbox checked"></span>制造业反内卷与中小企业生存之道文章</li>
-                        <li class="sub-task"><span class="checkbox"></span><a href="https-guide.html" style="color:#667eea;">🔐 OpenClaw 远程访问安全指南：HTTPS 配置详解</a></li>
-                    </ul>
-                </li>
+                <li><span class="checkbox checked"></span><a href="blog.html" style="color:#667eea;">📝 建立技术博客系统</a></li>
             </ul>
         </div>
 
         <div class="section">
             <h2>🔌 设备与平台打通</h2>
             <ul class="task-list">
-                <li><span class="checkbox"></span>配置 OpenClaw Dashboard HTTPS 远程访问
-                    <ul class="task-list">
-                        <li class="sub-task"><span class="checkbox"></span>安装 Nginx 并配置反向代理</li>
-                        <li class="sub-task"><span class="checkbox"></span>生成自签名 SSL 证书</li>
-                        <li class="sub-task"><span class="checkbox"></span>配置 HTTPS 访问</li>
-                        <li class="sub-task"><span class="checkbox"></span>编写安全配置文档博客</li>
-                    </ul>
-                </li>
+                <li><span class="checkbox"></span><a href="https-guide.html" style="color:#667eea;">🔐 配置 OpenClaw Dashboard HTTPS 远程访问</a></li>
                 <li><span class="checkbox"></span>打通邮件收发功能</li>
                 <li><span class="checkbox"></span>打通淘宝购物</li>
-                <li><span class="checkbox checked"></span>打通钉钉
-                    <ul class="task-list">
-                        <li class="sub-task"><span class="checkbox checked"></span>研究钉钉开放平台 API 对接</li>
-                        <li class="sub-task"><span class="checkbox checked"></span>安装配置 dingtalk-setup 技能</li>
-                        <li class="sub-task"><span class="checkbox checked"></span>后期用钉钉取代飞书</li>
-                        <li class="sub-task"><span class="checkbox checked"></span>研究反向控制钉钉的管理接口</li>
-                    </ul>
-                </li>
+                <li><span class="checkbox checked"></span>打通钉钉</li>
+                <li><span class="checkbox"></span>打通华为智能家居设备</li>
             </ul>
         </div>
 
