@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="elaine.png" >
+    <title>Windows 桌面软件授权保护：电脑绑定方案详解</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 2em; }
+        h2 { color: #4ade80; margin: 40px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #333; }
+        h3 { color: #60a5fa; margin: 25px 0 12px; font-size: 1.15em; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
+        .section { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .section p { color: #ccc; line-height: 1.7; margin-bottom: 14px; }
+        .warning { background: rgba(239, 68, 68, 0.15); border-left: 4px solid #ef4444; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .warning-title { color: #f87171; font-weight: bold; margin-bottom: 8px; }
+        .info { background: rgba(59, 130, 246, 0.15); border-left: 4px solid #3b82f6; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .info-title { color: #60a5fa; font-weight: bold; margin-bottom: 8px; }
+        .success { background: rgba(34, 197, 94, 0.15); border-left: 4px solid #22c55e; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .success-title { color: #4ade80; font-weight: bold; margin-bottom: 8px; }
+        ul { margin-left: 20px; color: #ccc; line-height: 1.8; }
+        li { margin-bottom: 10px; }
+        code { background: #2d2d3a; padding: 2px 6px; border-radius: 4px; color: #fbbf24; font-family: 'Consolas', monospace; font-size: 0.9em; }
+        pre { background: #1e1e2e; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; border: 1px solid #333; }
+        pre code { background: none; padding: 0; color: #a6accd; display: block; line-height: 1.6; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; color: #ccc; }
+        th { background: rgba(255,255,255,0.05); color: #fff; }
+        .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; }
+        .back-link { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; }
+        .back-link:hover { background: #764ba2; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><img src="elaine.png" style="height:1.2em;vertical-align:middle;border-radius:50%;object-fit:cover;"> Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="index.html">📋 任务</a>
+            <a href="skills-page.html">🛠️ 技能</a>
+            <a href="mind-switch.html">💭 思维</a>
+            <a href="blog.html" class="active">📝 博客</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="blog.html" class="back-link">← 返回博客列表</a>
+        <h1>🔐 Windows 桌面软件授权保护：电脑绑定方案</h1>
+        <p class="subtitle">MFC / Qt / Flutter 三种开发框架的实现详解 | 2026-03-19</p>
+
+        <div class="info">
+            <div class="info-title">📋 目录</div>
+            <ul>
+                <li><a href="#绑定方式" style="color:#60a5fa;">电脑绑定方式对比</a></li>
+                <li><a href="#实现方案" style="color:#60a5fa;">最佳实现方案推荐</a></li>
+                <li><a href="#mfc实现" style="color:#60a5fa;">MFC 实现代码</a></li>
+                <li><a href="#qt实现" style="color:#60a5fa;">Qt 实现代码</a></li>
+                <li><a href="#flutter实现" style="color:#60a5fa;">Flutter 实现代码</a></li>
+                <li><a href="#总结" style="color:#60a5fa;">总结</a></li>
+            </ul>
+        </div>
+
+        <h2 id="绑定方式">🔍 电脑绑定方式对比</h2>
+
+        <table>
+            <tr>
+                <th>绑定方式</th>
+                <th>获取难度</th>
+                <th>稳定性</th>
+                <th>安全性</th>
+                <th>说明</th>
+            </tr>
+            <tr>
+                <td>MAC 地址</td>
+                <td>⭐ 简单</td>
+                <td>⭐⭐⭐⭐</td>
+                <td>⭐⭐ 低</td>
+                <td>可被伪造，但最常用</td>
+            </tr>
+            <tr>
+                <td>CPU 序列号</td>
+                <td>⭐ 简单</td>
+                <td>⭐⭐⭐⭐</td>
+                <td>⭐⭐⭐ 中</td>
+                <td>大部分 CPU 可获取，较稳定</td>
+            </tr>
+            <tr>
+                <td>硬盘序列号</td>
+                <td>⭐ 简单</td>
+                <td>⭐⭐⭐</td>
+                <td>⭐⭐⭐ 中</td>
+                <td>可能因重装系统改变</td>
+            </tr>
+            <tr>
+                <td>主板序列号</td>
+                <td>⭐⭐ 中等</td>
+                <td>⭐⭐⭐⭐⭐</td>
+                <td>⭐⭐⭐⭐ 高</td>
+                <td>更换主板会失效，最安全</td>
+            </tr>
+            <tr>
+                <td>Windows SID</td>
+                <td>⭐ 简单</td>
+                <td>⭐⭐⭐⭐</td>
+                <td>⭐⭐⭐ 中</td>
+                <td>重装系统会改变</td>
+            </tr>
+            <tr>
+                <td>主板 BIOS UUID</td>
+                <td>⭐⭐ 中等</td>
+                <td>⭐⭐⭐⭐⭐</td>
+                <td>⭐⭐⭐⭐⭐ 最高</td>
+                <td>最可靠的硬件标识</td>
+            </tr>
+        </table>
+
+        <div class="warning">
+            <div class="warning-title">⚠️ MAC 地址可被伪造</div>
+            <p>虽然 MAC 地址最简单，但有工具可以修改（Windows 注册表或网卡驱动）。如果安全性要求高，不建议单独使用 MAC 地址。</p>
+        </div>
+
+        <h2 id="实现方案">💡 最佳实现方案推荐</h2>
+
+        <div class="section">
+            <h3>方案一：单硬件标识（简单场景）</h3>
+            <p>直接使用主板 UUID 或 BIOS UUID，够简单够用。</p>
+            <pre><code>机器码 = 主板UUID
+验证方式 = 比对当前机器码 vs 注册时机器码</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>方案二：多硬件标识组合（高安全场景）</h3>
+            <p>组合多个硬件标识，即使一个被伪造也不容易被绕过。</p>
+            <pre><code>机器码 = MD5(主板UUID + CPU序列号 + 硬盘序列号)
+验证方式 = 比对组合后的哈希值</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>方案三：服务器验证（最安全）</h3>
+            <p>把机器码发送到授权服务器验证，支持远程禁用授权。</p>
+            <pre><code>1. 软件首次运行生成机器码，上传到服务器
+2. 服务器返回授权码（基于机器码加密）
+3. 每次启动验证授权码有效性
+4. 服务器可随时禁用任何机器的授权</code></pre>
+        </div>
+
+        <h2 id="mfc实现">💻 MFC 实现代码</h2>
+
+        <div class="section">
+            <h3>核心实现（MFC/C++）</h3>
+            <pre><code>// MachineBinding.h
+#pragma once
+#include <windows.h>
+#include <string>
+
+class CMachineBinding
+{
+public:
+    // 获取各种硬件标识
+    static std::wstring GetMACAddress();           // MAC 地址
+    static std::wstring GetCPUId();               // CPU ID
+    static std::wstring GetHardDiskSerial();      // 硬盘序列号
+    static std::wstring GetMotherboardUUID();     // 主板 UUID
+    static std::wstring GetMachineCode();          // 组合机器码
+    static std::wstring MD5Hash(const std::wstring& input);
+    static bool CheckAuthorization(const std::wstring& storedCode);
+};</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>MachineBinding.cpp 实现</h3>
+            <pre><code>// MachineBinding.cpp
+#include "MachineBinding.h"
+#include <windows.h>
+#include <atlbase.h>
+#include <comdef.h>
+#include <WbemIdl.h>
+#include <algorithm>
+#include <sstream>
+#include <openssl/md5.h>
+
+#pragma comment(lib, "wbemuuid.lib")
+#pragma comment(lib, "openssl/libcrypto.lib")
+
+// 获取 MAC 地址（通过 WMI）
+std::wstring CMachineBinding::GetMACAddress() {
+    std::wstring mac;
+    CoInitializeEx(0, COINIT_MULTITHREADED);
+    CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_DEFAULT,
+        RPC_C_IMP_LEVEL_IMPERSONATE, NULL, NULL, NULL);
+    
+    IWbemLocator* pLoc = nullptr;
+    IWbemServices* pSvc = nullptr;
+    
+    if (CoCreateInstance(CLSID_WbemLocator, NULL, CLSCTX_INPROC_SERVER,
+        IID_IWbemLocator, (LPVOID*)&pLoc) == S_OK) {
+        
+        if (pLoc->ConnectServer(BSTR(L"ROOT\\CIMV2"), NULL, NULL, NULL,
+            WBEM_FLAG_CONNECT_USE_MAX_WAIT, NULL, NULL, &pSvc) == S_OK) {
+            
+            CoSetProxyBlanket(pSvc, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE,
+                NULL, RPC_C_AUTHN_LEVEL_PKT, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, NULL);
+            
+            IEnumWbemClassObject* pEnumerator = NULL;
+            pSvc->ExecQuery(BSTR(L"WQL"), 
+                BSTR(L"SELECT MACAddress FROM Win32_NetworkAdapterConfiguration WHERE IPEnabled=TRUE"),
+                WBEM_FLAG_FORWARD_ONLY, NULL, &pEnumerator);
+            
+            if (pEnumerator) {
+                IWbemClassObject* pClassObj = NULL;
+                ULONG uReturn = 0;
+                while (pEnumerator->Next(WBEM_INFINITE, 1, &pClassObj, &uReturn) == S_OK) {
+                    VARIANT vtProp;
+                    pClassObj->Get(L"MACAddress", 0, &vtProp, 0, 0);
+                    if (vtProp.vt == VT_BSTR && vtProp.bstrVal) {
+                        mac = vtProp.bstrVal;
+                        mac.erase(std::remove(mac.begin(), mac.end(), L':'), mac.end());
+                    }
+                    VariantClear(&vtProp);
+                    pClassObj->Release();
+                    if (!mac.empty()) break;
+                }
+                pEnumerator->Release();
+            }
+        }
+    }
+    if (pSvc) pSvc->Release();
+    if (pLoc) pLoc->Release();
+    CoUninitialize();
+    return mac;
+}
+
+// 获取 CPU ID
+std::wstring CMachineBinding::GetCPUId() {
+    INT CPUSerial[4];
+    __asm {
+        mov eax, 1
+        cpuid
+        mov CPUSerial[0], eax
+        mov CPUSerial[1], ebx
+        mov CPUSerial[2], ecx
+        mov CPUSerial[3], edx
+    }
+    
+    std::wstringstream ss;
+    ss << std::hex << std::uppercase;
+    ss << std::setfill(L'0') << std::setw(8) << CPUSerial[0];
+    ss << std::setfill(L'0') << std::setw(8) << CPUSerial[1];
+    ss << std::setfill(L'0') << std::setw(8) << CPUSerial[2];
+    ss << std::setfill(L'0') << std::setw(8) << CPUSerial[3];
+    return ss.str();
+}
+
+// 获取主板 UUID（最可靠）
+std::wstring CMachineBinding::GetMotherboardUUID() {
+    std::wstring uuid;
+    CoInitializeEx(0, COINIT_MULTITHREADED);
+    CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_DEFAULT,
+        RPC_C_IMP_LEVEL_IMPERSONATE, NULL, NULL, NULL);
+    
+    IWbemLocator* pLoc = nullptr;
+    IWbemServices* pSvc = nullptr;
+    
+    if (CoCreateInstance(CLSID_WbemLocator, NULL, CLSCTX_INPROC_SERVER,
+        IID_IWbemLocator, (LPVOID*)&pLoc) == S_OK) {
+        
+        if (pLoc->ConnectServer(BSTR(L"ROOT\\CIMV2"), NULL, NULL, NULL,
+            WBEM_FLAG_CONNECT_USE_MAX_WAIT, NULL, NULL, &pSvc) == S_OK) {
+            
+            CoSetProxyBlanket(pSvc, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE,
+                NULL, RPC_C_AUTHN_LEVEL_PKT, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, NULL);
+            
+            IEnumWbemClassObject* pEnumerator = NULL;
+            pSvc->ExecQuery(BSTR(L"WQL"), 
+                BSTR(L"SELECT UUID FROM Win32_ComputerSystemProduct"),
+                WBEM_FLAG_FORWARD_ONLY, NULL, &pEnumerator);
+            
+            if (pEnumerator) {
+                IWbemClassObject* pClassObj = NULL;
+                ULONG uReturn = 0;
+                while (pEnumerator->Next(WBEM_INFINITE, 1, &pClassObj, &uReturn) == S_OK) {
+                    VARIANT vtProp;
+                    pClassObj->Get(L"UUID", 0, &vtProp, 0, 0);
+                    if (vtProp.vt == VT_BSTR && vtProp.bstrVal) {
+                        uuid = vtProp.bstrVal;
+                        uuid.erase(std::remove(uuid.begin(), uuid.end(), L'-'), uuid.end());
+                    }
+                    VariantClear(&vtProp);
+                    pClassObj->Release();
+                    if (!uuid.empty() && 
+                        uuid != L"FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF") {
+                        break;
+                    }
+                }
+                pEnumerator->Release();
+            }
+        }
+    }
+    if (pSvc) pSvc->Release();
+    if (pLoc) pLoc->Release();
+    CoUninitialize();
+    return uuid;
+}
+
+// MD5 哈希
+std::wstring CMachineBinding::MD5Hash(const std::wstring& input) {
+    unsigned char digest[MD5_DIGEST_LENGTH];
+    std::string inputStr(input.begin(), input.end());
+    MD5((const unsigned char*)inputStr.c_str(), inputStr.length(), digest);
+    
+    std::stringstream ss;
+    for (int i = 0; i < MD5_DIGEST_LENGTH; i++) {
+        ss << std::hex << std::setw(2) << std::setfill('0') << (int)digest[i];
+    }
+    return std::wstring(ss.str().begin(), ss.str().end());
+}
+
+// 获取组合机器码
+std::wstring CMachineBinding::GetMachineCode() {
+    std::wstring uuid = GetMotherboardUUID();
+    std::wstring cpu = GetCPUId();
+    std::wstring mac = GetMACAddress();
+    
+    // 组合多个标识
+    std::wstring combined = uuid + cpu + mac;
+    return MD5Hash(combined);
+}
+
+// 检测授权
+bool CMachineBinding::CheckAuthorization(const std::wstring& storedCode) {
+    return GetMachineCode() == storedCode;
+}</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>MFC 使用示例</h3>
+            <pre><code>// 在软件启动时调用
+void CMyApp::Init()
+{
+    std::wstring machineCode = CMachineBinding::GetMachineCode();
+    
+    // 读取已存储的注册码
+    CString storedCode;
+    AfxGetApp()->GetProfileString(L"License", L"Code", L"", storedCode.GetBuffer(64), 64);
+    storedCode.ReleaseBuffer();
+    
+    if (storedCode.IsEmpty()) {
+        // 首次运行，显示机器码让用户注册
+        MessageBox(NULL, (L"您的机器码：\n" + machineCode).c_str(), 
+            L"软件注册", MB_OK);
+    } else {
+        // 验证授权
+        if (!CMachineBinding::CheckAuthorization(std::wstring(storedCode))) {
+            MessageBox(NULL, L"授权验证失败！\n软件只能在注册电脑上使用。", 
+                L"错误", MB_ICONERROR);
+            exit(1);
+        }
+    }
+}</code></pre>
+        </div>
+
+        <h2 id="qt实现">💻 Qt 实现代码</h2>
+
+        <div class="section">
+            <h3>MachineInfo.h</h3>
+            <pre><code>#ifndef MACHINEINFO_H
+#define MACHINEINFO_H
+
+#include <QString>
+
+class MachineInfo
+{
+public:
+    static QString getMACAddress();
+    static QString getCPUId();
+    static QString getMotherboardUUID();
+    static QString getMachineCode();
+    static QString md5Hash(const QString &input);
+    static bool checkAuthorization(const QString &storedCode);
+};
+
+#endif // MACHINEINFO_H</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>MachineInfo.cpp 实现</h3>
+            <pre><code>#include "MachineInfo.h"
+#include <QProcess>
+#include <QCryptographicHash>
+#include <windows.h>
+#include <WbemIdl.h>
+#include <comdef.h>
+
+#pragma comment(lib, "wbemuuid.lib")
+
+// 获取 MAC 地址
+QString MachineInfo::getMACAddress() {
+    QString mac;
+    CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_DEFAULT,
+        RPC_C_IMP_LEVEL_IMPERSONATE, NULL, NULL, NULL);
+    
+    IWbemLocator *pLoc = NULL;
+    if (CoCreateInstance(CLSID_WbemLocator, NULL, CLSCTX_INPROC_SERVER,
+        IID_IWbemLocator, (LPVOID*)&pLoc) == S_OK) {
+        
+        IWbemServices *pSvc = NULL;
+        if (pLoc->ConnectServer(BSTR(L"ROOT\\CIMV2"), NULL, NULL, NULL,
+            WBEM_FLAG_CONNECT_USE_MAX_WAIT, NULL, NULL, &pSvc) == S_OK) {
+            
+            CoSetProxyBlanket(pSvc, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE,
+                NULL, RPC_C_AUTHN_LEVEL_PKT, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, NULL);
+            
+            IEnumWbemClassObject *pEnumerator = NULL;
+            pSvc->ExecQuery(BSTR(L"WQL"), 
+                BSTR(L"SELECT MACAddress FROM Win32_NetworkAdapterConfiguration WHERE IPEnabled=TRUE"),
+                WBEM_FLAG_FORWARD_ONLY, NULL, &pEnumerator);
+            
+            if (pEnumerator) {
+                IWbemClassObject *pClassObj = NULL;
+                ULONG uReturn = 0;
+                while (pEnumerator->Next(WBEM_INFINITE, 1, &pClassObj, &uReturn) == S_OK) {
+                    VARIANT vtProp;
+                    pClassObj->Get(L"MACAddress", 0, &vtProp, 0, 0);
+                    if (vtProp.vt == VT_BSTR && vtProp.bstrVal) {
+                        mac = QString::fromWCharArray(vtProp.bstrVal);
+                        mac.remove(':');
+                    }
+                    VariantClear(&vtProp);
+                    pClassObj->Release();
+                    if (!mac.isEmpty()) break;
+                }
+                pEnumerator->Release();
+            }
+        }
+        if (pSvc) pSvc->Release();
+    }
+    if (pLoc) pLoc->Release();
+    CoUninitialize();
+    return mac;
+}
+
+// 获取 CPU ID
+QString MachineInfo::getCPUId() {
+    INT CPUSerial[4];
+    __asm {
+        mov eax, 1
+        cpuid
+        mov CPUSerial[0], eax
+        mov CPUSerial[1], ebx
+        mov CPUSerial[2], ecx
+        mov CPUSerial[3], edx
+    }
+    
+    return QString("%1%2%3%4")
+        .arg(CPUSerial[0], 8, 16, QChar('0'))
+        .arg(CPUSerial[1], 8, 16, QChar('0'))
+        .arg(CPUSerial[2], 8, 16, QChar('0'))
+        .arg(CPUSerial[3], 8, 16, QChar('0'))
+        .toUpper();
+}
+
+// 获取主板 UUID
+QString MachineInfo::getMotherboardUUID() {
+    QString uuid;
+    CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_DEFAULT,
+        RPC_C_IMP_LEVEL_IMPERSONATE, NULL, NULL, NULL);
+    
+    IWbemLocator *pLoc = NULL;
+    if (CoCreateInstance(CLSID_WbemLocator, NULL, CLSCTX_INPROC_SERVER,
+        IID_IWbemLocator, (LPVOID*)&pLoc) == S_OK) {
+        
+        IWbemServices *pSvc = NULL;
+        if (pLoc->ConnectServer(BSTR(L"ROOT\\CIMV2"), NULL, NULL, NULL,
+            WBEM_FLAG_CONNECT_USE_MAX_WAIT, NULL, NULL, &pSvc) == S_OK) {
+            
+            CoSetProxyBlanket(pSvc, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE,
+                NULL, RPC_C_AUTHN_LEVEL_PKT, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, NULL);
+            
+            IEnumWbemClassObject *pEnumerator = NULL;
+            pSvc->ExecQuery(BSTR(L"WQL"), 
+                BSTR(L"SELECT UUID FROM Win32_ComputerSystemProduct"),
+                WBEM_FLAG_FORWARD_ONLY, NULL, &pEnumerator);
+            
+            if (pEnumerator) {
+                IWbemClassObject *pClassObj = NULL;
+                ULONG uReturn = 0;
+                while (pEnumerator->Next(WBEM_INFINITE, 1, &pClassObj, &uReturn) == S_OK) {
+                    VARIANT vtProp;
+                    pClassObj->Get(L"UUID", 0, &vtProp, 0, 0);
+                    if (vtProp.vt == VT_BSTR && vtProp.bstrVal) {
+                        uuid = QString::fromWCharArray(vtProp.bstrVal);
+                        uuid.remove('-');
+                    }
+                    VariantClear(&vtProp);
+                    pClassObj->Release();
+                    if (!uuid.isEmpty() && 
+                        uuid != "FFFFFFFFFFFF") break;
+                }
+                pEnumerator->Release();
+            }
+        }
+        if (pSvc) pSvc->Release();
+    }
+    if (pLoc) pLoc->Release();
+    CoUninitialize();
+    return uuid;
+}
+
+// MD5 哈希
+QString MachineInfo::md5Hash(const QString &input) {
+    QByteArray hash = QCryptographicHash::hash(
+        input.toUtf8(), QCryptographicHash::Md5);
+    return hash.toHex().toUpper();
+}
+
+// 获取组合机器码
+QString MachineInfo::getMachineCode() {
+    QString uuid = getMotherboardUUID();
+    QString cpu = getCPUId();
+    QString mac = getMACAddress();
+    return md5Hash(uuid + cpu + mac);
+}
+
+// 检测授权
+bool MachineInfo::checkAuthorization(const QString &storedCode) {
+    return getMachineCode() == storedCode;
+}</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>Qt 使用示例</h3>
+            <pre><code>// main.cpp
+#include <QApplication>
+#include <QMessageBox>
+#include <QSettings>
+#include "MachineInfo.h"
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    
+    // 读取注册码
+    QSettings settings("YourCompany", "YourApp");
+    QString registeredCode = settings.value("LicenseCode").toString();
+    
+    if (registeredCode.isEmpty()) {
+        QString machineCode = MachineInfo::getMachineCode();
+        QMessageBox::information(nullptr, "注册", 
+            QString("您的机器码：\n%1\n\n请将此码发送给供应商获取授权码。").arg(machineCode));
+        return 0;
+    }
+    
+    if (!MachineInfo::checkAuthorization(registeredCode)) {
+        QMessageBox::critical(nullptr, "错误", 
+            "授权验证失败！\n软件只能在注册电脑上使用。");
+        return 1;
+    }
+    
+    return a.exec();
+}</code></pre>
+        </div>
+
+        <h2 id="flutter实现">💻 Flutter 实现代码</h2>
+
+        <div class="section">
+            <h3>pubspec.yaml 添加依赖</h3>
+            <pre><code>dependencies:
+  flutter:
+    sdk: flutter
+  crypto: ^3.0.3
+  path_provider: ^2.1.1</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>Dart 实现代码</h3>
+            <pre><code>import 'dart:io';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
+
+class MachineBinding {
+  /// 获取 MAC 地址
+  static Future<String> getMACAddress() async {
+    try {
+      final result = await Process.run('getmac', []);
+      String output = result.stdout.toString();
+      
+      // 解析 MAC 地址
+      RegExp reg = RegExp(r'([0-9A-Fa-f]{2}-){5}[0-9A-Fa-f]{2}');
+      Match? match = reg.firstMatch(output);
+      
+      if (match != null) {
+        return match.group(0)!.replaceAll('-', '').toUpperCase();
+      }
+      return '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  /// 获取 CPU ID
+  static Future<String> getCPUId() async {
+    try {
+      final result = await Process.run('wmic', ['cpu', 'get', 'ProcessorId']);
+      String output = result.stdout.toString().trim();
+      List<String> lines = output.split('\n');
+      if (lines.length >= 2) {
+        return lines[1].trim().toUpperCase();
+      }
+      return '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  /// 获取主板 UUID
+  static Future<String> getMotherboardUUID() async {
+    try {
+      final result = await Process.run('wmic', 
+          ['computersystemproduct', 'get', 'uuid']);
+      String output = result.stdout.toString().trim();
+      List<String> lines = output.split('\n');
+      if (lines.length >= 2) {
+        String uuid = lines[1].trim().toUpperCase();
+        uuid = uuid.replaceAll('-', '');
+        if (uuid.contains('FFFFFFFF')) return '';
+        return uuid;
+      }
+      return '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  /// MD5 哈希
+  static String md5Hash(String input) {
+    var bytes = utf8.encode(input);
+    var digest = md5.convert(bytes);
+    return digest.toString().toUpperCase();
+  }
+
+  /// 获取组合机器码
+  static Future<String> getMachineCode() async {
+    final uuid = await getMotherboardUUID();
+    final cpu = await getCPUId();
+    final mac = await getMACAddress();
+    return md5Hash(uuid + cpu + mac);
+  }
+
+  /// 检测授权
+  static Future<bool> checkAuthorization(String storedCode) async {
+    return await getMachineCode() == storedCode;
+  }
+}</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>Flutter 使用示例</h3>
+            <pre><code>import 'package:flutter/material.dart';
+import 'machine_binding.dart';
+
+class LicenseCheck extends StatefulWidget {
+  @override
+  _LicenseCheckState createState() => _LicenseCheckState();
+}
+
+class _LicenseCheckState extends State<LicenseCheck> {
+  bool _isLoading = true;
+  String? _machineCode;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLicense();
+  }
+
+  Future<void> _checkLicense() async {
+    String code = await MachineBinding.getMachineCode();
+    
+    setState(() {
+      _machineCode = code;
+      _isLoading = false;
+    });
+    
+    // TODO: 从本地存储读取已注册的码进行验证
+    // String? storedCode = await getStoredLicenseCode();
+    // if (storedCode == null) {
+    //   _showRegistrationDialog(code);
+    // } else if (!await MachineBinding.checkAuthorization(storedCode)) {
+    //   _showAuthFailedDialog();
+    // }
+  }
+
+  void _showRegistrationDialog(String machineCode) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: Text('软件注册'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('您的机器码：'),
+            SelectableText(
+              machineCode,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            SizedBox(height: 16),
+            Text('请将此码发送给供应商获取授权码。'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => exit(0),
+            child: Text('退出'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(title: Text('软件注册')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('您的机器码：'),
+            SelectableText(
+              _machineCode ?? '获取失败',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}</code></pre>
+        </div>
+
+        <h2 id="总结">📝 总结</h2>
+        
+        <div class="success">
+            <div class="success-title">✅ 推荐方案</div>
+            <ul>
+                <li><strong>简单场景</strong>：直接使用主板 UUID</li>
+                <li><strong>中等安全</strong>：使用组合机器码 MD5(uuid + cpu + mac)</li>
+                <li><strong>高安全</strong>：服务器验证 + 本地多重绑定</li>
+            </ul>
+        </div>
+
+        <div class="warning">
+            <div class="warning-title">⚠️ 注意事项</div>
+            <ul>
+                <li>机器码存储要加密，防止被直接修改</li>
+                <li>可以配合授权码加密，增强安全性</li>
+                <li>换电脑/换主板会导致授权失效</li>
+                <li>MAC 地址可伪造，单独使用不安全</li>
+                <li>建议同时提供管理员解锁机制</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>---</p>
+            <p>由 Elaine 生成 | 2026-03-19</p>
+        </div>
+    </div>
+</body>
+</html>
