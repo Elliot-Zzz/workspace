@@ -37,8 +37,6 @@
         .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; }
         .back-link { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; }
         .back-link:hover { background: #764ba2; }
-        .toc { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 24px; margin-bottom: 30px; }
-        .toc-item { margin-bottom: 8px; }
     </style>
 </head>
 <body>
@@ -64,8 +62,8 @@
                 <li><a href="#ida-vs-ghidra" style="color:#60a5fa;">IDA vs Ghidra 全面对比</a></li>
                 <li><a href="#ghidra下载" style="color:#60a5fa;">Ghidra 下载与安装</a></li>
                 <li><a href="#ghidra界面" style="color:#60a5fa;">Ghidra 界面详解</a></li>
-                <li><a href="#ghidra使用流程" style="color:#60a5fa;">Ghidra 使用流程</a></li>
-                <li><a href="#ghidra高级技巧" style="color:#60a5fa;">高级使用技巧</a></li>
+                <li><a href="#ghidra使用流程" style="color:#60a5fa;">Ghidra 使用流程（详解）</a></li>
+                <li><a href="#ghidra修改文件" style="color:#60a5fa;">如何修改二进制文件</a></li>
                 <li><a href="#ghidra脚本" style="color:#60a5fa;">Ghidra 脚本开发</a></li>
                 <li><a href="#总结" style="color:#60a5fa;">总结</a></li>
             </ul>
@@ -74,484 +72,428 @@
         <h2 id="背景">🔍 背景：什么是逆向工程？</h2>
         <div class="section">
             <p><strong>逆向工程</strong>（Reverse Engineering）是指在没有源代码的情况下，通过分析二进制文件来理解程序的结构、功能和行为的过程。</p>
-            <p>逆向工程广泛应用于：</p>
-            <ul>
-                <li>恶意软件分析</li>
-                <li>漏洞挖掘与安全研究</li>
-                <li>固件分析</li>
-                <li>协议分析</li>
-                <li>软件兼容性研究</li>
-                <li>已丢失源代码的软件维护</li>
-            </ul>
-        </div>
-
-        <div class="info">
-            <div class="info-title">🛠️ 主要逆向工程工具</div>
-            <p>业界最常用的两大反汇编/反编译工具是 <strong>IDA Pro</strong> 和 <strong>Ghidra</strong>。</p>
+            <p>你可以把二进制文件理解为一本用加密语言写的书，逆向工程就是破解这本加密书的内容。</p>
         </div>
 
         <h2 id="ida-vs-ghidra">⚔️ IDA vs Ghidra 全面对比</h2>
         
-        <div class="section">
-            <h3>1. 基本信息对比</h3>
-            <table>
-                <tr>
-                    <th>特性</th>
-                    <th>IDA Pro</th>
-                    <th>Ghidra</th>
-                </tr>
-                <tr>
-                    <td>开发商</td>
-                    <td>Hex-Rays (比利时)</td>
-                    <td>美国国家安全局 (NSA)</td>
-                </tr>
-                <tr>
-                    <td>价格</td>
-                    <td>商业付费 ($589+)</td>
-                    <td>免费开源</td>
-                </tr>
-                <tr>
-                    <td>支持平台</td>
-                    <td>Windows/Linux/macOS</td>
-                    <td>Windows/Linux/macOS</td>
-                </tr>
-                <tr>
-                    <td>编程语言</td>
-                    <td>C++ (核心) + Python/IDC</td>
-                    <td>Java (核心) + Python/Java</td>
-                </tr>
-                <tr>
-                    <td>发布时间</td>
-                    <td>1990年代</td>
-                    <td>2019年 (开源)</td>
-                </tr>
-            </table>
-        </div>
+        <table>
+            <tr>
+                <th>特性</th>
+                <th>IDA Pro</th>
+                <th>Ghidra</th>
+            </tr>
+            <tr>
+                <td>价格</td>
+                <td>商业付费 ($589+)</td>
+                <td>免费开源</td>
+            </tr>
+            <tr>
+                <td>反编译引擎</td>
+                <td>Hex-Rays (业界最佳)</td>
+                <td>内置 (持续改进)</td>
+            </tr>
+            <tr>
+                <td>多架构支持</td>
+                <td>80+ 处理器</td>
+                <td>70+ 处理器</td>
+            </tr>
+            <tr>
+                <td>脚本支持</td>
+                <td>Python/IDC</td>
+                <td>Python/Java</td>
+            </tr>
+            <tr>
+                <td>协作功能</td>
+                <td>IDA Collab</td>
+                <td>版本控制/Patch追踪</td>
+            </tr>
+        </table>
 
-        <div class="section">
-            <h3>2. 核心功能对比</h3>
-            <table>
-                <tr>
-                    <th>功能</th>
-                    <th>IDA Pro</th>
-                    <th>Ghidra</th>
-                </tr>
-                <tr>
-                    <td>反汇编</td>
-                    <td>✅ 优秀</td>
-                    <td>✅ 优秀</td>
-                </tr>
-                <tr>
-                    <td>反编译 (Decompiler)</td>
-                    <td>✅ Hex-Rays 引擎 (业界最佳)</td>
-                    <td>✅ 内置反编译器 (持续改进)</td>
-                </tr>
-                <tr>
-                    <td>调试器</td>
-                    <td>✅ 集成调试器</td>
-                    <td>✅ 集成调试器</td>
-                </tr>
-                <tr>
-                    <td>多架构支持</td>
-                    <td>✅ 80+ 处理器</td>
-                    <td>✅ 70+ 处理器</td>
-                </tr>
-                <tr>
-                    <td>协作功能</td>
-                    <td>✅ IDA Collab</td>
-                    <td>✅ 版本控制/Patch追踪</td>
-                </tr>
-                <tr>
-                    <td>自动化脚本</td>
-                    <td>✅ Python/IDC</td>
-                    <td>✅ Python/Java/GhidraScript</td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="section">
-            <h3>3. IDA Pro 优缺点</h3>
-            <div class="success">
-                <div class="success-title">✅ 优点</div>
-                <ul>
-                    <li><strong>业界标准</strong>：30年历史，安全研究领域认可度最高</li>
-                    <li><strong>Hex-Rays 反编译器</strong>：业界公认最好的反编译引擎</li>
-                    <li><strong>稳定性</strong>：经过多年迭代，bug少，稳定可靠</li>
-                    <li><strong>插件生态</strong>：丰富的第三方插件（如 Hex-Rays SDK、IDAPython）</li>
-                    <li><strong>技术支持</strong>：专业公司提供技术支持</li>
-                    <li><strong>IDA Processor SDK</strong>：可开发自定义处理器模块</li>
-                </ul>
-            </div>
-            <div class="warning">
-                <div class="warning-title">❌ 缺点</div>
-                <ul>
-                    <li><strong>价格昂贵</strong>：基础版 $589，完整版 $1189+</li>
-                    <li><strong>封闭源码</strong>：无法定制核心功能</li>
-                    <li><strong>学习曲线</strong>：界面复杂，功能太多，新手上手难度大</li>
-                    <li><strong>启动速度</strong>：大型二进制文件加载较慢</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="section">
-            <h3>4. Ghidra 优缺点</h3>
-            <div class="success">
-                <div class="success-title">✅ 优点</div>
-                <ul>
-                    <li><strong>完全免费</strong>：开源项目，任何人都可以使用</li>
-                    <li><strong>开源可定制</strong>：可以修改源码，定制自己的需求</li>
-                    <li><strong>NSA 支持</strong>：有专业团队维护，持续更新</li>
-                    <li><strong>现代化 UI</strong>：基于 Java Swing，界面友好</li>
-                    <li><strong>协作功能</strong>：内置版本控制，方便团队协作</li>
-                    <li><strong>脚本支持</strong>：支持 Python、Java，易于扩展</li>
-                    <li><strong>响应速度快</strong>：大型二进制文件处理效率高</li>
-                </ul>
-            </div>
-            <div class="warning">
-                <div class="warning-title">❌ 缺点</div>
-                <ul>
-                    <li><strong>反编译器质量</strong>：不如 Hex-Rays，部分代码反编译结果不够优化</li>
-                    <li><strong>插件生态</strong>：相对较新，第三方插件不如 IDA 丰富</li>
-                    <li><strong>稳定性</strong>：偶有小 bug</li>
-                    <li><strong>文档</strong>：官方文档相对简单，社区文档不如 IDA 丰富</li>
-                    <li><strong>品牌认可</strong>：在企业安全领域，IDA 仍是首选</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="section">
-            <h3>5. 选择建议</h3>
-            <table>
-                <tr>
-                    <th>场景</th>
-                    <th>推荐工具</th>
-                    <th>理由</th>
-                </tr>
-                <tr>
-                    <td>企业/商业使用</td>
-                    <td>IDA Pro</td>
-                    <td>稳定、业界认可、有技术支持</td>
-                </tr>
-                <tr>
-                    <td>学习/研究/个人使用</td>
-                    <td>Ghidra</td>
-                    <td>免费、功能完整、足够学习使用</td>
-                </tr>
-                <tr>
-                    <td>恶意软件分析</td>
-                    <td>两者皆可</td>
-                    <td>Ghidra 适合快速分析，IDA 适合深度分析</td>
-                </tr>
-                <tr>
-                    <td>固件分析</td>
-                    <td>Ghidra</td>
-                    <td>对多种架构支持好，免费适合大量固件</td>
-                </tr>
-                <tr>
-                    <td>团队协作</td>
-                    <td>Ghidra</td>
-                    <td>内置版本控制和 Patch 管理</td>
-                </tr>
-            </table>
+        <div class="info">
+            <div class="info-title">💡 选择建议</div>
+            <p><strong>学习/个人使用</strong> → 推荐 Ghidra（免费且功能完整）<br>
+            <strong>企业/商业项目</strong> → 推荐 IDA Pro（稳定、有技术支持）</p>
         </div>
 
         <h2 id="ghidra下载">📥 Ghidra 下载与安装</h2>
 
         <div class="section">
-            <h3>系统要求</h3>
-            <ul>
-                <li><strong>操作系统</strong>：Windows 10+, Linux (Ubuntu 18.04+), macOS 10.13+</li>
-                <li><strong>Java</strong>：JDK 17 或更高版本（推荐使用 Ghidra 自带的 JDK）</li>
-                <li><strong>内存</strong>：建议 8GB+，分析大型文件建议 16GB+</li>
-                <li><strong>磁盘</strong>：建议 2GB+ 可用空间</li>
-            </ul>
+            <h3>Step 1：下载 Ghidra</h3>
+            <p>访问 Ghidra 官网：<a href="https://ghidra-sre.org/" style="color:#60a5fa;">https://ghidra-sre.org/</a></p>
+            <p>点击 "Download Ghidra" 按钮，下载 zip 文件（约 400MB）。</p>
         </div>
 
         <div class="section">
-            <h3>下载步骤</h3>
-            <pre><code>1. 访问 Ghidra 官网：https://ghidra-sre.org/
-2. 点击 "Download Ghidra" 按钮
-3. 选择适合你平台的版本（Windows/Linux/macOS）
-4. 下载 ghidra_XX_YYYYMMDD.zip 文件
-5. 解压到任意目录（路径不要有空格和中文）
-6. 运行：$GHIDRA_ROOT/support/ghidraRun.bat (Windows)
-              $GHIDRA_ROOT/support/ghidraRun (Linux/macOS)</code></pre>
+            <h3>Step 2：检查 Java 环境</h3>
+            <p>Ghidra 基于 Java 开发，需要 JDK 17 或更高版本：</p>
+            <pre><code># 检查 Java 版本
+java -version
+
+# 如果没有，安装 JDK
+# Windows: 下载 JDK 安装包
+# Linux: sudo apt install openjdk-17-jdk
+# macOS: brew install openjdk@17</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>Step 3：解压并运行</h3>
+            <pre><code># 解压到任意目录（注意：路径不要有中文和空格）
+unzip ghidra_XX_YYYYMMDD.zip -d ~/tools/
+
+# 运行 Ghidra
+# Windows:
+cd ~/tools/ghidra_XX_YYYYMMDD/support/
+./ghidraRun.bat
+
+# Linux/macOS:
+cd ~/tools/ghidra_XX_YYYYMMDD/support/
+./ghidraRun</code></pre>
         </div>
 
         <div class="warning">
-            <div class="warning-title">⚠️ 注意事项</div>
+            <div class="warning-title">⚠️ 常见问题</div>
             <ul>
-                <li>路径中不要包含中文或空格</li>
-                <li>首次运行会提示设置 JIT Editor（可选，推荐使用 VS Code）</li>
-                <li>建议分配更多内存给 Ghidra（编辑 <code>ghidraRun.bat</code> 或 <code>ghidraRun</code>）</li>
+                <li><strong>路径有中文</strong>：Ghidra 对中文路径支持不好，会导致加载失败</li>
+                <li><strong>内存不足</strong>：大型二进制文件建议分配 8GB+ 内存</li>
             </ul>
         </div>
 
         <h2 id="ghidra界面">🖥️ Ghidra 界面详解</h2>
 
         <div class="section">
-            <h3>主要窗口</h3>
+            <h3>1. Project Window（项目窗口）</h3>
+            <p><strong>作用</strong>：管理所有导入的二进制文件，类似文件浏览器。</p>
+            <p>你可以创建多个项目，每个项目可以包含多个二进制文件。</p>
+        </div>
+
+        <div class="section">
+            <h3>2. Listing Window（反汇编窗口）</h3>
+            <p><strong>作用</strong>：显示程序的机器码和汇编指令。</p>
+            <p>这是你看到二进制文件"原始面貌"的地方，每一行是一条指令或数据。</p>
             <ul>
-                <li><strong>Project Window（项目窗口）</strong>：管理导入的二进制文件</li>
-                <li><strong>Listing Window（反汇编窗口）</strong>：显示程序的指令和汇编代码</li>
-                <li><strong>Decompiler Window（反编译窗口）</strong>：显示反编译后的伪代码</li>
-                <li><strong>Symbol Tree（符号树）</strong>：显示函数、变量、类等符号</li>
-                <li><strong>Data Tree Manager</strong>：管理数据结构</li>
-                <li><strong>Console（控制台）</strong>：脚本输出和调试信息</li>
+                <li>地址（最左边）</li>
+                <li>机器码字节（如 <code>48 8B 45 F0</code>）</li>
+                <li>汇编指令（如 <code>MOV RAX, [RBP-0x10]</code>）</li>
             </ul>
         </div>
 
         <div class="section">
-            <h3>菜单栏功能</h3>
-            <ul>
-                <li><strong>File</strong>：导入/导出文件、新建项目、关闭等</li>
-                <li><strong>Edit</strong>：撤销、重做、搜索、跳转等</li>
-                <li><strong>Search</strong>：强大的搜索功能（指令、字符串、模式等）</li>
-                <li><strong>Analysis</strong>：配置分析选项、重新分析</li>
-                <li><strong>Tools</strong>：数据格式编辑器、Emulator 等</li>
-                <li><strong>Window</strong>：窗口布局管理</li>
-                <li><strong>Help</strong>：帮助文档</li>
-            </ul>
+            <h3>3. Decompiler Window（反编译窗口）</h3>
+            <p><strong>作用</strong>：将汇编代码翻译成类似 C 语言的伪代码。</p>
+            <p>这是 Ghidra 的核心功能之一，它尝试理解汇编指令的含义，并用人能理解的方式表达出来。</p>
         </div>
 
-        <h2 id="ghidra使用流程">🚀 Ghidra 使用流程</h2>
+        <div class="section">
+            <h3>4. Symbol Tree（符号树）</h3>
+            <p><strong>作用</strong>：显示程序中的所有符号（函数、变量、类等）。</p>
+            <p>Ghidra 会尝试从二进制中恢复出这些符号信息。</p>
+        </div>
+
+        <h2 id="ghidra使用流程">🚀 Ghidra 使用流程（详解）</h2>
 
         <div class="section">
-            <h3>Step 1：创建/打开项目</h3>
+            <h3>Step 1：创建或打开项目</h3>
+            <p><strong>为什么要创建项目？</strong> Ghidra 需要保存分析结果、书签、自定义注释等信息，这些都存在项目文件中。</p>
             <pre><code># 方式1：新建项目
-File → New Project → 选择 "Non-Shared Project" 或 "Shared Project"
-设置项目名称和存储位置
+File → New Project → 选择 "Non-Shared Project" → 设置项目名称和保存位置
 
 # 方式2：打开已有项目
 File → Open → 选择 .gpr 项目文件</code></pre>
+            <p><strong>项目类型说明</strong>：</p>
+            <ul>
+                <li><strong>Non-Shared Project</strong>：本地项目，个人使用</li>
+                <li><strong>Shared Project</strong>：共享项目，可以导入到 Git 等版本控制</li>
+            </ul>
         </div>
 
         <div class="section">
             <h3>Step 2：导入二进制文件</h3>
-            <pre><code>1. 在 Project 窗口，点击 "Import File" 按钮（或 File → Import File）
+            <p><strong>为什么要导入？</strong> Ghidra 需要先把二进制文件加载到内存中进行分析，就像打开一本书一样。</p>
+            <pre><code># 操作步骤
+1. 在 Project 窗口，点击 "Import File" 按钮
 2. 选择要分析的二进制文件（.exe, .dll, .bin, .elf 等）
-3. Ghidra 会自动识别文件类型，选择语言/处理器架构
-4. 点击 "OK" 开始导入
-5. 导入完成后，双击文件打开分析</code></pre>
+3. Ghidra 会自动识别文件类型
+4. 选择处理器架构（通常自动识别）
+5. 点击 "OK" 开始导入</code></pre>
+            <div class="info">
+                <div class="info-title">💡 自动识别机制</div>
+                <p>Ghidra 根据文件头（Magic Number）识别文件类型。例如：</p>
+                <ul>
+                    <li><code>7F 45 4C 46</code> → ELF 文件（Linux 可执行文件）</li>
+                    <li><code>4D 5A</code> → PE 文件（Windows 可执行文件）</li>
+                    <li><code>CA FE BA BE</code> → Java CLASS 文件</li>
+                </ul>
+            </div>
         </div>
 
         <div class="section">
-            <h3>Step 3：自动分析</h3>
-            <pre><code>导入文件后，Ghidra 会弹出 "Code Browser" 窗口，并自动运行分析：
-
-# 分析内容包括：
-- 函数识别 (Function ID)
-- 调用图构建 (Call Graph)
-- 字符串提取 (Strings)
-- 数据结构识别 (Data Types)
-- 控制流分析 (Control Flow)
-- 引用分析 (References)
-
-# 如需手动触发分析：
-Analysis → Auto Analyze → 选择分析选项 → 点击 "Analyze"</code></pre>
+            <h3>Step 3：等待自动分析</h3>
+            <p><strong>这一步在做什么？</strong> Ghidra 会对二进制文件进行多轮自动分析，识别函数、构建调用图、提取字符串等。</p>
+            <pre><code># Ghidra 自动分析的内容：
+1. 函数识别 (Function ID) - 找到所有函数入口
+2. 调用图构建 (Call Graph) - 搞清楚函数之间的关系
+3. 字符串提取 (Strings) - 找到程序中的字符串常量
+4. 数据结构识别 (Data Types) - 尝试识别数据结构
+5. 控制流分析 (Control Flow) - 理解程序的执行流程
+6. 引用分析 (References) - 找到数据/代码之间的引用关系</code></pre>
+            <div class="info">
+                <div class="info-title">⏱️ 等待时间</div>
+                <p>大型文件（几十MB以上）可能需要几分钟到几十分钟不等。Ghidra 窗口底部有进度条。</p>
+            </div>
         </div>
 
         <div class="section">
             <h3>Step 4：浏览代码</h3>
-            <pre><code># 导航到函数
-- 双击函数名：跳转到函数定义
-- Ctrl+G：跳转到指定地址
-- Ctrl+Shift+G：跳转到符号
+            <p><strong>如何导航？</strong> 学会导航是高效分析的关键。</p>
+            <pre><code># 基本导航操作
+- 双击函数名 → 跳转到函数定义
+- 双击变量名 → 跳转到变量定义
+- Ctrl+G → 跳转到指定地址
+- Alt+←/→ → 后退/前进（类似浏览器）
+- ; (分号) → 添加注释
 
-# 搜索功能
-- Search → Program Text：搜索字符串、符号
-- Search → Pattern：搜索指令模式
-- Search → Memory：搜索内存内容
-
-# 书签功能
-- Bookmarks → Create Bookmark：添加书签方便下次查看</code></pre>
+# 查找功能
+- Ctrl+F → 在当前窗口搜索
+- Search → For Strings → 搜索字符串
+- Search → For Instructions → 搜索指令模式</code></pre>
         </div>
 
         <div class="section">
-            <h3>Step 5：使用反编译器</h3>
-            <pre><code>1. 在 Listing 窗口，选择一个函数
-2. 按 Tab 键或点击 "Decompile" 按钮打开反编译窗口
-3. 反编译窗口会显示伪代码
-4. 可以直接编辑伪代码进行重命名、注释等
+            <h3>Step 5：使用反编译器理解逻辑</h3>
+            <p><strong>反编译器是做什么的？</strong> 汇编语言对人来说很难理解，反编译器把汇编指令"翻译"成类似 C 语言的伪代码。</p>
+            <pre><code># 打开反编译窗口
+1. 在 Listing 窗口选择一个函数
+2. 按 Tab 键 → 打开/切换到反编译窗口
+3. 反编译窗口显示该函数的伪代码
 
-# 常用快捷键
-- Tab：在 Listing 和 Decompiler 之间切换
-- Shift+F：反向引用（查看谁调用了这个函数）
-- Ctrl+Shift+F：前向引用（查看这个函数调用了什么）</code></pre>
+# 反编译窗口能做什么
+- 看到类似 C 语言的代码逻辑
+- 给变量重命名（更易理解）
+- 添加注释
+- 直接看到条件判断、循环等结构</code></pre>
+            <div class="success">
+                <div class="success-title">💡 实战技巧</div>
+                <p>同时打开 Listing（汇编）和 Decompiler（伪代码）两个窗口，用 Tab 键切换对应位置，方便对照理解。</p>
+            </div>
         </div>
 
         <div class="section">
-            <h3>Step 6：编辑和 Patch</h3>
-            <pre><code># 修改指令
+            <h3>Step 6：添加书签和注释</h3>
+            <p><strong>为什么要添加书签？</strong> 固件分析通常需要几天甚至几周，添加书签和注释帮助记忆和回顾。</p>
+            <pre><code># 添加书签
+- 选中一行 → 右键 → Bookmarks → Create Bookmark
+- 给书签起个有意义的名字，如 "校验函数"、"加密入口"
+
+# 添加注释
+- ; (分号) → 在汇编行添加注释
+- 按 F2 → 锁定/解锁编辑
+- 在反编译窗口直接添加注释</code></pre>
+        </div>
+
+        <h2 id="ghidra修改文件">✏️ 如何修改二进制文件</h2>
+
+        <div class="warning">
+            <div class="warning-title">⚠️ 重要前提</div>
+            <p><strong>Ghidra 反编译的 C 代码不能直接编译回去！</strong>反编译是"伪代码"（pseudocode），是 Ghidra 重建出来的，不是原始代码。</p>
+        </div>
+
+        <div class="section">
+            <h3>修改的两种方式</h3>
+            <table>
+                <tr>
+                    <th>方式</th>
+                    <th>说明</th>
+                    <th>适用场景</th>
+                </tr>
+                <tr>
+                    <td>Patch 机器码</td>
+                    <td>直接修改二进制字节</td>
+                    <td>小改、字节级修改</td>
+                </tr>
+                <tr>
+                    <td>Ghidra Script</td>
+                    <td>编写脚本批量修改</td>
+                    <td>自动化修改、复杂逻辑</td>
+                </tr>
+                <tr>
+                    <td>理解后重写</td>
+                    <td>理解逻辑后自己写代码</td>
+                    <td>需要大改或完全重写</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h3>方式一：直接 Patch 机器码</h3>
+            <p><strong>原理</strong>：二进制文件是由字节组成的，修改字节就相当于修改程序。</p>
+            <pre><code># 具体步骤
 1. 在 Listing 窗口，选择要修改的指令
-2. 按 E 键或右键 → Edit
-3. 修改后按 Enter 确认
+2. 按 E 键（或右键 → Edit）
+3. Ghidra 显示该指令的机器码
+4. 修改机器码（如把 74 改成 75，JE 改成 JNE）
+5. 按 Enter 确认
 
-# Patch 字节
+# 示例：修改跳转条件
+- 原指令：74 0A  （JE SHORT xxx）如果等于则跳转
+- 修改为：75 0A  （JNE SHORT xxx）如果不等则跳转
+- 效果：把"等于时跳转"改成"不等于时跳转"</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>方式二：Patch 字节</h3>
+            <p><strong>原理</strong>：有时候不需要改指令，只改某个字节的值。</p>
+            <pre><code># 具体步骤
 1. 在 Listing 窗口，选择要修改的字节
-2. 按 P 键或右键 → Patch Instruction
-3. 修改机器码
+2. 按 P 键（或右键 → Patch Instruction）
+3. 输入新的字节值
+4. 按 Enter 确认
 
-# 保存 Patch
-File → Export → 选择格式（如 .exe, .bin）→ 选择输出路径</code></pre>
-        </div>
-
-        <h2 id="ghidra高级技巧">💡 高级使用技巧</h2>
-
-        <div class="section">
-            <h3>1. 内存布局设置</h3>
-            <pre><code># 对于固件分析，需要正确设置内存布局：
-1. Window → Memory Map（或按 Alt+M）
-2. 点击 "+" 添加内存区块
-3. 设置：
-   - Name: 区块名称（如 FLASH, RAM）
-   - Start: 起始地址（如 0x08000000）
-   - Length: 长度（如 0x100000）
-   - Type: 类型（ROM/RAM/Code/Data）
-4. 导入固件时，Ghidra 会自动尝试识别，但固件通常需要手动配置</code></pre>
+# 示例：修改内存中的常量
+- 原字节：3C （0x3C，是数值 60）
+- 修改为：00 （数值 0）
+- 效果：修改程序中某个常量值</code></pre>
         </div>
 
         <div class="section">
-            <h3>2. 字符串搜索与分析</h3>
-            <pre><code># 搜索字符串
-Search → For Strings
-- 设置最小字符串长度
-- 选择编码（ASCII、UTF-8、UTF-16 等）
-- 点击 OK 开始搜索
-
-# 分析字符串引用
-- 双击字符串跳转到引用位置
-- 右键 → Show References 查看所有引用</code></pre>
+            <h3>方式三：导出修改后的文件</h3>
+            <p><strong>重要</strong>：在 Ghidra 中修改后，必须导出才能生效。</p>
+            <pre><code># 导出步骤
+1. File → Export
+2. 选择输出格式：
+   - Binary (.bin)：纯二进制文件
+   - ELF (.elf)：Linux 可执行文件
+   - PE (.exe)：Windows 可执行文件
+   - .hex：十六进制文件
+3. 选择保存路径
+4. 点击 OK 导出</code></pre>
         </div>
 
         <div class="section">
-            <h3>3. 交叉引用分析</h3>
-            <pre><code># 查看引用（谁用了这个地址）
-- 选中地址/变量，按 X 键
-- 或右键 → References → Show References to Address
-
-# 查看函数调用图
-- Window → Function Graph
-- 或 Navigation → Show Function Call Graph
-
-# 数据依赖分析
-- 右键 → Data Flow → Analyze Data Flow</code></pre>
-        </div>
-
-        <div class="section">
-            <h3>4. 结构体与联合体</h3>
-            <pre><code># 创建结构体
-1. Window → Data Type Manager
-2. 右键 → New → Structure
-3. 命名并添加成员
-
-# 应用结构体到数据
-1. 选择内存中的数据
-2. 按 Alt+Shift+S 打开结构体选择器
-3. 选择或创建合适的结构体
-
-# 常见快捷键
-- A：创建 ASCII 字符串
-- D：创建数据（按多次切换类型）
-- F：创建函数
-- U：取消定义</code></pre>
-        </div>
-
-        <div class="section">
-            <h3>5. 固件分析特殊设置</h3>
-            <pre><code># STM32 固件分析示例：
-1. 文件 → 导入固件（如 firmware.bin）
-2. 语言选择 ARM Cortex (little endian)
-3. Memory Map 设置：
-   - FLASH: 0x08000000, 长度根据固件大小
-   - RAM: 0x20000000, 长度根据芯片 RAM 大小
-4. 勾选 "Only show addressable memory"
-5. 开始分析
-
-# 常见 MCU 内存地址：
-- STM32 F1: FLASH 0x08000000, RAM 0x20000000
-- STM32 F4: FLASH 0x08000000, RAM 0x20000000
-- nRF52: FLASH 0x00000000, RAM 0x20000000</code></pre>
+            <h3>实战案例：固件修改</h3>
+            <p><strong>场景</strong>：你分析了一个固件校验函数，想跳过校验直接运行。</p>
+            <pre><code>1. 用 Ghidra 分析找到校验函数入口（如 0x08003684）
+2. 分析校验逻辑（在"相关问题"中提到的 XOR 校验）
+3. 找到关键跳转指令（如 JNE 表示校验失败跳转）
+4. 在 Ghidra 中：
+   - 选中跳转指令
+   - 按 E 键
+   - 把 75 改成 74（JNE → JE）
+5. 导出修改后的固件
+6. 刷入设备测试</code></pre>
         </div>
 
         <h2 id="ghidra脚本">📜 Ghidra 脚本开发</h2>
 
         <div class="section">
-            <h3>1. Python 脚本</h3>
-            <pre><code># Ghidra 支持 Python (Jython)
-# 脚本位置：Window → Script Manager
-
-# 示例：遍历所有函数
-import ghidra.app.script.GhidraScript as GhidraScript
-
-def run():
-    functionManager = currentProgram.getFunctionManager()
-    functions = functionManager.getFunctions(True)
-    
-    for func in functions:
-        print("Function: {} at {}".format(
-            func.getName(),
-            func.getEntryPoint()
-        ))
-
-run()</code></pre>
+            <h3>为什么要写脚本？</h3>
+            <p>当需要重复做某件事时，脚本可以自动化这个过程。例如：</p>
+            <ul>
+                <li>批量重命名函数</li>
+                <li>自动查找加密常量</li>
+                <li>批量 Patch 多个位置</li>
+                <li>提取特定数据</li>
+            </ul>
         </div>
 
         <div class="section">
-            <h3>2. Java 脚本</h3>
-            <pre><code>// Ghidra Java API 示例
-import ghidra.app.script.GhidraScript;
-import ghidra.program.model.listing.*;
+            <h3>打开脚本管理器</h3>
+            <pre><code># 菜单路径
+Window → Script Manager（或按 Ctrl+Shift+S）
 
-public class ListFunctions extends GhidraScript {
+# 脚本管理器功能
+- 查看所有可用脚本
+- 创建新脚本
+- 编辑现有脚本
+- 运行脚本</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>Python 脚本示例：查找所有函数</h3>
+            <pre><code># 在脚本管理器中新建 Python 脚本
+# 输入以下代码：
+
+import json
+
+# 获取所有函数
+functionManager = currentProgram.getFunctionManager()
+functions = functionManager.getFunctions(True)
+
+# 打印函数列表
+print("=" * 60)
+print("所有函数列表：")
+print("=" * 60)
+
+for func in functions:
+    name = func.getName()
+    entry = func.getEntryPoint()
+    print("{} @ {}".format(name, entry))
+
+print("=" * 60)
+print("共找到 {} 个函数".format(len(list(functions))))</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>Java 脚本示例：批量 Patch</h3>
+            <pre><code>// Java 脚本示例：将指定地址的字节改为 NOP
+import ghidra.app.script.GhidraScript;
+
+public class NopPatch extends GhidraScript {
     @Override
     public void run() throws Exception {
-        FunctionManager fm = currentProgram.getFunctionManager();
-        for (Function func : fm.getFunctions(true)) {
-            println("Function: " + func.getName() + 
-                    " at " + func.getEntryPoint());
+        // 要 NOP 的地址列表
+        String[] addresses = {
+            "0x08001000",
+            "0x08001010",
+            "0x08001020"
+        };
+        
+        // NOP 指令的机器码（x86）
+        byte[] nop = new byte[]{0x90};
+        
+        for (String addrStr : addresses) {
+            Address addr = toAddr(addrStr);
+            println("NOPing: " + addr);
+            setBytes(addr, nop);
         }
+        
+        println("Patch 完成！");
     }
 }</code></pre>
         </div>
 
-        <div class="section">
-            <h3>3. 常用脚本位置</h3>
-            <pre><code># Ghidra 自带脚本（位于 Ghidra/Processors/xxx/data/scripts/）
-- FindCrypt.java：查找加密常量
-- FindStackStrings.java：查找栈字符串
-- ClassSearch.java：查找类结构
-- CrossReferenceListing.java：显示交叉引用
-
-# 社区脚本
-- https://github.com/NSAagents/GhidraScripts
-- https://github.com/allpaca/Ghidra_scripts</code></pre>
-        </div>
-
         <h2 id="总结">📝 总结</h2>
         
+        <div class="section">
+            <h3>Ghidra 工作流回顾</h3>
+            <pre><code>1. 创建/打开项目 → 保存分析进度
+2. 导入二进制文件 → 加载到内存
+3. 等待自动分析 → 让 Ghidra 理解代码结构
+4. 浏览代码 + 反编译 → 理解程序逻辑
+5. 添加书签注释 → 记录重要发现
+6. 修改（如需） → Patch 机器码
+7. 导出 → 生成修改后的文件</code></pre>
+        </div>
+
         <div class="success">
-            <div class="success-title">✅ Ghidra 适用人群</div>
+            <div class="success-title">✅ Ghidra 适合场景</div>
             <ul>
-                <li>学习逆向工程的学生和研究人员</li>
-                <li>需要分析固件的安全研究员</li>
-                <li>预算有限但需要专业工具的工程师</li>
-                <li>需要协作的团队项目</li>
-                <li>希望定制化工具的开发者</li>
+                <li>学习逆向工程</li>
+                <li>固件分析（STM32、nRF52 等 MCU）</li>
+                <li>恶意软件分析</li>
+                <li>协议分析</li>
+                <li>安全审计</li>
             </ul>
         </div>
 
         <div class="warning">
-            <div class="warning-title">💰 何时选择 IDA</div>
+            <div class="warning-title">⚠️ 局限性</div>
             <ul>
-                <li>商业项目，需要稳定的技术支持</li>
-                <li>Hex-Rays 反编译器质量是刚需</li>
-                <li>团队已有 IDA 使用经验</li>
-                <li>需要使用专业插件生态</li>
+                <li>反编译的代码不能直接编译回去</li>
+                <li>复杂的代码反编译质量不如 Hex-Rays</li>
+                <li>需要结合汇编知识一起分析</li>
             </ul>
         </div>
-
-        <p>Ghidra 作为 NSA 出品的免费工具，已经成为逆向工程领域的重要选择。对于大多数场景，Ghidra 功能足够强大，配合 IDA 使用效果更佳。</p>
 
         <div class="footer">
             <p>---</p>
