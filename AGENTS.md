@@ -210,3 +210,23 @@ The goal: Be helpful without being annoying. Check in a few times a day, do usef
 ## Make It Yours
 
 This is a starting point. Add your own conventions, style, and rules as you figure out what works.
+
+## 📝 博客模板规范 (以 https-guide.html 为准)
+
+新博客 HTML 模板规范（基于 2026-03-19 的 HTTPS 配置指南）：
+
+### 返回链接
+- 顶部：`<a href="blog.html" class="back-link">← 返回博客列表</a>`
+- 底部：`<a href="blog.html" class="back-link" style="margin-top:30px;">← 返回博客列表</a>`
+- 样式：`.back-link` 自带紫色背景，点击后保持蓝色（已包含 :visited）
+
+### 按钮样式 CSS
+```css
+.back-link { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; }
+.back-link:hover { background: #764ba2; }
+.back-link:visited { color: white; }
+```
+
+### 注意事项
+- 所有新博客必须包含顶部和底部两个返回按钮
+- 保持风格与 https-guide.html 一致
