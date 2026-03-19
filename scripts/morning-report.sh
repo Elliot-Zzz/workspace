@@ -13,8 +13,9 @@ mkdir -p "$WORKSPACE/logs"
 # 记录开始
 echo "$(date '+%Y-%m-%d %H:%M:%S') - 开始生成早报" >> "$LOGFILE"
 
-# ===== 1. 获取天气 =====
-WEATHER=$(curl -s "wttr.in/Shanghai%20Lingang?format=%l:+%c+%t+(体感%f),+湿度%h,+风力%w" 2>/dev/null)
+# ===== 1. 获取天气（未来三天） =====
+# wttr.in 支持多天预报，使用 format=3 获取3天
+WEATHER=$(curl -s "wttr.in/Shanghai%20Lingang?format=3&lang=zh" 2>/dev/null)
 if [ -z "$WEATHER" ]; then
     WEATHER="上海临港: 获取天气失败"
 fi
