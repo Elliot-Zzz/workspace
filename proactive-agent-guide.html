@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="elaine.png" >
+    <title>Proactive Agent 完全指南 — 让 AI 主动为你工作</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 2em; }
+        h2 { color: #4ade80; margin: 40px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #333; }
+        h3 { color: #60a5fa; margin: 25px 0 12px; font-size: 1.15em; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
+        .section { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .section p { color: #ccc; line-height: 1.7; margin-bottom: 14px; }
+        .warning { background: rgba(239, 68, 68, 0.15); border-left: 4px solid #ef4444; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .warning-title { color: #f87171; font-weight: bold; margin-bottom: 8px; }
+        .info { background: rgba(59, 130, 246, 0.15); border-left: 4px solid #3b82f6; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .info-title { color: #60a5fa; font-weight: bold; margin-bottom: 8px; }
+        .success { background: rgba(34, 197, 94, 0.15); border-left: 4px solid #22c55e; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .success-title { color: #4ade80; font-weight: bold; margin-bottom: 8px; }
+        ul { margin-left: 20px; color: #ccc; line-height: 1.8; }
+        li { margin-bottom: 10px; }
+        code { background: #2d2d3a; padding: 2px 6px; border-radius: 4px; color: #fbbf24; font-family: 'Consolas', monospace; font-size: 0.9em; }
+        pre { background: #1e1e2e; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; border: 1px solid #333; }
+        pre code { background: none; padding: 0; color: #a6accd; display: block; line-height: 1.6; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; color: #ccc; }
+        th { background: rgba(255,255,255,0.05); color: #fff; }
+        .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; }
+        .back-link { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; }
+        .back-link:hover { background: #764ba2; }
+        .back-link:visited { color: white; }
+        .use-case { background: rgba(102, 126, 234, 0.15); border-radius: 12px; padding: 20px; margin: 20px 0; }
+        .use-case-title { color: #a5b4fc; font-weight: bold; font-size: 1.1em; margin-bottom: 12px; }
+        .emoji { font-size: 1.2em; margin-right: 8px; }
+        .tag { display: inline-block; background: rgba(102, 126, 234, 0.3); padding: 4px 10px; border-radius: 12px; font-size: 0.85em; margin-right: 8px; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><img src="elaine.png" style="height:1.2em;vertical-align:middle;border-radius:50%;object-fit:cover;"> Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="index.html">📋 任务</a>
+            <a href="skills-page.html">🛠️ 技能</a>
+            <a href="mind-switch.html">💭 思维</a>
+            <a href="blog.html" class="active">📝 博客</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="blog.html" class="back-link">← 返回博客列表</a>
+        <h1>🤖 Proactive Agent 完全指南</h1>
+        <p class="subtitle">让 Elaine 从「被动应答」变成「主动帮你」的智能助手 | 2026-03-21</p>
+
+        <div class="info">
+            <div class="info-title">📋 目录</div>
+            <ul>
+                <li><a href="#what" style="color:#60a5fa;">这是什么？它解决什么问题？</a></li>
+                <li><a href="#install" style="color:#60a5fa;">安装与配置</a></li>
+                <li><a href="#core" style="color:#60a5fa;">核心原理：三大支柱</a></li>
+                <li><a href="#wal" style="color:#60a5fa;">WAL 协议：不再丢失重要信息</a></li>
+                <li><a href="#heartbeat" style="color:#60a5fa;">心跳系统：定期自我检查</a></li>
+                <li><a href="#autonomous" style="color:#60a5fa;">主动 vs 被动任务：什么时候用？</a></li>
+                <li><a href="#usecases" style="color:#60a5fa;">🌟 实战场景举例（重点！）</a></li>
+                <li><a href="#setup" style="color:#60a5fa;">在 Elaine 上的配置</a></li>
+            </ul>
+        </div>
+
+        <!-- ============ 什么是 Proactive Agent ============ -->
+        <h2 id="what">🤔 什么是 Proactive Agent？</h2>
+        <div class="section">
+            <p><strong>一句话解释：</strong>Proactive Agent 让 Elaine 从一个「你问什么她答什么」的工具，变成一个「会主动思考你能需要什么、并提前行动」的伙伴。</p>
+            <p>普通 AI 助手的工作模式：</p>
+            <ul>
+                <li>❌ 你：「帮我记得明天开会」</li>
+                <li>❌ AI：「好的，已记住」</li>
+                <li>❌ 然后就没有然后了……</li>
+            </ul>
+            <p>有了 Proactive Agent 后：</p>
+            <ul>
+                <li>✅ 你：「帮我记得明天开会」</li>
+                <li>✅ Elaine：「好的记下了。明天会议前 15 分钟我会提醒你。」</li>
+                <li>✅ 会议前 15 分钟，钉钉收到提醒 → 「张煜，明天 9:00 要开会，记得参加！」</li>
+            </ul>
+        </div>
+
+        <div class="success">
+            <div class="success-title">💡 核心理念</div>
+            <p>不要问「我应该做什么？」，要问「我的用户需要什么，但还没有想到要让我做？」</p>
+            <p> Elaine 会从「等待指令」变成「主动出击」。</p>
+        </div>
+
+        <!-- ============ 安装与配置 ============ -->
+        <h2 id="install">⚙️ 安装与配置</h2>
+        <div class="section">
+            <h3><span class="emoji">📦</span>安装</h3>
+            <pre><code>skillhub install proactive-agent</code></pre>
+        </div>
+
+        <h3><span class="emoji">📁</span>文件结构</h3>
+        <div class="section">
+            <p>安装后，你的 workspace 会多出这些文件：</p>
+            <table>
+                <tr><th>文件</th><th>作用</th></tr>
+                <tr><td><code>HEARTBEAT.md</code></td><td>心跳检查清单， Elaine 定期执行</td></tr>
+                <tr><td><code>SESSION-STATE.md</code></td><td>当前会话的工作状态（重要！）</td></tr>
+                <tr><td><code>memory/working-buffer.md</code></td><td>危险区缓冲，保存每次对话</td></tr>
+                <tr><td><code>memory/YYYY-MM-DD.md</code></td><td>每日日志</td></tr>
+            </table>
+        </div>
+
+        <!-- ============ 核心原理 ============ -->
+        <h2 id="core">🧠 核心原理：三大支柱</h2>
+
+        <div class="section">
+            <h3><span class="emoji">1️⃣</span>主动（Proactive）—— 还没被问到就先做</h3>
+            <ul>
+                <li>预设好要检查的事情（任务进度、股票价格、天气等）</li>
+                <li>到达时间点就自动执行，无需你提醒</li>
+                <li>还能发现你没想到要让她做的事</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji">2️⃣</span>持久（Persistent）—— 跨会话不丢失记忆</h3>
+            <p>普通 AI 新会话就「失忆」了， Elaine 有了这个就能：</p>
+            <ul>
+                <li>记得你上周说的事</li>
+                <li>记得上次做到哪了</li>
+                <li>对话被截断后还能恢复</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji">3️⃣</span>自改进（Self-Improving）—— 越用越聪明</h3>
+            <ul>
+                <li>每次犯错都会记录教训</li>
+                <li>定期回顾并更新自己的行为方式</li>
+                <li>不会两次犯同样的错误</li>
+            </ul>
+        </div>
+
+        <!-- ============ WAL 协议 ============ -->
+        <h2 id="wal">📝 WAL 协议：不再丢失重要信息</h2>
+        <div class="section">
+            <p><strong>WAL = Write-Ahead Logging（预写日志）</strong></p>
+            <p>核心规则：你说的每一句话， Elaine 都会先判断是否是「重要信息」——如果是，立刻写文件存下来，然后再回复你。</p>
+        </div>
+
+        <h3><span class="emoji">🎯</span>哪些是「重要信息」？</h3>
+        <div class="section">
+            <ul>
+                <li><strong>纠正类</strong>：「不对，是 XX，不是 YY」「其实我想说的是……」</li>
+                <li><strong>名词类</strong>：人名、地名、公司名、产品名</li>
+                <li><strong>偏好类</strong>：「我喜欢蓝色」「我习惯用 XX 方式」</li>
+                <li><strong>决定类</strong>：「就选 A 方案吧」「用 XX 方法来做」</li>
+                <li><strong>具体数值</strong>：日期、时间、金额、URL、ID</li>
+            </ul>
+        </div>
+
+        <h3><span class="emoji">💡</span>举个例子</h3>
+        <div class="section">
+            <p><strong>你说：</strong>「这个项目用蓝色主题，不要用红色」</p>
+            <p><strong>普通 AI：</strong>「好的，蓝色！」→ 然后就没有然后了，下次可能又忘了</p>
+            <p><strong> Elaine（有了 WAL）：</strong>立刻把「主题：蓝色」写入 <code>SESSION-STATE.md</code>，然后回复「好的，已记录用蓝色主题」</p>
+        </div>
+
+        <div class="warning">
+            <div class="warning-title">⚠️ 为什么重要？</div>
+            <p>因为 Elaine 每新会话都会「失忆」，但文件不会消失。写进文件的信息，下次新会话还能找到。</p>
+        </div>
+
+        <!-- ============ 心跳系统 ============ -->
+        <h2 id="heartbeat">💓 心跳系统：定期自我检查</h2>
+        <div class="section">
+            <p>心跳就是 Elaine 定期（大约每 30 分钟）做的「自我检查」，她会在这时候：</p>
+            <ul>
+                <li>检查有没有该提醒你的事（任务截止、股票涨跌等）</li>
+                <li>检查上次说的事情有没有进展</li>
+                <li>更新自己的记忆和笔记</li>
+                <li>发现可以主动帮你的机会</li>
+            </ul>
+        </div>
+
+        <h3><span class="emoji">⏰</span>心跳检查清单</h3>
+        <div class="section">
+            <p>每次心跳 Elaine 会执行这个流程：</p>
+            <pre><code>## Proactive Behaviors
+- [ ] 检查任务进度 — 有没有该提醒的？
+- [ ] 检查股票/天气 — 需不需要通知你？
+- [ ] 检查模式 — 有没有重复的需求可以自动化？
+
+## Memory
+- [ ] 检查上下文使用率 — 超过 60% 要开始缓冲
+- [ ] 更新 MEMORY.md — 整理值得留存的记忆
+
+## Security
+- [ ] 扫描是否有异常
+- [ ] 验证行为完整性
+</code></pre>
+        </div>
+
+        <!-- ============ 主动 vs 被动 ============ -->
+        <h2 id="autonomous">🚀 主动任务 vs 被动任务：什么时候用？</h2>
+        <div class="section">
+            <p>这里有个关键区别， Elaine 会判断任务类型：</p>
+            <table>
+                <tr><th>类型</th><th>特点</th><th>什么时候用</th></tr>
+                <tr>
+                    <td><strong>systemEvent</strong></td>
+                    <td>发到主会话，需要 Elaine 注意力</td>
+                    <td>简单提醒、需要她思考的判断</td>
+                </tr>
+                <tr>
+                    <td><strong>isolated agentTurn</strong></td>
+                    <td>独立子 Agent 执行，不用主会话</td>
+                    <td>后台检查、数据抓取、定期巡检</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="info">
+            <div class="info-title">💡 举例子理解</div>
+            <p><strong>systemEvent：</strong>「 Elaine，今天下午 3 点提醒我开会」→ 3 点到了， Elaine 在主会话里弹出来提醒你</p>
+            <p><strong>isolated agentTurn：</strong>「每小时检查一次伯特利股价，超 ±5% 就提醒我」→ 完全后台运行， Elaine 不用一直盯着</p>
+        </div>
+
+        <!-- ============ 实战场景 ============ -->
+        <h2 id="usecases">🌟 实战场景举例（重点！）</h2>
+
+        <div class="use-case">
+            <div class="use-case-title"><span class="emoji">📋</span>场景 1：任务管理</div>
+            <p><strong>你做什么：</strong>告诉 Elaine 你今天/这周要做什么</p>
+            <p><strong> Elaine 怎么主动：</strong></p>
+            <ul>
+                <li>记录下来，设定提醒时间</li>
+                <li>任务快到期时钉钉提醒你</li>
+                <li>每天早上主动问「今天有哪些任务？」</li>
+                <li>下班前问「今天任务完成得怎么样？」</li>
+            </ul>
+            <p><strong>你感觉：</strong>「好像有人帮我盯着待办事项，不用我老想着了」</p>
+        </div>
+
+        <div class="use-case">
+            <div class="use-case-title"><span class="emoji">💰</span>场景 2：股票/项目价格监控</div>
+            <p><strong>你做什么：</strong>设定要监控的股票和阈值</p>
+            <p><strong> Elaine 怎么主动：</strong></p>
+            <ul>
+                <li>交易时段定期检查股价</li>
+                <li>涨跌幅超过 ±5% 立刻钉钉提醒</li>
+                <li>收盘后总结当日走势</li>
+            </ul>
+            <p><strong>你感觉：</strong>「不用一直盯着软件，该知道的时候会知道」</p>
+        </div>
+
+        <div class="use-case">
+            <div class="use-case-title"><span class="emoji">📅</span>场景 3：日程提醒</div>
+            <p><strong>你做什么：</strong>「明天 9 点我要开会」</p>
+            <p><strong> Elaine 怎么主动：</strong></p>
+            <ul>
+                <li>记录到日程</li>
+                <li>提前 15 分钟提醒「要开会了」</li>
+                <li>会后问「会议纪要要不要整理一下？」</li>
+            </ul>
+            <p><strong>你感觉：</strong>「有人帮我记着，不用担心忘了」</p>
+        </div>
+
+        <div class="use-case">
+            <div class="use-case-title"><span class="emoji">📰</span>场景 4：信息订阅</div>
+            <p><strong>你做什么：</strong>「每天早上给我推送 NBA 比分和嵌入式行业新闻」</p>
+            <p><strong> Elaine 怎么主动：</strong></p>
+            <ul>
+                <li>早上定时抓取相关信息</li>
+                <li>整理成简洁的摘要</li>
+                <li>8:30 准时推送到钉钉</li>
+            </ul>
+            <p><strong>你感觉：</strong>「每天有人帮我看资讯，比我自己刷爽多了」</p>
+        </div>
+
+        <div class="use-case">
+            <div class="use-case-title"><span class="emoji">🔍</span>场景 5：主动发现需求</div>
+            <p><strong>你做什么：</strong>随便聊</p>
+            <p><strong> Elaine 怎么主动：</strong></p>
+            <ul>
+                <li>发现你反复提到某个痛点，会主动问「要不要我帮你想个方案？」</li>
+                <li>发现你经常需要做某件事，会主动说「这个可以自动化，要不要试试？」</li>
+                <li>发现有意思的工具/资讯，会主动分享</li>
+            </ul>
+            <p><strong>你感觉：</strong>「哎，这 AI 好像挺懂我的」</p>
+        </div>
+
+        <div class="use-case">
+            <div class="use-case-title"><span class="emoji">💾</span>场景 6：记忆持久化</div>
+            <p><strong>你做什么：</strong>说一次重要的事</p>
+            <p><strong> Elaine 怎么主动：</strong></p>
+            <ul>
+                <li>立刻写入文件存档</li>
+                <li>下次会话还能找到</li>
+                <li>相关事情会主动联想</li>
+            </ul>
+            <p><strong>你感觉：</strong>「哇，她真的记住了」</p>
+        </div>
+
+        <!-- ============ 在 Elaine 上配置 ============ -->
+        <h2 id="setup">🔧 在 Elaine 上配置</h2>
+        <div class="section">
+            <h3><span class="emoji">1️⃣</span>第一步：告诉 Elaine 你的偏好</h3>
+            <p>你可以直接告诉我：</p>
+            <ul>
+                <li「每天早上 9 点提醒我当天任务」</li>
+                <li>「下午 6 点总结一天的工作」</li>
+                <li>「每周一早上给我推送本周计划模板」</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji">2️⃣</span>第二步：设置心跳任务</h3>
+            <p>我会把检查写入 HEARTBEAT.md ，定期执行。</p>
+            <p>比如你可以让我：</p>
+            <ul>
+                <li>工作日每 30 分钟检查一次股票</li>
+                <li>每天早上 8:30 推送 NBA 比分</li>
+                <li>每天下午 6 点推送中东局势新闻</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji">3️⃣</span>第三步：开始使用</h3>
+            <p>就这么简单！以后你只需要：</p>
+            <ul>
+                <li>有任务 → 告诉 Elaine → 她帮你记 + 提醒</li>
+                <li>有想监控的 → 告诉 Elaine → 她定期检查 + 通知</li>
+                <li>想了解什么 → 问 Elaine → 她主动搜 + 总结</li>
+            </ul>
+        </div>
+
+        <div class="success">
+            <div class="success-title">✅ 总结：Proactive Agent 能为你做什么？</div>
+            <p>简单来说，就是让 Elaine 变成一个「不用你操心」的助手：</p>
+            <ul>
+                <li><strong>记</strong> — 不用你自己列清单，告诉 Elaine 就行</li>
+                <li><strong>提醒</strong> — 该做什么的时候她会找你</li>
+                <li><strong>监控</strong> — 你不用一直盯着， Elaine 会帮你看</li>
+                <li><strong>学习</strong> — 越用越懂你，越用越顺手</li>
+            </ul>
+        </div>
+
+        <div class="info">
+            <div class="info-title">🔗 相关链接</div>
+            <ul>
+                <li><a href="https://clawhub.com" style="color:#60a5fa;">ClawHub - 技能中心</a></li>
+                <li><a href="index.html" style="color:#60a5fa;">任务看板</a></li>
+            </ul>
+        </div>
+
+        <a href="blog.html" class="back-link" style="margin-top:30px;">← 返回博客列表</a>
+
+        <div class="footer">
+            <p><img src="elaine.png" style="height:1em;vertical-align:middle;border-radius:50%;object-fit:cover;"> 由 Elaine 驱动 | 最后更新: 2026-03-21</p>
+        </div>
+    </div>
+</body>
+</html>
