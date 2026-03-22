@@ -175,7 +175,18 @@ sudo systemctl reload ssh</code></pre>
             <p>将服务器上的私钥文件 <code>id_ed25519</code> 下载到本地，放到以下路径：</p>
             <pre><code>C:\Users\你的用户名\.ssh\id_ed25519</code></pre>
 
-            <h4>2. 设置文件权限（重要！）</h4>
+            <h4>2. 私钥文件传输（重要！）</h4>
+            <p>由于私钥是单行文本格式，直接复制粘贴容易损坏。建议用 base64 编码传输，避免格式问题：</p>
+
+            <p><strong>第一步：在服务器上执行</strong></p>
+            <pre><code>base64 ~/.ssh/id_ed25519 | tr -d '\n'</code></pre>
+            <p>复制输出的 base64 编码内容（一长串无换行的字符）。</p>
+
+            <p><strong>第二步：在 Windows PowerShell 上执行</strong></p>
+            <pre><code>[System.IO.File]::WriteAllBytes("C:\Users\silen\.ssh\id_ed25519", [System.Convert]::FromBase64String("这里粘贴刚才复制的base64内容"))</code></pre>
+            <p>注意：base64 内容粘贴后不要有换行或空格，全部是连续字符后按回车。</p>
+
+            <h4>3. 设置文件权限（重要！）</h4>
             <p>Windows 对 SSH 私钥文件权限要求严格，权限过高会导致 <code>Permissions for xxx are too open</code> 错误。用图形界面设置：</p>
             <ul>
                 <li>右键 <code>id_ed25519</code> → <strong>属性</strong> → <strong>安全</strong> → <strong>高级</strong></li>
@@ -186,7 +197,7 @@ sudo systemctl reload ssh</code></pre>
             <p>或者用命令快速设置（安全性风险极低，可忽略）：</p>
             <pre><code>icacls "%USERPROFILE%\.ssh\id_ed25519" /grant:r "everyone:R"</code></pre>
 
-            <h4>3. 创建 SSH Config 文件（简化登录）</h4>
+            <h4>4. 创建 SSH Config 文件（简化登录）</h4>
             <p>在 <code>C:\Users\你的用户名\.ssh\</code> 目录下新建文件 <code>config</code>（没有扩展名），内容：</p>
             <pre><code>Host my-server
     HostName 你的服务器IP
@@ -194,12 +205,12 @@ sudo systemctl reload ssh</code></pre>
     Port 22
     IdentityFile C:\Users\你的用户名\.ssh\id_ed25519</code></pre>
 
-            <h4>4. 测试登录</h4>
+            <h4>5. 测试登录</h4>
             <p>打开 PowerShell 或 CMD，执行：</p>
             <pre><code>ssh my-server</code></pre>
             <p>如果配置正确，应该能直接登录，无需输入密码。</p>
 
-            <h4>常见问题</h4>
+            <h4>6. 常见问题</h4>
             <ul>
                 <li><strong>报错 "Bad permissions"：</strong>私钥文件权限不对，用上面的方法重新设置</li>
                 <li><strong>报错 "Connection refused"：</strong>检查服务器 IP、端口是否正确，确认服务器 SSH 服务在运行</li>
