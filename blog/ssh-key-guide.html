@@ -176,15 +176,19 @@ sudo systemctl reload ssh</code></pre>
             <pre><code>C:\Users\你的用户名\.ssh\id_ed25519</code></pre>
 
             <h4>2. 私钥文件传输（重要！）</h4>
-            <p>由于私钥是单行文本格式，直接复制粘贴容易损坏。建议用 base64 编码传输，避免格式问题：</p>
+            <p>直接复制粘贴私钥文件内容容易损坏（会出现 <code>invalid format</code> 错误）。正确做法是用 base64 编码传输。</p>
 
             <p><strong>第一步：在服务器上执行</strong></p>
             <pre><code>base64 ~/.ssh/id_ed25519 | tr -d '\n'</code></pre>
-            <p>复制输出的 base64 编码内容（一长串无换行的字符）。</p>
+            <p>复制输出的 base64 编码（一长串无换行的字符），约 400-500 个字符。</p>
 
             <p><strong>第二步：在 Windows PowerShell 上执行</strong></p>
             <pre><code>[System.IO.File]::WriteAllBytes("C:\Users\silen\.ssh\id_ed25519", [System.Convert]::FromBase64String("这里粘贴刚才复制的base64内容"))</code></pre>
-            <p>注意：base64 内容粘贴后不要有换行或空格，全部是连续字符后按回车。</p>
+            <p>注意：base64 内容粘贴后不要有换行或空格，全部是连续字符后按回车。如果报错 <code>No such file or directory</code>，先执行 <code>mkdir C:\Users\silen\.ssh</code> 创建目录。</p>
+
+            <p><strong>第三步：验证文件正确</strong></p>
+            <pre><code>ssh-keygen -l -f C:\Users\silen\.ssh\id_ed25519</code></pre>
+            <p>如果输出密钥指纹，说明文件传输正确。</p>
 
             <h4>3. 设置文件权限（重要！）</h4>
             <p>Windows 对 SSH 私钥文件权限要求严格，权限过高会导致 <code>Permissions for xxx are too open</code> 错误。用图形界面设置：</p>
@@ -212,6 +216,8 @@ sudo systemctl reload ssh</code></pre>
 
             <h4>6. 常见问题</h4>
             <ul>
+                <li><strong>报错 "Load key invalid format"：</strong>私钥文件复制时格式被损坏。用 base64 方法重新传输，不要直接复制粘贴文件内容</li>
+                <li><strong>报错 "No such file or directory"：</strong>目录不存在，先执行 <code>mkdir C:\Users\silen\.ssh</code></li>
                 <li><strong>报错 "Bad permissions"：</strong>私钥文件权限不对，用上面的方法重新设置</li>
                 <li><strong>报错 "Connection refused"：</strong>检查服务器 IP、端口是否正确，确认服务器 SSH 服务在运行</li>
                 <li><strong>Windows 11 用户</strong>：建议使用 Windows Terminal，体验更好</li>
