@@ -300,6 +300,31 @@ sudo ufw enable</code></pre>
             </table>
         </div>
 
+        <h2 id="常见问题">🔧 常见问题排查</h2>
+
+        <div class="section">
+            <h3>1. 浏览器提示"您的连接不是私密连接"</h3>
+            <p>这是自签名证书的正常提示。点击"高级" → "继续前往（不安全）"即可。仅首次需要，之后浏览器会记住证书。</p>
+        </div>
+
+        <div class="section">
+            <h3>2. Dashboard 提示"control ui requires device identity"</h3>
+            <p>浏览器安全策略要求 Device Identity API 必须通过安全上下文（HTTPS 或 localhost）访问。如果直接用 HTTP 访问公网 IP 就会触发此错误。</p>
+            <p><strong>解决方法：</strong>按照上面的步骤配置 HTTPS 访问，通过 HTTPS 访问即可解决。</p>
+        </div>
+
+        <div class="section">
+            <h3>3. 点 Connect 显示 "disconnected (1006): no reason"</h3>
+            <p>WebSocket 连接失败，通常是 nginx 没有正确配置 WebSocket 代理。</p>
+            <p><strong>解决方法：</strong>确保 nginx 配置中包含以下 4 个关键 headers：</p>
+            <pre><code>proxy_http_version 1.1;
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection "upgrade";
+proxy_set_header Host $host;</code></pre>
+            <p>然后重载 nginx：</p>
+            <pre><code>sudo nginx -t && sudo systemctl reload nginx</code></pre>
+        </div>
+
         <h2 id="总结">📝 总结</h2>
         
         <div class="success">
