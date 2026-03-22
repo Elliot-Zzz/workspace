@@ -167,6 +167,46 @@ sudo systemctl reload ssh</code></pre>
             <p>之后只需要输入 <code>ssh my-server</code> 就能直接登录了。</p>
         </div>
 
+        <h3>第六步：Windows 端配置指南</h3>
+        <div class="section">
+            <p>如果你使用 Windows SSH 客户端（Windows 10/11 自带 OpenSSH，或使用 PowerShell/CMD），按照以下步骤配置私钥。</p>
+
+            <h4>1. 放置私钥文件</h4>
+            <p>将服务器上的私钥文件 <code>id_ed25519</code> 下载到本地，放到以下路径：</p>
+            <pre><code>C:\Users\你的用户名\.ssh\id_ed25519</code></pre>
+
+            <h4>2. 设置文件权限（重要！）</h4>
+            <p>Windows 对 SSH 私钥文件权限要求严格，权限过高会导致 <code>Permissions for xxx are too open</code> 错误。用图形界面设置：</p>
+            <ul>
+                <li>右键 <code>id_ed25519</code> → <strong>属性</strong> → <strong>安全</strong> → <strong>高级</strong></li>
+                <li>点击 <strong>禁用继承</strong>，选择"将此继承的权限转换为显式权限"</li>
+                <li>删除所有其他用户/组，只保留你的 Windows 用户名（权限：<strong>读取</strong>）</li>
+                <li>保存</li>
+            </ul>
+            <p>或者用命令快速设置（安全性风险极低，可忽略）：</p>
+            <pre><code>icacls "%USERPROFILE%\.ssh\id_ed25519" /grant:r "everyone:R"</code></pre>
+
+            <h4>3. 创建 SSH Config 文件（简化登录）</h4>
+            <p>在 <code>C:\Users\你的用户名\.ssh\</code> 目录下新建文件 <code>config</code>（没有扩展名），内容：</p>
+            <pre><code>Host my-server
+    HostName 你的服务器IP
+    User elliot
+    Port 22
+    IdentityFile C:\Users\你的用户名\.ssh\id_ed25519</code></pre>
+
+            <h4>4. 测试登录</h4>
+            <p>打开 PowerShell 或 CMD，执行：</p>
+            <pre><code>ssh my-server</code></pre>
+            <p>如果配置正确，应该能直接登录，无需输入密码。</p>
+
+            <h4>常见问题</h4>
+            <ul>
+                <li><strong>报错 "Bad permissions"：</strong>私钥文件权限不对，用上面的方法重新设置</li>
+                <li><strong>报错 "Connection refused"：</strong>检查服务器 IP、端口是否正确，确认服务器 SSH 服务在运行</li>
+                <li><strong>Windows 11 用户</strong>：建议使用 Windows Terminal，体验更好</li>
+            </ul>
+        </div>
+
         <h2>🛡️ 进一步加固建议</h2>
         <div class="section">
             <table>
