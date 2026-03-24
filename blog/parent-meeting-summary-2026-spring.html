@@ -5,89 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>一年级下学期家长会总结</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.8;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 10px;
-            text-align: center;
-        }
-        h2 {
-            color: #555;
-            margin-top: 35px;
-            border-left: 5px solid #667eea;
-            padding-left: 15px;
-            background: linear-gradient(90deg, #667eea10 0%, transparent 100%);
-            padding: 15px 20px;
-            border-radius: 0 8px 8px 0;
-        }
-        h3 {
-            color: #667eea;
-            margin-top: 25px;
-        }
-        .highlight-box {
-            background: #f8f9fa;
-            border-left: 4px solid #28a745;
-            padding: 15px 20px;
-            margin: 15px 0;
-            border-radius: 4px;
-        }
-        .warning-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px 20px;
-            margin: 15px 0;
-            border-radius: 4px;
-        }
-        .info-box {
-            background: #e7f3ff;
-            border-left: 4px solid #2196F3;
-            padding: 15px 20px;
-            margin: 15px 0;
-            border-radius: 4px;
-        }
-        ul {
-            padding-left: 25px;
-        }
-        li {
-            margin: 8px 0;
-        }
-        code {
-            background: #f0f0f0;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-        }
-        .subtitle {
-            text-align: center;
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 30px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 2em; color: #fff; border-bottom: 3px solid #667eea; padding-bottom: 15px; }
+        h2 { color: #4ade80; margin: 35px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #333; padding-left: 15px; border-left: 5px solid #667eea; }
+        h3 { color: #60a5fa; margin: 25px 0 12px; font-size: 1.15em; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
+        .section { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .section p { color: #ccc; line-height: 1.7; margin-bottom: 14px; }
+        .highlight-box { background: rgba(34, 197, 94, 0.15); border-left: 4px solid #22c55e; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; color: #ccc; }
+        .warning-box { background: rgba(239, 68, 68, 0.15); border-left: 4px solid #ef4444; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; color: #ccc; }
+        .info-box { background: rgba(59, 130, 246, 0.15); border-left: 4px solid #3b82f6; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; color: #ccc; }
+        ul { margin-left: 20px; color: #ccc; line-height: 1.8; }
+        li { margin-bottom: 10px; }
+        code { background: #2d2d3a; padding: 2px 6px; border-radius: 4px; color: #fbbf24; font-family: 'Consolas', monospace; font-size: 0.9em; }
+        ol { margin-left: 20px; color: #ccc; line-height: 1.8; }
+        ol li { margin-bottom: 10px; }
+        hr { border: none; border-top: 1px solid #333; margin: 30px 0; }
+        .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; }
+        .back-link { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; }
+        .back-link:hover { background: #764ba2; }
+        .back-link:visited { color: white; }
         .section-english { border-left-color: #E91E63; }
         .section-math { border-left-color: #FF9800; }
         .section-chinese { border-left-color: #4CAF50; }
         .section-general { border-left-color: #9C27B0; }
-        .back-link { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; }
-        .back-link:hover { background: #764ba2; }
-        .back-link:visited { color: white; }
+        p { color: #ccc; line-height: 1.7; }
     </style>
 </head>
 <body>
-    <a href="https://elliot-zzz.github.io/workspace/blog.html" class="back-link">← 返回博客列表</a>
+    <nav class="navbar">
+        <div class="nav-brand"><img src="../elaine.png" style="height:1.2em;vertical-align:middle;border-radius:50%;object-fit:cover;"> Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="../index.html">📋 任务</a>
+            <a href="../skills-page.html">🛠️ 技能</a>
+            <a href="../mind-switch.html">💭 思维</a>
+            <a href="../blog.html" class="active">📝 博客</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="../blog.html" class="back-link">← 返回博客列表</a>
     
     <div class="container">
         <h1>📚 一年级下学期家长会总结</h1>
@@ -246,6 +210,12 @@
         </p>
     </div>
 
-    <a href="https://elliot-zzz.github.io/workspace/blog.html" class="back-link" style="margin-top:30px;">← 返回博客列表</a>
+        <p style="text-align: center; color: #888; margin-top: 30px;">
+            — 整理自2026年春季学期一年级家长会 —
+        </p>
+    </div>
+
+    <a href="../blog.html" class="back-link" style="margin-top:30px;">← 返回博客列表</a>
+    <div class="footer">由 Elaine 驱动 | 2026-03-24</div>
 </body>
 </html>

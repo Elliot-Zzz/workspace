@@ -5,117 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tailscale 全面指南：安全远程访问方案对比</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.8;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 10px;
-        }
-        h2 {
-            color: #555;
-            margin-top: 35px;
-            border-left: 4px solid #667eea;
-            padding-left: 15px;
-        }
-        h3 {
-            color: #667eea;
-            margin-top: 25px;
-        }
-        code {
-            background: #f0f0f0;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-        }
-        pre {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
-            line-height: 1.5;
-        }
-        pre code {
-            background: transparent;
-            padding: 0;
-            color: #d4d4d4;
-        }
-        .highlight {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #ffc107;
-            margin: 20px 0;
-        }
-        .warning {
-            background: #f8d7da;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #dc3545;
-            margin: 20px 0;
-        }
-        .success {
-            background: #d4edda;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #28a745;
-            margin: 20px 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background: #667eea;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background: #f9f9f9;
-        }
-        .score-high { color: #28a745; font-weight: bold; }
-        .score-mid { color: #ffc107; font-weight: bold; }
-        .score-low { color: #dc3545; font-weight: bold; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 2em; color: #fff; border-bottom: 3px solid #667eea; padding-bottom: 15px; }
+        h2 { color: #4ade80; margin: 35px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #333; border-left: 4px solid #667eea; padding-left: 15px; }
+        h3 { color: #60a5fa; margin: 25px 0 12px; font-size: 1.15em; }
+        h4 { color: #a78bfa; margin: 20px 0 10px; font-size: 1.05em; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
+        .section { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .section p { color: #ccc; line-height: 1.7; margin-bottom: 14px; }
+        .highlight { background: rgba(251, 191, 36, 0.15); border-left: 4px solid #fbbf24; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; color: #ccc; }
+        .warning { background: rgba(239, 68, 68, 0.15); border-left: 4px solid #ef4444; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; color: #ccc; }
+        .success { background: rgba(34, 197, 94, 0.15); border-left: 4px solid #22c55e; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; color: #ccc; }
+        ul { margin-left: 20px; color: #ccc; line-height: 1.8; }
+        li { margin-bottom: 10px; }
+        ol { margin-left: 20px; color: #ccc; line-height: 1.8; }
+        code { background: #2d2d3a; padding: 2px 6px; border-radius: 4px; color: #fbbf24; font-family: 'Consolas', monospace; font-size: 0.9em; }
+        pre { background: #1e1e2e; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; border: 1px solid #333; }
+        pre code { background: none; padding: 0; color: #a6accd; display: block; line-height: 1.6; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; color: #ccc; }
+        th { background: rgba(255,255,255,0.05); color: #fff; }
+        tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+        .score-high { color: #4ade80; font-weight: bold; }
+        .score-mid { color: #fbbf24; font-weight: bold; }
+        .score-low { color: #f87171; font-weight: bold; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0; }
+        .feature-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border-left: 3px solid #667eea; color: #ccc; }
+        .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; }
         .back-link { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; }
         .back-link:hover { background: #764ba2; }
         .back-link:visited { color: white; }
-        ul, ol { padding-left: 25px; }
-        li { margin: 8px 0; }
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .feature-card {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 3px solid #667eea;
-        }
+        hr { border: none; border-top: 1px solid #333; margin: 30px 0; }
+        p { color: #ccc; line-height: 1.7; margin-bottom: 14px; }
+        a { color: #60a5fa; }
     </style>
 </head>
 <body>
-    <a href="blog.html" class="back-link">← 返回博客列表</a>
+    <nav class="navbar">
+        <div class="nav-brand"><img src="../elaine.png" style="height:1.2em;vertical-align:middle;border-radius:50%;object-fit:cover;"> Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="../index.html">📋 任务</a>
+            <a href="../skills-page.html">🛠️ 技能</a>
+            <a href="../mind-switch.html">💭 思维</a>
+            <a href="../blog.html" class="active">📝 博客</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="../blog.html" class="back-link">← 返回博客列表</a>
     
     <div class="container">
         <h1>Tailscale 全面指南：安全远程访问方案对比</h1>
@@ -370,6 +314,7 @@ mysql -h 100.64.0.2 -u root -p</code></pre>
         2026-03-23</em></p>
     </div>
 
-    <a href="blog.html" class="back-link" style="margin-top:30px;">← 返回博客列表</a>
+    <a href="../blog.html" class="back-link" style="margin-top:30px;">← 返回博客列表</a>
+    <div class="footer">由 Elaine 驱动 | 2026-03-24</div>
 </body>
 </html>
