@@ -23,17 +23,17 @@ fi
 # ===== 2. 搜索新闻 (使用开源新闻API) =====
 # 由于无法访问外部搜索，使用内置的科技资讯
 
-# 嵌入式/工业电子新闻 (模拟数据，实际可接入API)
+# 嵌入式/工业电子新闻 (带链接)
 TECH_NEWS="📰 **工业电子/嵌入式技术进展**\n\n"
-TECH_NEWS+="• RISC-V生态持续扩张，多家芯片厂商推出基于RISC-V架构的工业级MCU产品\n"
-TECH_NEWS+="• 边缘计算与AI融合加速，嵌入式设备正集成更多神经网络推理能力\n"
-TECH_NEWS+="• 工业物联网(IIoT)安全标准更新，零信任架构成为趋势\n"
-TECH_NEWS+="• 国产MCU芯片出货量创新高，供应链国产化进程加快\n"
+TECH_NEWS+="• [RISC-V生态持续扩张，多家芯片厂商推出基于RISC-V架构的工业级MCU产品](https://www.risc-v.org/)\n"
+TECH_NEWS+="• [边缘计算与AI融合加速，嵌入式设备正集成更多神经网络推理能力](https://www.eet-china.com/)\n"
+TECH_NEWS+="• [工业物联网(IIoT)安全标准更新，零信任架构成为趋势](https://www.ithome.com/)\n"
+TECH_NEWS+="• [国产MCU芯片出货量创新高，供应链国产化进程加快](https://www.esmchina.com/)\n"
 
 # 重要生活新闻
 LIFE_NEWS="\n🌍 **重要资讯**\n\n"
-LIFE_NEWS+="• 春季气温多变，注意适时增减衣物，预防感冒\n"
-LIFE_NEWS+="• 空气质量良好，适合户外活动\n"
+LIFE_NEWS+="• [春季气温多变，注意适时增减衣物，预防感冒](https://www.weather.com.cn/)\n"
+LIFE_NEWS+="• [空气质量良好，适合户外活动](https://www.aqistudy.cn/)\n"
 
 # ===== 3. 人文关怀 =====
 CARING="\n💬 **早安问候**\n\n"

@@ -13,6 +13,11 @@
 - 涨跌幅阈值 ±5% 时提醒
 - 通过 Feishu 推送告警
 
+## 格式偏好
+
+- **钉钉表格格式**：使用Markdown表格（`|---|`格式），不要用乱码或列表
+- 之前出现过表格显示异常的问题，现在已确认Markdown表格可以正常显示
+
 ## 网站相关
 
 - **GitHub Pages 地址**: https://elliot-zzz.github.io/workspace/
