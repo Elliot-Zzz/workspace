@@ -2,6 +2,7 @@
 """
 NBA战报 Cron 脚本
 数据源: 腾讯体育 sports.qq.com
+输出格式: Markdown 表格
 """
 
 import subprocess
@@ -33,11 +34,11 @@ def extract_nba_matches(data):
     matches = []
     if not data:
         return matches
-    
+
     try:
         store = data['_value']['useIndexApiStore']
         focus_list = store.get('focusContentList', [])
-        
+
         for item in focus_list:
             match_info = item.get('match', {}).get('matchInfo', {})
             # matchType=2 表示NBA常规赛
@@ -58,69 +59,88 @@ def extract_nba_matches(data):
                 })
     except Exception as e:
         print(f"解析数据失败: {e}", file=sys.stderr)
-    
+
     return matches
 
 def generate_report(matches, date_str):
-    """生成NBA战报"""
+    """生成NBA战报（Markdown 表格格式）"""
     today_cn = datetime.now().strftime('%m月%d日')
-    
+    now_str = datetime.now().strftime('%H:%M')
+
+    lines = []
+    lines.append(f"## 🏀 NBA战报（{today_cn}）")
+    lines.append("")
+    lines.append(f"**更新时间：** {now_str}")
+    lines.append("")
+
     if not matches:
-        print(f"🏀 NBA战报（{today_cn}）\n")
-        print("今日暂无NBA比赛数据\n")
-        print("📚 数据来源：腾讯体育")
+        lines.append("今日暂无NBA比赛数据 📭")
+        lines.append("")
+        lines.append("**数据来源：** [腾讯体育](https://sports.qq.com/nba/)")
+        print("\n".join(lines))
         return
-    
+
     # 按状态排序：已结束的在前
     matches.sort(key=lambda x: 0 if '结束' in x['status'] else 1)
-    
-    print(f"🏀 NBA战报（{today_cn}）\n")
-    
-    # 重点比赛（取前5场）
-    print("📊 重点场次\n")
+
+    # ===== 重点场次 =====
+    lines.append("### 📊 重点场次")
+    lines.append("")
+    lines.append("| # | 主队 | 比分 | 客队 | 赛事 | 状态 |")
+    lines.append("|---|------|------|------|------|------|")
+
     for i, m in enumerate(matches[:5], 1):
         try:
             lg = int(m['leftGoal'])
             rg = int(m['rightGoal'])
-            winner = "🟢" if lg > rg else "🔴"
         except:
-            winner = "⚪"
-        
-        period = f"({m['period']})" if m['period'] else ""
+            lg, rg = 0, 0
+
         desc = m['desc'] if m['desc'] else "NBA常规赛"
-        print(f"{i}. {m['left']} {lg}-{rg} {m['right']}")
-        print(f"   {winner} {desc} {period}")
-        if m['video_title']:
-            print(f"   📺 {m['video_title'][:30]}")
-    
-    print(f"\n━━━━━━━━━━━━━━\n")
-    
-    # 完整赛果
-    print("📋 今日完整赛果\n")
+        status = m['status'].strip() if m['status'] else "比赛中"
+        period = f"({m['period']})" if m['period'] else ""
+        video = f"📺 {m['video_title'][:20]}..." if m['video_title'] else ""
+
+        lines.append(f"| {i} | **{m['left']}** | **{lg} - {rg}** | **{m['right']}** | {desc} {period} | {status} {video} |")
+
+    lines.append("")
+
+    # ===== 今日完整赛果 =====
+    lines.append("### 📋 今日完整赛果")
+    lines.append("")
+    lines.append("| 主队 | 比分 | 客队 | 状态 |")
+    lines.append("|------|------|------|------|")
+
     for m in matches:
         try:
             lg = int(m['leftGoal'])
             rg = int(m['rightGoal'])
         except:
             lg, rg = 0, 0
-        print(f"| {m['left']} {lg}-{rg} {m['right']} |")
-    
-    print(f"\n━━━━━━━━━━━━━━\n")
-    
-    # 今日数据榜
-    print("📊 数据榜单亮点")
-    print("\n**得分榜前三**")
-    print("- 东契奇 (湖人) 33.4分")
-    print("- 亚历山大 (雷霆) 31.5分")
-    print("- 爱德华兹 (森林狼) 29.5分")
-    
-    print(f"\n📚 数据来源：腾讯体育")
-    print(f"⏰ 生成时间：{datetime.now().strftime('%H:%M')}")
+        status = m['status'].strip() if m['status'] else "-"
+        lines.append(f"| {m['left']} | {lg} - {rg} | {m['right']} | {status} |")
+
+    lines.append("")
+
+    # ===== 数据榜单 =====
+    lines.append("### 📈 数据榜单亮点")
+    lines.append("")
+    lines.append("| 排名 | 球员 | 球队 | 数据 |")
+    lines.append("|------|------|------|------|")
+    lines.append("| 1 | 东契奇 | 湖人 | 33.4 分 |")
+    lines.append("| 2 | 亚历山大 | 雷霆 | 31.5 分 |")
+    lines.append("| 3 | 爱德华兹 | 森林狼 | 29.5 分 |")
+    lines.append("")
+
+    # ===== 底部来源 =====
+    lines.append("---")
+    lines.append(f"**数据来源：** [腾讯体育](https://sports.qq.com/nba/)")
+    lines.append(f"**生成时间：** {now_str}")
+
+    print("\n".join(lines))
 
 def main():
     today = datetime.now().strftime('%Y-%m-%d')
-    today_cn = datetime.now().strftime('%m月%d日')
-    
     data = fetch_nba_data(today)
     matches = extract_nba_matches(data)
     generate_report(matches, today)
