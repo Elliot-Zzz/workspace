@@ -22,6 +22,18 @@
   - 链接必须是可点击的超链接，用 `[文字](URL)` 格式
   - 不要用纯文本或乱码格式
 
+## 多Agent团队架构
+
+ Elliot 的多Agent团队（基于 OpenClaw 多Agent架构）：
+
+| Agent | 角色 | 职责 |
+|-------|------|------|
+| **Elaine** | PM项目经理（顶层） | 总指挥，需求理解，任务分配，进度跟踪 |
+| **Sheldon** | 开发工程师 | 代码管理，技术方案，固件开发 |
+| **Leonard** | QA测试工程师 | 测试用例，bug跟踪，测试报告 |
+| **Raj** | 文档管理 | 项目文档索引，知识库维护 |
+| **Howard** | 运维Agent | 环境管理，CI/CD，发布，告警通知 |
+
 ## 网站相关
 
 - **GitHub Pages 地址**: https://elliot-zzz.github.io/workspace/
