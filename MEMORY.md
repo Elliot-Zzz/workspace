@@ -13,7 +13,7 @@
 - 涨跌幅阈值 ±5% 时提醒
 - 通过 Feishu 推送告警
 
-## 推送格式规范（重要！）
+## 推送格式规范（重要！所有 Cron 推送必须遵守）
 
 所有 Cron 推送和消息推送**必须**使用 Markdown 表格格式，禁止纯链接列表或无格式文本。
 
@@ -37,6 +37,15 @@
 ### 已确认支持的格式
 - Markdown 表格（`|--|`）✅
 - 可点击超链接 `[文字](URL)` ✅
+
+### Cron 推送清单（已确认 Markdown 格式）
+| Cron任务 | 脚本 | 格式状态 |
+|----------|------|----------|
+| NBA战报 | scripts/nba-report.py | ✅ Markdown表格 |
+| AI大模型资讯 | scripts/ai-news.py | ✅ Markdown链接 |
+| 早报 | scripts/morning-report.sh | ✅ Markdown表格（已更新） |
+| 中东局势+股票 | AI直接生成 | ⚠️ 需确认用Markdown发送 |
+| 天长市天气 | AI直接生成 | ⚠️ 需确认用Markdown发送 |
 
 ## 格式偏好
 
