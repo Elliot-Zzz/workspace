@@ -2,6 +2,7 @@
 """
 AI 大模型资讯 Cron 脚本
 使用 Tavily API 搜索 Twitter/X.com 上的 AI 最新动态
+输出格式：详细摘要 + 可点击超链接（钉钉 Markdown 格式）
 """
 
 import subprocess
@@ -31,14 +32,14 @@ def get_tavily_key():
     return None
 
 # 调用 Tavily Search API
-def search_tavily(query, count=8):
+def search_tavily(query, count=5):
     import urllib.request
     import urllib.parse
-    
+
     api_key = get_tavily_key()
     if not api_key:
         return None, "Tavily API Key 未配置"
-    
+
     url = 'https://api.tavily.com/search'
     data = json.dumps({
         'api_key': api_key,
@@ -48,7 +49,7 @@ def search_tavily(query, count=8):
         'include_answer': False,
         'include_raw_content': False,
     }).encode('utf-8')
-    
+
     req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
     try:
         with urllib.request.urlopen(req, timeout=30) as resp:
@@ -57,23 +58,29 @@ def search_tavily(query, count=8):
     except Exception as e:
         return None, str(e)
 
+# 清理 HTML 标签
+def clean_text(text):
+    if not text:
+        return ""
+    text = re.sub(r'<[^>]+>', '', text).strip()
+    return text
+
 # 格式化日期
 now = datetime.now().strftime('%Y-%m-%d %H:%M')
-message = f"📢 **AI 大模型最新动态** ({now})\n\n"
 
 # 搜索 queries
 queries = [
-    ('OpenAI', 'site:x.com OpenAI official 2026 latest'),
-    ('Anthropic Claude', 'site:x.com Anthropic Claude AI 2026'),
-    ('DeepSeek', 'site:x.com DeepSeek AI 2026 latest'),
-    ('MiniMax', 'site:x.com MiniMax AI 2026'),
-    ('Google Gemini', 'site:x.com Google Gemini AI 2026'),
-    ('Meta AI', 'site:x.com Meta AI Llama 2026'),
+    ('OpenAI', 'site:x.com OR site:twitter.com OpenAI official 2026 latest announcement'),
+    ('Anthropic Claude', 'site:x.com OR site:twitter.com Anthropic Claude AI 2026 latest'),
+    ('DeepSeek', 'site:x.com OR site:twitter.com DeepSeek AI 2026 latest model'),
+    ('MiniMax', 'site:x.com OR site:twitter.com MiniMax AI 2026 latest'),
+    ('Google Gemini', 'site:x.com OR site:twitter.com Google Gemini AI 2026 latest'),
+    ('Meta AI', 'site:x.com OR site:twitter.com Meta AI Llama 2026 latest'),
 ]
 
 all_results = []
 for name, query in queries:
-    result, err = search_tavily(query, count=3)
+    result, err = search_tavily(query, count=4)
     if err:
         continue
     if result and 'results' in result:
@@ -89,17 +96,35 @@ for item in all_results:
         seen.add(title)
         unique_results.append(item)
 
+# 构建消息（钉钉 Markdown 格式）
+lines = []
+lines.append(f"## 🤖 AI 大模型最新动态")
+lines.append(f"**更新时间：** {now}")
+lines.append("")
+
 if unique_results:
     for i, (name, title, url, snippet) in enumerate(unique_results[:6], 1):
-        # 清理 HTML 标签
-        title_clean = re.sub(r'<[^>]+>', '', title).strip()
-        snippet_clean = re.sub(r'<[^>]+>', '', snippet).strip()
-        if snippet_clean:
-            message += f"**{name}**：{snippet_clean[:100]}\n"
-        else:
-            message += f"**{name}**：{title_clean[:80]}\n"
-        message += f"🔗 {url}\n\n"
-else:
-    message += "暂无最新动态 📭\n\n"
+        title_clean = clean_text(title)
+        snippet_clean = clean_text(snippet)
 
+        # 标题行：可点击超链接
+        lines.append(f"**{i}. 【{name}】**")
+        lines.append(f"[{title_clean[:80]}]({url})")
+
+        # 摘要内容
+        if snippet_clean:
+            lines.append(f"📝 {snippet_clean[:200]}")
+        lines.append("")
+else:
+    lines.append("暂无最新动态 📭")
+    lines.append("")
+
+# 底部超链接列表
+lines.append("---")
+lines.append("**来源：**")
+for i, (name, title, url, snippet) in enumerate(unique_results[:6], 1):
+    title_clean = clean_text(title)
+    lines.append(f"{i}. [{title_clean[:50]}]({url})")
+
+message = "\n".join(lines)
 print(message)
