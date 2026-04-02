@@ -232,7 +232,7 @@
 
         <div class="success">
             <strong>📊 推荐架构</strong>
-            <pre><code>手机/电脑 (WireGuard Client)
+            <pre><code>Windows 电脑 (WireGuard Client)
        ↓ UDP 包
   国内云服务器 (WireGuard Server)
        ↓
@@ -242,7 +242,7 @@
 
         <h2 id="安装">📦 安装配置详解</h2>
         <div class="section">
-            <h3>1. 服务端安装（Ubuntu/Debian）</h3>
+            <h3>1. 服务端安装（Ubuntu）</h3>
             <pre><code># 安装 WireGuard
 sudo apt update
 sudo apt install wireguard -y
@@ -319,19 +319,82 @@ sudo wg show</code></pre>
         </div>
 
         <div class="section">
-            <h3>7. 客户端配置（手机/电脑）</h3>
-            <p>生成客户端配置（包含二维码）：</p>
+            <h3>7. 客户端配置（Windows）</h3>
+            <p><strong>Step 1：下载 WireGuard 客户端</strong></p>
+            <p>访问 <a href="https://www.wireguard.com/install/" style="color:#60a5fa;">WireGuard 官方下载页面</a>，下载 Windows 安装包并安装。</p>
+            
+            <p><strong>Step 2：生成本地密钥对</strong></p>
+            <p>在 Windows 上打开 PowerShell，运行以下命令生成密钥对：</p>
+            <pre><code># 生成本地私钥
+$privateKey = wg genkey
+
+# 生成公钥
+$publicKey = $privateKey | wg pubkey
+
+# 将私钥和公钥保存到文件（方便后续使用）
+$privateKey | Out-File -FilePath "$env:USERPROFILE\wg_private.key"
+$publicKey | Out-File -FilePath "$env:USERPROFILE\wg_public.key"
+
+# 显示公钥（需要复制给服务端）
+Write-Host "你的公钥是:"
+Get-Content "$env:USERPROFILE\wg_public.key"</code></pre>
+            <p>将生成的<strong>公钥</strong>复制下来，稍后填入服务端的 <code>wg0.conf</code> 配置中。</p>
+
+            <p><strong>Step 3：创建客户端配置文件</strong></p>
+            <p>在 Windows 上打开记事本，创建以下配置文件，保存到 <code>C:\Program Files\WireGuard\Config\wg0.conf</code>：</p>
             <pre><code>[Interface]
-PrivateKey = &lt;客户端私钥&gt;
+# Windows 本地私钥
+PrivateKey = &lt;客户端私钥（从 PowerShell 生成的私钥）&gt;
+
+# 客户端内网 IP
 Address = 10.0.0.2/24
+
+# 国内首选 DNS（避免 DNS 劫持）
 DNS = 223.5.5.5, 119.29.29.29
 
 [Peer]
+# 服务端公钥
 PublicKey = &lt;服务端公钥&gt;
+
+# 服务器地址和端口
 Endpoint = your-server-ip:51820
+
+# 流量走向：0.0.0.0/0 = 全局 VPN（推荐）；10.0.0.0/24 = 仅访问内网
 AllowedIPs = 0.0.0.0/0
+
+# 保持连接（穿透 NAT）
 PersistentKeepalive = 25</code></pre>
-            <p>使用 WireGuard 客户端 App 扫描二维码即可连接。</p>
+            <div class="info">
+                <strong>📝 配置说明</strong>
+                <ul>
+                    <li><strong>PrivateKey</strong>：填入刚才 PowerShell 生成的私钥</li>
+                    <li><strong>PublicKey</strong>：填入服务端的公钥</li>
+                    <li><strong>Endpoint</strong>：填入你的服务器 IP</li>
+                    <li><strong>AllowedIPs</strong>：<code>0.0.0.0/0</code> = 全局翻转到服务器；<code>10.0.0.0/24</code> = 仅访问内网，不影响其他流量</li>
+                </ul>
+            </div>
+
+            <p><strong>Step 4：导入配置并连接</strong></p>
+            <ul>
+                <li>打开 WireGuard 客户端</li>
+                <li>点击"导入隧道"按钮，选择刚才创建的 <code>wg0.conf</code> 文件</li>
+                <li>选中导入的隧道，点击"激活"按钮</li>
+                <li>任务栏图标变绿表示连接成功</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>8. 验证连接</h3>
+            <p>连接成功后，在 Windows 上打开 PowerShell，验证是否能访问服务器内网：</p>
+            <pre><code># 测试能否 ping 通服务器端
+ping 10.0.0.1
+
+# 查看 WireGuard 状态
+wg show
+
+# 查看当前分配的 IP
+ipconfig</code></pre>
+            <p>如果一切正常，你应该能看到 <code>wg0</code> 虚拟网卡获取到了 <code>10.0.0.2</code> 的 IP。</p>
         </div>
 
         <h2 id="国内">🇨🇳 国内可用替代方案</h2>
