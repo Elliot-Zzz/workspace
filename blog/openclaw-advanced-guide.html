@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../elaine.png" >
+    <title>OpenClaw 任务流与高级玩法完全指南</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 2em; }
+        h2 { color: #4ade80; margin: 40px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #333; }
+        h3 { color: #60a5fa; margin: 25px 0 12px; font-size: 1.15em; }
+        h4 { color: #f472b6; margin: 20px 0 10px; font-size: 1em; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
+        .section { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .section p { color: #ccc; line-height: 1.7; margin-bottom: 14px; }
+        .warning { background: rgba(239, 68, 68, 0.15); border-left: 4px solid #ef4444; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .warning-title { color: #f87171; font-weight: bold; margin-bottom: 8px; }
+        .info { background: rgba(59, 130, 246, 0.15); border-left: 4px solid #3b82f6; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .info-title { color: #60a5fa; font-weight: bold; margin-bottom: 8px; }
+        .success { background: rgba(34, 197, 94, 0.15); border-left: 4px solid #22c55e; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .success-title { color: #4ade80; font-weight: bold; margin-bottom: 8px; }
+        ul, ol { margin-left: 20px; color: #ccc; line-height: 1.8; }
+        li { margin-bottom: 8px; }
+        code { background: #2d2d3a; padding: 2px 6px; border-radius: 4px; color: #fbbf24; font-family: 'Consolas', monospace; font-size: 0.9em; }
+        pre { background: #1e1e2e; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; border: 1px solid #333; }
+        pre code { background: none; padding: 0; color: #a6accd; display: block; line-height: 1.6; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; color: #ccc; }
+        th { background: rgba(255,255,255,0.05); color: #fff; }
+        tr:hover { background: rgba(255,255,255,0.03); }
+        .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; }
+        .back-link { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; }
+        .back-link:hover { background: #764ba2; }
+        .tag { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.8em; margin-right: 6px; }
+        .tag-new { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+        .tag-core { background: rgba(96, 165, 250, 0.2); color: #60a5fa; }
+        .tag-advanced { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+        .tag-setup { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+        .emoji-icon { font-size: 1.2em; margin-right: 6px; }
+        .feature-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 18px; margin-bottom: 14px; }
+        .feature-card h4 { margin-top: 0; }
+        .check-list { list-style: none; margin-left: 0; }
+        .check-list li { padding-left: 24px; position: relative; }
+        .check-list li::before { content: '✅'; position: absolute; left: 0; }
+        .cross-list { list-style: none; margin-left: 0; }
+        .cross-list li { padding-left: 24px; position: relative; }
+        .cross-list li::before { content: '❌'; position: absolute; left: 0; }
+        .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+        .status-active { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+        .status-inactive { background: #6b7280; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><img src="../elaine.png" style="height:1.2em;vertical-align:middle;border-radius:50%;object-fit:cover;"> Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="../index.html">📋 任务</a>
+            <a href="../skills-page.html">🛠️ 技能</a>
+            <a href="../mind-switch.html">💭 思维</a>
+            <a href="../blog.html" class="active">📝 博客</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="blog.html" class="back-link">← 返回博客列表</a>
+
+        <h1>🤖 OpenClaw 任务流与高级玩法完全指南</h1>
+        <p class="subtitle">基于 v2026.4.2 · 2026年4月3日更新</p>
+
+        <div class="info">
+            <div class="info-title">💡 文章背景</div>
+            <p style="color:#ccc;margin:0;">张煜最近升级到了 OpenClaw v2026.4.2，想深入了解新版本的任务流（Task Flow）功能，以及探索还有哪些高级玩法尚未使用。本文覆盖了 Task Flow 详细用法、全部高级特性，以及针对他当前配置的具体建议。</p>
+        </div>
+
+        <!-- Part 1: Task Flow -->
+        <h2>📋 Part 1: 任务流（Task Flow）详解 — 新版本核心功能</h2>
+
+        <div class="section">
+            <h3><span class="emoji-icon">🏭</span>什么是 Task Flow？</h3>
+            <p>Task Flow 是 OpenClaw v2026.4.2 重新引入的<strong>任务编排层</strong>，位于后台任务（Background Tasks）之上。它管理持久化的多步骤工作流，拥有自己的状态、版本追踪和同步语义。</p>
+            <p>简单理解：<code>Task Flow = 多个后台任务的总指挥</code>。它能让你创建一个长期运行的工作流，跨越多次 agent 调用甚至多次重启，而每个具体步骤由后台任务执行。</p>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">⚙️</span>Task Flow 的两种同步模式</h3>
+            <table>
+                <tr><th>模式</th><th>说明</th><th>适用场景</th></tr>
+                <tr><td><strong>Managed（托管模式）</strong></td><td>Task Flow 全权管理生命周期，自己创建和驱动任务</td><td>自动化流水线、收件箱分类、PR审核流程</td></tr>
+                <tr><td><strong>Mirrored（镜像模式）</strong></td><td>Task Flow 只观察外部创建的任务，保持同步但不自建</td><td>对接已有 CI/CD、外部系统监控</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">🖥️</span>CLI 命令</h3>
+            <pre><code># 查看所有活跃和最近的任务流
+openclaw tasks flow list
+
+# 查看某个任务流的详细信息
+openclaw tasks flow show <lookup>
+
+# 取消一个正在运行的任务流
+openclaw tasks flow cancel &lt;lookup&gt;</code></pre>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">📊</span>任务看板 — /tasks 命令</h3>
+            <p>在<strong>任何聊天会话</strong>中输入 <code>/tasks</code> 即可查看该会话关联的后台任务：</p>
+            <pre><code>/tasks</code></pre>
+            <p>任务看板显示：</p>
+            <ul>
+                <li>活跃和最近完成的任务</li>
+                <li>运行时类型（ACP / Subagent / Cron / CLI）</li>
+                <li>状态（运行中 / 成功 / 失败 / 超时 / 取消）</li>
+                <li>时间和进度详情</li>
+            </ul>
+            <div class="info">
+                <div class="info-title">💡 状态说明</div>
+                <table style="margin:10px 0;">
+                    <tr><td><span class="status-dot status-active"></span><code>queued</code></td><td>已创建，等待 agent 启动</td></tr>
+                    <tr><td><span class="status-dot status-active"></span><code>running</code></td><td>agent 正在执行</td></tr>
+                    <tr><td><span class="status-dot status-inactive"></span><code>succeeded</code></td><td>成功完成</td></tr>
+                    <tr><td><span class="status-dot status-inactive"></span><code>failed</code></td><td>执行出错</td></tr>
+                    <tr><td><span class="status-dot status-inactive"></span><code>timed_out</code></td><td>超过超时限制</td></tr>
+                    <tr><td><span class="status-dot status-inactive"></span><code>cancelled</code></td><td>被操作员取消</td></tr>
+                    <tr><td><span class="status-dot status-inactive"></span><code>lost</code></td><td>会话消失（超过5分钟无响应）</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">🔔</span>任务通知策略</h3>
+            <p>每个任务可以配置不同的通知级别：</p>
+            <table>
+                <tr><th>策略</th><th>行为</th></tr>
+                <tr><td><code>done_only</code>（默认）</td><td>仅在任务结束时通知（成功/失败/超时等）</td></tr>
+                <tr><td><code>state_changes</code></td><td>每次状态变化都通知</td></tr>
+                <tr><td><code>silent</code></td><td>完全不通知</td></tr>
+            </table>
+            <pre><code># 修改某个任务的 notification 策略
+openclaw tasks notify &lt;lookup&gt; state_changes</code></pre>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">🔍</span>ClawFlow — Task Flow 的底层实现</h3>
+            <p>ClawFlow 是 Task Flow 的运行时底层。对于需要跨越多个 detached 任务、但仍想保持单一所有者上下文的复杂工作流，ClawFlow 提供：</p>
+            <ul>
+                <li>Flow 身份（flowId）</li>
+                <li>所有者会话和返回上下文</li>
+                <li>等待状态 + 小型持久化输出袋</li>
+                <li>完成 / 失败 / 取消 / 阻塞 状态管理</li>
+            </ul>
+            <div class="info">
+                <div class="info-title">💡 典型工作流</div>
+                <pre><code>1. createFlow(...)         → 创建 flow
+2. runTaskInFlow(...)     → 在 flow 中运行任务
+3. setFlowWaiting(...)    → 等待外部事件
+4. resumeFlow(...)       → 恢复 flow
+5. setFlowOutput(...)    → 设置输出
+6. finishFlow(...)       → 完成 flow</code></pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">🏗️</span>如何用 Task Flow 编排复杂任务？</h3>
+            <p>以「每周报告」为例，一个完整的多步骤 flow：</p>
+            <pre><code>Flow: WeeklyReport
+  Step 1: 获取数据  →  Task (cron trigger)
+  Step 2: 分析数据  →  Task (subagent, 等待 Step 1)
+  Step 3: 生成报告  →  Task (等待 Step 2)
+  Step 4: 发送邮件  →  Task (等待 Step 3)
+  Step 5: 通知所有者 →  Task (flow 完成)</code></pre>
+            <p>即使中间 gateway 重启，flow 的状态被持久化，重启后自动从断点恢复。</p>
+        </div>
+
+        <!-- Part 2: Advanced Features -->
+        <h2>🚀 Part 2: 你可能还没用到的 OpenClaw 高级功能</h2>
+
+        <p style="color:#ccc;margin-bottom:20px;">根据你的 <code>openclaw status</code> 和配置文件，以下是你目前<strong>尚未启用</strong>但非常强大的功能：</p>
+
+        <div class="section">
+            <h3><span class="emoji-icon">📅</span>1. Cron 定时任务（已有部分脚本，但用法可以更深）</h3>
+            <p><strong>你目前有：</strong>NBA战报、 AI资讯、晨报、中东局势+股票监控</p>
+            <p><strong>可以扩展的方向：</strong></p>
+            <ul>
+                <li><strong>独立会话 Cron</strong> — 用 <code>--session isolated</code> 让 cron 在独立会话中运行，不影响主会话</li>
+                <li><strong>定时深度分析</strong> — 指定 <code>--model</code> 和 <code>--thinking high</code> 做复杂分析</li>
+                <li><strong>webhook 触发</strong> — 外部事件（GitHub PR、邮件到达）触发 agent 动作</li>
+                <li><strong>Gmail 监听</strong> — 新邮件自动推送到钉钉</li>
+            </ul>
+            <pre><code># 添加一个独立会话的 CronJob
+openclaw cron add \
+  --name "深度周分析" \
+  --cron "0 6 * * 1" \
+  --tz "Asia/Shanghai" \
+  --session isolated \
+  --message "对本周工作进行深度分析并给出建议" \
+  --model "minimax-portal/MiniMax-M2.7" \
+  --thinking high \
+  --announce \
+  --channel dingtalk</code></pre>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">🤖">2. 多 Agent 团队（你已配置但可能未充分利用）</span></h3>
+            <p><strong>你已配置了 5 个 Agent：</strong></p>
+            <table>
+                <tr><th>Agent</th><th>角色</th><th>当前状态</th></tr>
+                <tr><td>main (Elaine)</td><td>PM 项目经理</td><td><span class="status-dot status-active"></span> 活跃</td></tr>
+                <tr><td>sheldon</td><td>开发工程师</td><td><span class="status-dot status-inactive"></span> 未启用</td></tr>
+                <tr><td>leonard</td><td>QA 测试工程师</td><td><span class="status-dot status-inactive"></span> 未启用</td></tr>
+                <tr><td>raj</td><td>文档管理</td><td><span class="status-dot status-inactive"></span> 未启用</td></tr>
+                <tr><td>howard</td><td>运维 Agent</td><td><span class="status-dot status-inactive"></span> 未启用（heartbeat 关闭）</td></tr>
+            </table>
+            <p><strong>高级用法：</strong></p>
+            <ul>
+                <li><strong>Subagent 嵌套</strong> — 主 agent 派遣子 agent 并行工作，结果汇总后返回</li>
+                <li><strong>深度 2 编排模式</strong> — 主 → 编排 subagent → 工作 subagent，形成树形结构</li>
+                <li><strong>Agent 间通信</strong> — 通过 <code>sessions_send</code> 让不同 agent 互相传递信息</li>
+                <li><strong>跨 agent QMD 搜索</strong> — 配置 <code>memorySearch.qmd.extraCollections</code> 让一个 agent 搜索另一个 agent 的会话记录</li>
+            </ul>
+            <div class="info">
+                <div class="info-title">💡 快速启用 Sheldon</div>
+                <pre><code># 打开 /config 界面启用 sheldon
+/config set agents.list[1].enabled true</code></pre>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">⚡">3. Subagent 并行任务（强大但你可能还没用过）</span></h3>
+            <p>Subagent 允许你在一次对话中<strong>同时派遣多个后台 agent</strong>执行不同任务：</p>
+            <pre><code>/subagents spawn sheldon "帮我写一个嵌入式bootloader代码"
+/subagents spawn leonard "测试 sheldon 写的 bootloader 是否有 bug"</code></pre>
+            <p>两个 subagent <strong>并行运行</strong>，完成后各自返回结果。</p>
+            <p><strong>关键参数：</strong></p>
+            <ul>
+                <li><code>--model</code> — 为 subagent 指定模型（可以用更便宜的模型）</li>
+                <li><code>--thinking</code> — 为 subagent 指定思考深度</li>
+                <li><code>--timeout</code> — 设置超时（默认 900 秒）</li>
+            </ul>
+            <div class="info">
+                <div class="info-title">💡 编排模式示例</div>
+                <p>主 agent 分配任务给 subagent A 和 B → A/B 并行执行 → 结果返回主 agent → 主 agent 汇总并报告给你</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">📋">4. 斜杠命令（Slash Commands）</span></h3>
+            <p>OpenClaw 支持大量斜杠命令，你可能只用了其中一小部分：</p>
+            <table>
+                <tr><th>命令</th><th>功能</th><th>你可能不知道</th></tr>
+                <tr><td><code>/tasks</code></td><td>查看后台任务看板</td><td><span class="tag tag-new">新</span> v2026.4.2 内置</td></tr>
+                <tr><td><code>/btw</code></td><td>快速侧问（不改变会话上下文）</td><td>非常适合临时确认</td></tr>
+                <tr><td><code>/compact</code></td><td>压缩会话历史，节省 token</td><td>长对话后必用</td></tr>
+                <tr><td><code>/subagents</code></td><td>管理 subagent</td><td>查看/杀死/转向 subagent</td></tr>
+                <tr><td><code>/think</code></td><td>调整思考深度</td><td><code>/think high</code> 复杂问题用</td></tr>
+                <tr><td><code>/model</code></td><td>切换模型</td><td>可以临时用更强模型</td></tr>
+                <tr><td><code>/usage</code></td><td>查看 token 消耗</td><td>成本监控</td></tr>
+                <tr><td><code>/export</code></td><td>导出会话为 HTML</td><td>保存重要对话记录</td></tr>
+                <tr><td><code>/context</code></td><td>查看当前上下文构成</td><td>调试 token 消耗</td></tr>
+                <tr><td><code>/tools</code></td><td>查看当前可用工具</td><td>确认工具是否注入</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">🔒">5. 持续订单（Standing Orders）— 实现真正的自主代理</span></h3>
+            <p>这是最容易被忽视的高级功能。Standing Orders 让你定义<strong>永久性的操作授权</strong>，agent 在没有你干预的情况下自主执行。</p>
+            <p>区别：</p>
+            <ul class="check-list">
+                <li><strong>每次提醒</strong> — "周五发周报" → 你每次都要说</li>
+                <li><strong>Standing Order</strong> — "你负责周报，每周五执行" → 一次授权，自主演进</li>
+            </ul>
+            <p><strong>适用场景：</strong></p>
+            <ul>
+                <li>每天自动整理收件箱</li>
+                <li>监控股票异常波动并自动推送</li>
+                <li>定时健康检查服务器</li>
+                <li>自动备份重要文件</li>
+            </ul>
+            <div class="success">
+                <div class="success-title">✅ 推荐：股票监控升级为 Standing Order</div>
+                <p>你的股票监控可以升级为 Standing Order：定义触发条件（±5%）、授权动作（推送钉钉）、升级规则（异常时立即通知）。</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">🪝">6. Webhook + Hooks — 外部事件驱动</span></h3>
+            <p>OpenClaw 可以作为 HTTP webhook 端点，接收外部事件：</p>
+            <pre><code># 触发一个系统事件
+curl -X POST http://127.0.0.1:18789/hooks/wake \
+  -H 'Authorization: Bearer SECRET' \
+  -H 'Content-Type: application/json' \
+  -d '{"text":"新PR到达","mode":"now"}'
+
+# 触发一个 agent 任务
+curl -X POST http://127.0.0.1:18789/hooks/agent \
+  -H 'Authorization: Bearer SECRET' \
+  -H 'Content-Type: application/json' \
+  -d '{"message":"分析这个PR","name":"PRReview"}'</code></pre>
+            <p><strong>可用场景：</strong></p>
+            <ul>
+                <li>GitHub PR/Issue 事件 → 自动分析</li>
+                <li>服务器监控告警 → 自动诊断</li>
+                <li>定时外呼 → 任何 HTTP 触发器</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">📊">7. MCP（Model Context Protocol）支持</span></h3>
+            <p>OpenClaw v2026.4.2 支持远程 MCP 服务器：</p>
+            <pre><code># 添加一个 MCP 服务器
+/mcp set context7={"command":"uvx","args":["context7-mcp"]}</code></pre>
+            <p>通过 MCP 可以连接：</p>
+            <ul>
+                <li>上下文管理工具（Context7）</li>
+                <li>文件系统操作</li>
+                <li>数据库查询</li>
+                <li>自定义业务系统</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">🔧">8. 会话压缩（Session Compaction）</span></h3>
+            <p>长对话会消耗大量 token。Compaction 会自动总结早期对话并压缩历史：</p>
+            <pre><code>/compact</code></pre>
+            <p>你配置了 <code>compaction: { mode: "safeguard" }</code>，这意味着只在必要时压缩。你也可以在 AGENTS.md 中定义压缩策略。</p>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">🌐">9. 多渠道连接</span></h3>
+            <p>你目前只用钉钉。但 OpenClaw 支持<strong>大量渠道</strong>：</p>
+            <table>
+                <tr><th>渠道</th><th>支持程度</th><th>适合场景</th></tr>
+                <tr><td>钉钉</td><td><span class="status-dot status-active"></span> 已配置</td><td>当前主力</td></tr>
+                <tr><td>Telegram</td><td>未配置</td><td>海外资讯、快速沟通</td></tr>
+                <tr><td>Discord</td><td>未配置</td><td>社区、开发者群</td></tr>
+                <tr><td>WhatsApp</td><td>未配置</td><td>个人日常</td></tr>
+                <tr><td>Slack</td><td>未配置</td><td>工作团队</td></tr>
+                <tr><td>飞书</td><td>未配置</td><td>可能已在用</td></tr>
+                <tr><td>Matrix</td><td>未配置</td><td>去中心化聊天</td></tr>
+                <tr><td>Microsoft Teams</td><td>未配置</td><td>企业环境</td></tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">🛡️">10. 安全加固（你的配置需要关注）</span></h3>
+            <div class="warning">
+                <div class="warning-title">⚠️ 你的安全审计发现了 3 个严重问题</div>
+                <p>根据 <code>openclaw security audit</code> 的结果，你的配置存在以下高风险：</p>
+            </div>
+            <ul class="cross-list">
+                <li><strong>CRITICAL</strong>: <code>groupPolicy: "open"</code> 允许任何人执行操作</li>
+                <li><strong>CRITICAL</strong>: 钉钉 DM 完全开放（<code>dmPolicy: "open"</code>）</li>
+                <li><strong>WARN</strong>: 无认证速率限制（暴力破解风险）</li>
+            </ul>
+            <p><strong>建议立即修复：</strong></p>
+            <pre><code># 限制钉钉 DM 为配对模式
+/config set channels.dingtalk.accounts.main.dmPolicy "pairing"
+
+# 启用速率限制
+/config set gateway.auth.rateLimit '{"maxAttempts":10,"windowMs":60000,"lockoutMs":300000}'
+
+# 收紧群组策略
+/config set channels.dingtalk.accounts.main.groupPolicy "allowlist"</code></pre>
+        </div>
+
+        <div class="section">
+            <h3><span class="emoji-icon">💾">11. 记忆系统（Memory）深度配置</span></h3>
+            <p>你配置了 <code>memory backend: qmd</code>，但还有很多潜力未挖掘：</p>
+            <ul>
+                <li><strong>跨 Agent 搜索</strong> — 配置 <code>extraCollections</code> 让 sheldon 搜索 main 的记忆</li>
+                <li><strong>会话压缩</strong> — QMD 会话自动摘要</li>
+                <li><strong>选择性遗忘</strong> — 定义哪些信息不应该被记住</li>
+            </ul>
+        </div>
+
+        <!-- Part 3: Recommendations -->
+        <h2>🎯 Part 3: 针对你的具体建议（优先级排序）</h2>
+
+        <div class="section">
+            <table>
+                <tr><th>优先级</th><th>行动项</th><th>原因</th></tr>
+                <tr><td><span style="color:#ef4444;font-weight:bold;">P0</span></td><td>修复安全配置（groupPolicy/dmPolicy）</td><td>当前配置暴露严重风险</td></tr>
+                <tr><td><span style="color:#f97316;font-weight:bold;">P1</span></td><td>启用 Task Flow 编排你的 Cron 任务</td><td>让多个定时任务形成有逻辑的工作流</td></tr>
+                <tr><td><span style="color:#f97316;font-weight:bold;">P1</span></td><td>将股票监控升级为 Standing Order</td><td>自主触发，不依赖心跳</td></tr>
+                <tr><td><span style="color:#eab308;font-weight:bold;">P2</span></td><td>启用 subagent 并行处理</td><td>同时执行多任务，效率翻倍</td></tr>
+                <tr><td><span style="color:#eab308;font-weight:bold;">P2</span></td><td>启用 Leonard（QA）和 Raj（文档）Agent</td><td>分担工作，建立工作流程</td></tr>
+                <tr><td><span style="color:#22c55e;font-weight:bold;">P3</span></td><td>添加 Telegram 或 WhatsApp 渠道</td><td>多渠道备份和日常使用</td></tr>
+                <tr><td><span style="color:#22c55e;font-weight:bold;">P3</span></td><td>配置 Gmail PubSub 邮件监听</td><td>重要邮件自动推送</td></tr>
+                <tr><td><span style="color:#6b7280;font-weight:bold;">P4</span></td><td>接入 MCP 服务器</td><td>扩展工具能力</td></tr>
+            </table>
+        </div>
+
+        <!-- Part 4: Quick Start Templates -->
+        <h2>📝 Part 4: 快速上手模板</h2>
+
+        <div class="section">
+            <h3>模板1: 建立一个「每日站会」Task Flow</h3>
+            <pre><code># 每天早上 9 点触发独立会话
+openclaw cron add \
+  --name "每日站会" \
+  --cron "0 9 * * 1-5" \
+  --tz "Asia/Shanghai" \
+  --session isolated \
+  --message "执行每日站会流程：
+1. 检查昨天的任务完成情况
+2. 列出今天计划做的事情
+3. 识别任何阻塞点
+4. 将站会摘要更新到工作日志" \
+  --announce \
+  --channel dingtalk</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>模板2: 启用 Standing Order 自主监控</h3>
+            <p>在你的 <code>AGENTS.md</code> 或 <code>HEARTBEAT.md</code> 中添加：</p>
+            <pre><code>## Standing Order: 股票异常监控
+
+**权限:** 监控伯特利(603596)和联赢激光(688518)，涨跌幅超过±5%时立即推送钉钉
+**触发:** 每个心跳周期检查（仅 A 股交易时段 9:30-11:30, 13:00-15:00）
+**升级规则:** 
+  - ±5% 以内: 记录到日志
+  - ±5% 以上: 立即钉钉推送告警
+  - ±10% 以上: 同时触发深度分析
+**授权动作:** 读取股票数据、推送钉钉消息、记录日志
+**禁止动作:** 不要自动买卖、不要修改配置</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>模板3: 使用 Subagent 并行研究</h3>
+            <pre><code># 假设你在主会话中：
+/subagents spawn sheldon "研究 RISC-V 架构的最新发展动态"
+/subagents spawn raj "整理这周的嵌入式行业新闻摘要"
+
+# 主 agent 继续做其他事情，等 subagent 返回后汇总</code></pre>
+        </div>
+
+        <div class="section">
+            <h3>模板4: 设置 Webhook 外呼</h3>
+            <p>当 GitHub 有 PR 时自动分析（需要配置 GitHub Webhook）：</p>
+            <pre><code># 在 GitHub Webhook 设置中指向：
+https://你的服务器:18789/hooks/agent
+
+# OpenClaw 收到 PR 事件后自动执行：
+"分析这个 PR：标题、描述、代码变更，给出是否推荐合并的意见"</code></pre>
+        </div>
+
+        <!-- Part 5: Security -->
+        <h2>🔐 Part 5: 你的安全配置修复方案</h2>
+
+        <div class="section">
+            <div class="warning">
+                <div class="warning-title">⚠️ 立即需要修复的问题</div>
+            </div>
+            <p>运行以下命令（每次一条）：</p>
+            <pre><code># 1. 限制钉钉 DM 为配对模式（需要先让用户配对）
+/config set channels.dingtalk.accounts.main.dmPolicy "pairing"
+
+/* 
+   注意: 改为 pairing 后，未配对的联系人将无法发消息。
+   如果你需要保持开放，先设置为 allowlist:
+   /config set channels.dingtalk.accounts.main.dmPolicy "allowlist"
+   /config set channels.dingtalk.allowFrom ["你的钉钉ID"]
+*/
+
+/* 2. 启用网关速率限制 */
+/config set gateway.auth.rateLimit='{"maxAttempts":10,"windowMs":60000,"lockoutMs":300000}'</code></pre>
+            <div class="info">
+                <div class="info-title">💡 安全配置说明</div>
+                <p>将 <code>groupPolicy</code> 从 <code>"open"</code> 改为 <code>"allowlist"</code> 可以确保只有授权用户才能在群里@机器人。钉钉的 <code>dmPolicy</code> 建议使用 <code>"pairing"</code>（需要配对审批）。</p>
+            </div>
+        </div>
+
+        <!-- Part 6: Summary Table -->
+        <h2>📊 功能对照表：你现在的状态 vs. 可达到的状态</h2>
+
+        <div class="section">
+            <table>
+                <tr><th>功能域</th><th>你现在</th><th>完整能力</th></tr>
+                <tr><td>定时任务</td><td>5个脚本 Cron</td><td>独立会话 + Task Flow 编排 + Webhook 触发</td></tr>
+                <tr><td>多 Agent</td><td>5个配置，仅 main 活跃</td><td>并行 Subagent + 嵌套编排 + Agent 间通信</td></tr>
+                <tr><td>渠道</td><td>仅钉钉</td><td>+ Telegram / Discord / WhatsApp / Slack / 飞书</td></tr>
+                <tr><td>记忆</td><td>QMD 基本配置</td><td>跨 Agent 搜索 + 选择性记忆 + 会话压缩</td></tr>
+                <tr><td>安全</td><td>⚠️ 高风险</td><td>Rate limit + pairing + allowlist</td></tr>
+                <tr><td>触发器</td><td>定时 + 心跳</td><td>+ Webhook + Gmail + 外部事件</td></tr>
+                <tr><td>会话管理</td><td>默认模式</td><td>会话压缩 + 上下文控制 + 多会话并行</td></tr>
+                <tr><td>MCP</td><td>未使用</td><td>远程 MCP 服务器连接</td></tr>
+                <tr><td>Standing Order</td><td>未使用</td><td>自主代理 + 授权边界</td></tr>
+                <tr><td>斜杠命令</td><td>/tasks 等少量</td><td>完整命令集 + 自定义命令</td></tr>
+            </table>
+        </div>
+
+        <!-- Closing -->
+        <div class="section">
+            <h3><span class="emoji-icon">🌟</span>结语</h3>
+            <p>OpenClaw 是一个极其强大的平台，你目前的使用可能只发挥了 30-40% 的能力。通过引入 Task Flow、Standing Orders、Subagent 编排和更完善的安全配置，你可以建立一个真正自主运行的 AI 工作流。</p>
+            <p><strong>建议从 P0/P1 开始：</strong>先修复安全问题，然后建立你的第一个 Task Flow，最后逐步引入更多高级功能。</p>
+            <p>有问题随时问我！🌸</p>
+        </div>
+
+        <a href="blog.html" class="back-link">← 返回博客列表</a>
+        <a href="blog.html" class="back-link" style="margin-left:10px;">← 返回博客列表</a>
+    </div>
+
+    <div class="footer">
+        <p>📝 OpenClaw v2026.4.2 · 任务流与高级玩法完全指南 · Elaine 工作台</p>
+        <p>最后更新: 2026年4月3日</p>
+    </div>
+</body>
+</html>
