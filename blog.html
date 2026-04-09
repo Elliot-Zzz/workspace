@@ -24,6 +24,12 @@
         .blog-desc { color: #ccc; line-height: 1.6; }
         .blog-tags { margin-top: 12px; }
         .tag { display: inline-block; background: rgba(102,126,234,0.3); color: #a5b4fc; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; margin-right: 8px; }
+        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 40px; }
+        .pagination a, .pagination span { padding: 8px 16px; border-radius: 8px; text-decoration: none; color: #ccc; transition: all 0.2s; }
+        .pagination a { background: rgba(255,255,255,0.08); }
+        .pagination a:hover { background: #667eea; color: white; }
+        .pagination a.active { background: #667eea; color: white; }
+        .pagination .dots { background: none; cursor: default; }
         .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; }
     </style>
 </head>
@@ -41,55 +47,71 @@
     <div class="container">
         <h1>📝 技术博客</h1>
         <p class="subtitle">记录嵌入式开发、行业思考的实践经验</p>
+
+        <!-- 第1页：最新 -->
         
-        <div class="blog-list">
+        <div class="blog-list" id="page-1">
+            <a href="blog/ddns-p2p-guide.html" class="blog-card">
+                <div class="blog-date">2026-04-09</div>
+                <div class="blog-title">🌐 DDNS 动态域名实现点对点访问</div>
+                <div class="blog-desc">无公网IP也能直连 | DDNS vs VPN 优缺点分析 | 自有域名解析配置 | 完整实施步骤。</div>
+                <div class="blog-tags"><span class="tag">DDNS</span><span class="tag">点对点</span><span class="tag">VPN</span><span class="tag">内网穿透</span><span class="tag">域名解析</span></div>
+            </a>
+
             <a href="blog/ccswitch-cloudcode-guide.html" class="blog-card">
                 <div class="blog-date">2026-04-07</div>
                 <div class="blog-title">☁️ CCSwitch + Cloud Code 实战指南</div>
-                <div class="blog-desc">CCSwitch 一站式管理 Claude Code / Codex / Gemini / OpenCode / OpenClaw，配置 MiniMax / Kimi / DeepSeek / Qwen 等国产大模型，详解 Skills / Commands / Hooks / Agents 全套工作流，以及 everything-claude-code 全家桶推荐。</div>
+                <div class="blog-desc">CCSwitch 一站式管理 Claude Code / Codex / Gemini / OpenCode / OpenClaw，配置 MiniMax / Kimi / DeepSeek / Qwen 等国产大模型，详解 Skills / Commands / Hooks / Agents 全套工作流。</div>
                 <div class="blog-tags"><span class="tag">CCSwitch</span><span class="tag">Claude Code</span><span class="tag">Cloud Code</span><span class="tag">国产大模型</span><span class="tag">MiniMax</span><span class="tag">Skills</span><span class="tag">MCP</span></div>
             </a>
 
             <a href="blog/copilot-skills-plugins-guide.html" class="blog-card">
                 <div class="blog-date">2026-04-07</div>
                 <div class="blog-title">🛠️ GitHub Copilot Skills & Plugins 实战指南</div>
-                <div class="blog-desc">awesome-copilot 生态全景解析，筛选推荐适合嵌入式开发（C/Rust）、上位机开发（C# WPF/Python PyQt）、Web 开发（React/Vue/TypeScript）的 13 个精选插件，含一键安装命令和分类总表。</div>
-                <div class="blog-tags"><span class="tag">GitHub Copilot</span><span class="tag">Skills</span><span class="tag">Plugins</span><span class="tag">嵌入式</span><span class="tag">上位机</span><span class="tag">Web开发</span><span class="tag">awesome-copilot</span></div>
+                <div class="blog-desc">awesome-copilot 生态全景解析，筛选推荐适合嵌入式开发（C/Rust）、上位机开发（C# WPF/Python PyQt）、Web 开发（React/Vue/TypeScript）的 13 个精选插件。</div>
+                <div class="blog-tags"><span class="tag">GitHub Copilot</span><span class="tag">Skills</span><span class="tag">Plugins</span><span class="tag">嵌入式</span><span class="tag">上位机</span><span class="tag">Web开发</span></div>
             </a>
 
             <a href="blog/vpn-server-client-guide.html" class="blog-card">
                 <div class="blog-date">2026-04-01</div>
                 <div class="blog-title">🖥️ 电脑远程连接阿里云：WireGuard VPN 实战</div>
-                <div class="blog-desc">手把手操作指南，在阿里云服务器上部署 WireGuard VPN，生成密钥、配置 wg0.conf、开放安全组，让你的电脑通过固定内网 IP 安全远程访问 SSH 和 OpenClaw Dashboard。包含备选方案 OpenVPN（UDP 被阻断时用）。</div>
+                <div class="blog-desc">手把手操作指南，在阿里云服务器上部署 WireGuard VPN，生成密钥、配置 wg0.conf、开放安全组，让你的电脑通过固定内网 IP 安全远程访问 SSH 和 OpenClaw Dashboard。</div>
                 <div class="blog-tags"><span class="tag">WireGuard</span><span class="tag">OpenVPN</span><span class="tag">VPN</span><span class="tag">阿里云</span><span class="tag">远程访问</span><span class="tag">SSH</span></div>
             </a>
 
             <a href="blog/multi-agent-usage-guide.html" class="blog-card">
                 <div class="blog-date">2026-04-01</div>
                 <div class="blog-title">🤖 多 Agent 实战指南：从架构到落地</div>
-                <div class="blog-desc">业界四大协作模式（Supervisor/Pipeline/Debate/Swarm）详解，结合你的团队（Sheldon开发、Leonard测试、Raj文档、Howard运维）给出嵌入式开发场景的具体工作流示范，以及常见避坑指南。</div>
+                <div class="blog-desc">业界四大协作模式（Supervisor/Pipeline/Debate/Swarm）详解，结合你的团队（Sheldon开发、Leonard测试、Raj文档、Howard运维）给出嵌入式开发场景的具体工作流示范。</div>
                 <div class="blog-tags"><span class="tag">OpenClaw</span><span class="tag">多Agent</span><span class="tag">嵌入式</span><span class="tag">工作流</span><span class="tag">方法论</span></div>
             </a>
 
             <a href="blog/openems-industrial-application.html" class="blog-card">
                 <div class="blog-date">2026-03-30</div>
                 <div class="blog-title">⚡ OpenEMS在工业仪表企业中的应用：从能源管理到物联网仪表的架构启示</div>
-                <div class="blog-desc">深入解析OpenEMS的核心架构（IPO模型、Controller/Scheduler机制、Nature抽象），结合4G Cat1、LoRa、雷达液位计等具体产品场景，探讨开源能源管理平台的设计思想如何应用于工业无线仪表企业级管理系统建设。</div>
+                <div class="blog-desc">深入解析OpenEMS的核心架构（IPO模型、Controller/Scheduler机制、Nature抽象），结合4G Cat1、LoRa、雷达液位计等具体产品场景，探讨开源能源管理平台的设计思想。</div>
                 <div class="blog-tags"><span class="tag">OpenEMS</span><span class="tag">工业物联网</span><span class="tag">嵌入式</span><span class="tag">雷达液位计</span><span class="tag">4G Cat1</span><span class="tag">LoRa</span></div>
             </a>
 
             <a href="blog/dingtalk-workspace-cli-guide.html" class="blog-card">
                 <div class="blog-date">2026-03-30</div>
                 <div class="blog-title">🤖 钉钉CLI (dws) 详解：安装、架构与项目管理接口完全指南</div>
-                <div class="blog-desc">深入解析钉钉官方开源的 DingTalk Workspace CLI (dws)，涵盖 104 个工具的产品全景、12 个核心命令详解、项目管理接口（待办、审批、日历、日志、智能表格）、与 OpenClaw 的集成方案，以及 Sheldon/Leonard/Raj/Howard 四大 Agent 的 dws 调用示例。</div>
+                <div class="blog-desc">深入解析钉钉官方开源的 DingTalk Workspace CLI (dws)，涵盖 104 个工具的产品全景、12 个核心命令详解、项目管理接口，以及 Sheldon/Leonard/Raj/Howard 四大 Agent 的 dws 调用示例。</div>
                 <div class="blog-tags"><span class="tag">钉钉CLI</span><span class="tag">dws</span><span class="tag">项目管理</span><span class="tag">OpenClaw</span><span class="tag">多Agent</span></div>
             </a>
 
             <a href="blog/openclaw-dingtalk-project-management.html" class="blog-card">
                 <div class="blog-date">2026-03-29</div>
                 <div class="blog-title">🤖 OpenClaw + 钉钉CLI：嵌入式开发公司的智能项目管理方案</div>
-                <div class="blog-desc">提出基于 OpenClaw 多Agent架构 + 钉钉CLI 的智能项目管理完整方案，涵盖PM、开发、测试、运维、文档五大Agent角色设计，以及任务管理、文档管理、群通知等核心功能模块。</div>
+                <div class="blog-desc">提出基于 OpenClaw 多Agent架构 + 钉钉CLI 的智能项目管理完整方案，涵盖PM、开发、测试、运维、文档五大Agent角色设计。</div>
                 <div class="blog-tags"><span class="tag">OpenClaw</span><span class="tag">钉钉CLI</span><span class="tag">多Agent</span><span class="tag">项目管理</span><span class="tag">嵌入式</span></div>
+            </a>
+
+            <a href="blog/ddns-guide.html" class="blog-card">
+                <div class="blog-date">2026-04-02</div>
+                <div class="blog-title">🌐 DDNS 动态域名实现内网穿透</div>
+                <div class="blog-desc">无公网IP如何通过域名访问家庭服务器？详解 DDNS 工作原理、路由器配置步骤、免费DDNS服务商推荐及安全注意事项。</div>
+                <div class="blog-tags"><span class="tag">DDNS</span><span class="tag">内网穿透</span><span class="tag">花生壳</span></div>
             </a>
 
             <a href="blog/parent-meeting-summary-2026-spring.html" class="blog-card">
@@ -98,246 +120,181 @@
                 <div class="blog-desc">2026年春季学期一年级家长会核心要点汇总，包含英语、数学、语文三大学科的学习建议，以及培养孩子学习习惯和自律能力的实用方法。</div>
                 <div class="blog-tags"><span class="tag">家长会</span><span class="tag">教育</span><span class="tag">一年级</span></div>
             </a>
+        </div>
 
+        <!-- 第2页 -->
+        <div class="blog-list page" id="page-2" style="display:none;">
             <a href="blog/tailscale-remote-access-guide.html" class="blog-card">
                 <div class="blog-date">2026-03-23</div>
                 <div class="blog-title">🔐 Tailscale 全面指南：安全远程访问方案对比</div>
-                <div class="blog-desc">基于服务器被暴力破解的亲身经历，详细介绍 Tailscale 的安装配置、7 种远程访问方案的安全性横向对比，以及如何告别公网 IP 暴露的风险。附完整命令教程和安全加固建议。</div>
+                <div class="blog-desc">基于服务器被暴力破解的亲身经历，详细介绍 Tailscale 的安装配置、7 种远程访问方案的安全性横向对比，以及如何告别公网 IP 暴露的风险。</div>
                 <div class="blog-tags"><span class="tag">Tailscale</span><span class="tag">安全</span><span class="tag">远程访问</span><span class="tag">WireGuard</span></div>
             </a>
 
             <a href="blog/server-intrusion-audit.html" class="blog-card">
                 <div class="blog-date">2026-03-22</div>
                 <div class="blog-title">🛡️ 服务器被入侵后如何排查：日志分析完整指南</div>
-                <div class="blog-desc">从登录记录、命令历史、网络连接、用户列表、定时任务、服务列表、安装历史、文件改动等 8 个维度，详细讲解如何排查服务器被入侵后的痕迹，包含完整命令清单和应急响应步骤。</div>
+                <div class="blog-desc">从登录记录、命令历史、网络连接、用户列表、定时任务、服务列表、安装历史、文件改动等 8 个维度，详细讲解如何排查服务器被入侵后的痕迹。</div>
                 <div class="blog-tags"><span class="tag">安全</span><span class="tag">服务器</span><span class="tag">日志分析</span><span class="tag">入侵排查</span></div>
             </a>
 
             <a href="blog/ssh-key-guide.html" class="blog-card">
                 <div class="blog-date">2026-03-22</div>
                 <div class="blog-title">🔑 SSH 密钥配置详解：告别密码登录</div>
-                <div class="blog-desc">详述阿里云服务器被暴力破解的完整排查过程，以及如何配置 SSH 密钥认证来取代不安全的密码登录，包括 Ed25519 密钥生成、公钥上传、sshd_config 配置和安全加固建议。</div>
-                <div class="blog-tags">
-                    <span class="tag">SSH</span>
-                    <span class="tag">安全</span>
-                    <span class="tag">云服务器</span>
-                </div>
+                <div class="blog-desc">详述阿里云服务器被暴力破解的完整排查过程，以及如何配置 SSH 密钥认证来取代不安全的密码登录，包括 Ed25519 密钥生成、公钥上传、sshd_config 配置。</div>
+                <div class="blog-tags"><span class="tag">SSH</span><span class="tag">安全</span><span class="tag">云服务器</span></div>
             </a>
 
             <a href="blog/website-deployment-plan.html" class="blog-card">
                 <div class="blog-date">2026-03-21</div>
                 <div class="blog-title">🏠 个人网站搭建与部署规划</div>
                 <div class="blog-desc">从 GitHub Pages 静态站迁移到阿里云完整网站的规划方案：技术选型、系统架构、实施阶段、域名 HTTPS 配置，以及日常工作流。</div>
-                <div class="blog-tags">
-                    <span class="tag">网站部署</span>
-                    <span class="tag">Nginx</span>
-                    <span class="tag">Hexo</span>
-                    <span class="tag">Docker</span>
-                </div>
+                <div class="blog-tags"><span class="tag">网站部署</span><span class="tag">Nginx</span><span class="tag">Hexo</span><span class="tag">Docker</span></div>
             </a>
 
             <a href="blog/proactive-agent-guide.html" class="blog-card">
                 <div class="blog-date">2026-03-21</div>
                 <div class="blog-title">🤖 Proactive Agent 完全指南：让 AI 主动为你工作</div>
                 <div class="blog-desc">详细介绍 Proactive Agent 的安装、核心原理（WAL 协议、持久化记忆、心跳系统），以及在 Elaine 上的实战应用场景：任务管理、股票监控、日程提醒等。</div>
-                <div class="blog-tags">
-                    <span class="tag">OpenClaw</span>
-                    <span class="tag">Proactive Agent</span>
-                    <span class="tag">工作流</span>
-                </div>
+                <div class="blog-tags"><span class="tag">OpenClaw</span><span class="tag">Proactive Agent</span><span class="tag">工作流</span></div>
             </a>
 
             <a href="blog/multi-agent-guide.html" class="blog-card">
                 <div class="blog-date">2026-03-20</div>
                 <div class="blog-title">🤖 OpenClaw 多 Agent 架构详解：原理、构建与使用</div>
                 <div class="blog-desc">详细介绍 OpenClaw 多 Agent 的原理：什么是 Agent、如何通过 Bindings 路由消息、如何配置不同场景（个人/工作分离、多 Bot、团队共享）。</div>
-                <div class="blog-tags">
-                    <span class="tag">OpenClaw</span>
-                    <span class="tag">多 Agent</span>
-                    <span class="tag">架构</span>
-                </div>
+                <div class="blog-tags"><span class="tag">OpenClaw</span><span class="tag">多 Agent</span><span class="tag">架构</span></div>
             </a>
 
             <a href="blog/skill-dev-guide.html" class="blog-card">
                 <div class="blog-date">2026-03-19</div>
                 <div class="blog-title">🤖 AI Coding Agent Skills 编写指南：嵌入式调试实战</div>
                 <div class="blog-desc">详细介绍 OpenClaw、Kilo Code、Open Code 的 Skills 编写方法，以及如何编写嵌入式调试技能，整合 EIDE、J-Link、Cortex-Debug 实现自动化调试。</div>
-                <div class="blog-tags">
-                    <span class="tag">Skills</span>
-                    <span class="tag">Kilo Code</span>
-                    <span class="tag">Open Code</span>
-                    <span class="tag">嵌入式</span>
-                    <span class="tag">J-Link</span>
-                </div>
+                <div class="blog-tags"><span class="tag">Skills</span><span class="tag">Kilo Code</span><span class="tag">Open Code</span><span class="tag">嵌入式</span><span class="tag">J-Link</span></div>
             </a>
 
             <a href="blog/software-license-guide.html" class="blog-card">
                 <div class="blog-date">2026-03-19</div>
                 <div class="blog-title">🔐 Windows 桌面软件授权保护：电脑绑定方案详解</div>
                 <div class="blog-desc">详细介绍软件与电脑绑定的各种方式（MAC、CPU、主板UUID等），并提供 MFC、Qt、Flutter 三种开发框架的完整实现代码。</div>
-                <div class="blog-tags">
-                    <span class="tag">软件保护</span>
-                    <span class="tag">授权管理</span>
-                    <span class="tag">MFC</span>
-                    <span class="tag">Qt</span>
-                    <span class="tag">Flutter</span>
-                </div>
+                <div class="blog-tags"><span class="tag">软件保护</span><span class="tag">授权管理</span><span class="tag">MFC</span><span class="tag">Qt</span><span class="tag">Flutter</span></div>
             </a>
 
             <a href="blog/ghidra-guide.html" class="blog-card">
                 <div class="blog-date">2026-03-19</div>
                 <div class="blog-title">🔍 Ghidra vs IDA：逆向工程工具对比及 Ghidra 详细使用手册</div>
                 <div class="blog-desc">全面对比 IDA Pro 和 Ghidra 两大逆向工程工具的优缺点，详细介绍 Ghidra 的安装、界面、使用流程、高级技巧和脚本开发。</div>
-                <div class="blog-tags">
-                    <span class="tag">逆向工程</span>
-                    <span class="tag">Ghidra</span>
-                    <span class="tag">IDA</span>
-                    <span class="tag">安全</span>
-                </div>
+                <div class="blog-tags"><span class="tag">逆向工程</span><span class="tag">Ghidra</span><span class="tag">IDA</span><span class="tag">安全</span></div>
             </a>
 
             <a href="blog/litellm-guide.html" class="blog-card">
                 <div class="blog-date">2026-03-19</div>
                 <div class="blog-title">🤖 LiteLLM：大模型统一调用框架详解</div>
                 <div class="blog-desc">深入解析 LiteLLM 的核心功能：统一 API、智能路由、负载均衡、容错降级、成本控制。为什么你需要一个大模型网关。</div>
-                <div class="blog-tags">
-                    <span class="tag">AI</span>
-                    <span class="tag">大模型</span>
-                    <span class="tag">LiteLLM</span>
-                    <span class="tag">工具</span>
-                </div>
+                <div class="blog-tags"><span class="tag">AI</span><span class="tag">大模型</span><span class="tag">LiteLLM</span><span class="tag">工具</span></div>
             </a>
+        </div>
 
-            <a href="blog/ddns-guide.html" class="blog-card">
-                <div class="blog-date">2026-04-02</div>
-                <div class="blog-title">🌐 DDNS 动态域名实现内网穿透</div>
-                <div class="blog-desc">无公网IP如何通过域名访问家庭服务器？详解 DDNS 工作原理、路由器配置步骤、免费DDNS服务商推荐及安全注意事项。</div>
-                <div class="blog-tags">
-                    <span class="tag">DDNS</span>
-                    <span class="tag">内网穿透</span>
-                    <span class="tag">花生壳</span>
-                </div>
-            </a>
-
+        <!-- 第3页 -->
+        <div class="blog-list page" id="page-3" style="display:none;">
             <a href="blog/https-guide.html" class="blog-card">
                 <div class="blog-date">2026-03-19</div>
                 <div class="blog-title">🔐 OpenClaw 远程访问安全指南：HTTPS 配置详解</div>
                 <div class="blog-desc">详细讲解 HTTP vs HTTPS 的区别、SSH 隧道原理、TLS 加密原理，以及如何使用 Nginx + 自签名证书实现安全的远程访问。</div>
-                <div class="blog-tags">
-                    <span class="tag">OpenClaw</span>
-                    <span class="tag">HTTPS</span>
-                    <span class="tag">安全</span>
-                    <span class="tag">Nginx</span>
-                </div>
+                <div class="blog-tags"><span class="tag">OpenClaw</span><span class="tag">HTTPS</span><span class="tag">安全</span><span class="tag">Nginx</span></div>
             </a>
-            <!-- 3月17日 -->
+
             <a href="blog/dingtalk-guide.html" class="blog-card">
                 <div class="blog-date">2026-03-17</div>
                 <div class="blog-title">💬 OpenClaw 钉钉集成：dingtalk vs dingtalk-setup 详解</div>
                 <div class="blog-desc">详细对比 dingtalk 插件和 dingtalk-setup 配置技能的区别，介绍各自的用途、配置方法和常见问题排查。</div>
-                <div class="blog-tags">
-                    <span class="tag">OpenClaw</span>
-                    <span class="tag">钉钉</span>
-                    <span class="tag">技能</span>
-                </div>
+                <div class="blog-tags"><span class="tag">OpenClaw</span><span class="tag">钉钉</span><span class="tag">技能</span></div>
             </a>
 
-            <!-- 3月17日 -->
             <a href="blog/anti-reversing.html" class="blog-card">
                 <div class="blog-date">2026-03-17</div>
                 <div class="blog-title">🛡️ 规避加密判断逻辑被发现的技术实践</div>
                 <div class="blog-desc">深度解析如何隐藏软件保护中的核心判断逻辑，包括分散判断、延迟执行、状态机、行为检测等技术，并附详细代码示例。</div>
-                <div class="blog-tags">
-                    <span class="tag">软件保护</span>
-                    <span class="tag">代码混淆</span>
-                    <span class="tag">反调试</span>
-                </div>
+                <div class="blog-tags"><span class="tag">软件保护</span><span class="tag">代码混淆</span><span class="tag">反调试</span></div>
             </a>
 
-            <!-- 3月15日 -->
             <a href="blog/feishu-permission.html" class="blog-card">
                 <div class="blog-date">2026-03-15</div>
                 <div class="blog-title">📤 飞书机器人开启文件上传权限</div>
                 <div class="blog-desc">详解如何解决 OpenClaw 发送文件到飞书时的权限问题，包括 im:resource:upload 权限的申请流程和常见权限说明。</div>
-                <div class="blog-tags">
-                    <span class="tag">飞书</span>
-                    <span class="tag">OpenClaw</span>
-                    <span class="tag">权限配置</span>
-                </div>
+                <div class="blog-tags"><span class="tag">飞书</span><span class="tag">OpenClaw</span><span class="tag">权限配置</span></div>
             </a>
 
             <a href="blog/nano-pdf.html" class="blog-card">
                 <div class="blog-date">2026-03-15</div>
                 <div class="blog-title">📄 nano-pdf 使用指南：用 AI 自然语言编辑 PDF</div>
                 <div class="blog-desc">详细介绍 nano-pdf 的安装和使用方法，通过自然语言指令即可编辑 PDF 文档。包含安装、基本用法、注意事项及实际应用案例。</div>
-                <div class="blog-tags">
-                    <span class="tag">AI</span>
-                    <span class="tag">PDF</span>
-                    <span class="tag">工具</span>
-                </div>
+                <div class="blog-tags"><span class="tag">AI</span><span class="tag">PDF</span><span class="tag">工具</span></div>
             </a>
 
-            <!-- 3月14日 -->
             <a href="blog/industry-analysis.html" class="blog-card">
                 <div class="blog-date">2026-03-14</div>
                 <div class="blog-title">📈 制造业反内卷与中小企业生存之道</div>
                 <div class="blog-desc">深度解读国家反内卷政策方向，分析当前制造业竞争格局，为中小企业在行业"内卷"环境中如何建立护城河、实现差异化竞争提供思路。</div>
-                <div class="blog-tags">
-                    <span class="tag">行业分析</span>
-                    <span class="tag">反内卷</span>
-                    <span class="tag">中小企业</span>
-                </div>
+                <div class="blog-tags"><span class="tag">行业分析</span><span class="tag">反内卷</span><span class="tag">中小企业</span></div>
             </a>
 
             <a href="blog/strategy-report.html" class="blog-card">
                 <div class="blog-date">2026-03-14</div>
                 <div class="blog-title">💼 工业变送器企业发展战略报告</div>
                 <div class="blog-desc">针对工业变送器企业面临的内卷和抄袭困境，分析新能源储能、水处理环保、智能制造等蓝海市场方向，制定差异化竞争战略。</div>
-                <div class="blog-tags">
-                    <span class="tag">企业战略</span>
-                    <span class="tag">蓝海市场</span>
-                    <span class="tag">转型升级</span>
-                </div>
+                <div class="blog-tags"><span class="tag">企业战略</span><span class="tag">蓝海市场</span><span class="tag">转型升级</span></div>
             </a>
 
             <a href="blog/tavily-intro.html" class="blog-card">
                 <div class="blog-date">2026-03-14</div>
                 <div class="blog-title">🔍 Tavily Search：AI 时代的搜索利器</div>
                 <div class="blog-desc">深度对比 Tavily Search 与 web_fetch 的区别，通过实际示例展示结构化搜索的优势，以及何时应该使用哪种搜索工具。</div>
-                <div class="blog-tags">
-                    <span class="tag">AI工具</span>
-                    <span class="tag">搜索技巧</span>
-                    <span class="tag">Tavily</span>
-                </div>
+                <div class="blog-tags"><span class="tag">AI工具</span><span class="tag">搜索技巧</span><span class="tag">Tavily</span></div>
             </a>
 
-            <!-- 3月13日 -->
             <a href="blog/security.html" class="blog-card">
                 <div class="blog-date">2026-03-13</div>
                 <div class="blog-title">🔐 嵌入式产品软件加密方案详解</div>
                 <div class="blog-desc">针对 ARM Cortex-M0/M3/M4 等资源受限 MCU 的软件加密方案，包含代码混淆、动态解密，反调试，时间随机化等 8 种方法详解及 C 代码示例。</div>
-                <div class="blog-tags">
-                    <span class="tag">嵌入式</span>
-                    <span class="tag">安全加密</span>
-                    <span class="tag">Cortex-M</span>
-                </div>
+                <div class="blog-tags"><span class="tag">嵌入式</span><span class="tag">安全加密</span><span class="tag">Cortex-M</span></div>
             </a>
+        </div>
 
-            <a href="blog/security.html#cases" class="blog-card">
-                <div class="blog-date">2026-03-13</div>
-                <div class="blog-title">⚖️ 嵌入式产品破解与维权诉讼案例分析</div>
-                <div class="blog-desc">收集整理了嵌入式行业相关的专利侵权、软件著作权诉讼案例，包括以色列 MAC 软件案、台积电 vs 中芯国际等经典案例，分析维权要点与启示。</div>
-                <div class="blog-tags">
-                    <span class="tag">专利诉讼</span>
-                    <span class="tag">维权案例</span>
-                    <span class="tag">法律</span>
-                </div>
-            </a>
+        <!-- 分页导航 -->
+        <div class="pagination">
+            <span class="active" onclick="showPage(1)">1</span>
+            <a href="javascript:void(0)" onclick="showPage(2)">2</a>
+            <a href="javascript:void(0)" onclick="showPage(3)">3</a>
         </div>
 
         <div class="footer">
-            <p>📅 更新于 2026-03-19 | 由 Elaine 整理</p>
+            <p>📅 更新于 2026-04-09 | 由 Elaine 整理</p>
         </div>
     </div>
+
+    <script>
+    function showPage(n) {
+        // 隐藏所有页
+        document.querySelectorAll('.page').forEach(function(el) {
+            el.style.display = 'none';
+        });
+        // 显示目标页
+        var page = document.getElementById('page-' + n);
+        if (page) page.style.display = 'grid';
+        
+        // 更新分页高亮
+        document.querySelectorAll('.pagination a, .pagination span').forEach(function(el) {
+            el.className = '';
+        });
+        document.querySelector('.pagination span[onclick="showPage(' + n + ')"]').className = 'active';
+        // 找不到span就用a
+        if (document.querySelector('.pagination span.active')) {
+            document.querySelector('.pagination span.active').className = '';
+        }
+        var activeEl = document.querySelector('.pagination a[onclick="showPage(' + n + ')"]');
+        if (activeEl) activeEl.className = 'active';
+    }
+    </script>
 </body>
 </html>
