@@ -25,8 +25,7 @@
         .blog-tags { margin-top: 12px; }
         .tag { display: inline-block; background: rgba(102,126,234,0.3); color: #a5b4fc; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; margin-right: 8px; }
         .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 40px; }
-        .pagination a, .pagination span { padding: 8px 16px; border-radius: 8px; text-decoration: none; color: #ccc; transition: all 0.2s; }
-        .pagination a { background: rgba(255,255,255,0.08); }
+        .pagination a { padding: 8px 16px; border-radius: 8px; text-decoration: none; color: #ccc; transition: all 0.2s; background: rgba(255,255,255,0.08); }
         .pagination a:hover { background: #667eea; color: white; }
         .pagination a.active { background: #667eea; color: white; }
         .pagination .dots { background: none; cursor: default; }
@@ -123,7 +122,7 @@
         </div>
 
         <!-- 第2页 -->
-        <div class="blog-list page" id="page-2" style="display:none;">
+        <div class="blog-list" id="page-2" style="display:none;">
             <a href="blog/tailscale-remote-access-guide.html" class="blog-card">
                 <div class="blog-date">2026-03-23</div>
                 <div class="blog-title">🔐 Tailscale 全面指南：安全远程访问方案对比</div>
@@ -196,7 +195,7 @@
         </div>
 
         <!-- 第3页 -->
-        <div class="blog-list page" id="page-3" style="display:none;">
+        <div class="blog-list" id="page-3" style="display:none;">
             <a href="blog/https-guide.html" class="blog-card">
                 <div class="blog-date">2026-03-19</div>
                 <div class="blog-title">🔐 OpenClaw 远程访问安全指南：HTTPS 配置详解</div>
@@ -263,9 +262,9 @@
 
         <!-- 分页导航 -->
         <div class="pagination">
-            <span class="active" onclick="showPage(1)">1</span>
-            <a href="javascript:void(0)" onclick="showPage(2)">2</a>
-            <a href="javascript:void(0)" onclick="showPage(3)">3</a>
+            <a href="javascript:void(0)" id="btn-1" class="pagination-btn active" onclick="showPage(1)">1</a>
+            <a href="javascript:void(0)" id="btn-2" class="pagination-btn" onclick="showPage(2)">2</a>
+            <a href="javascript:void(0)" id="btn-3" class="pagination-btn" onclick="showPage(3)">3</a>
         </div>
 
         <div class="footer">
@@ -275,26 +274,20 @@
 
     <script>
     function showPage(n) {
-        // 隐藏所有页
-        document.querySelectorAll('.page').forEach(function(el) {
-            el.style.display = 'none';
-        });
+        // 隐藏所有页（用ID精确匹配）
+        document.getElementById('page-1').style.display = 'none';
+        document.getElementById('page-2').style.display = 'none';
+        document.getElementById('page-3').style.display = 'none';
         // 显示目标页
-        var page = document.getElementById('page-' + n);
-        if (page) page.style.display = 'grid';
-        
+        document.getElementById('page-' + n).style.display = 'grid';
         // 更新分页高亮
-        document.querySelectorAll('.pagination a, .pagination span').forEach(function(el) {
-            el.className = '';
+        document.querySelectorAll('.pagination-btn').forEach(function(el) {
+            el.classList.remove('active');
         });
-        document.querySelector('.pagination span[onclick="showPage(' + n + ')"]').className = 'active';
-        // 找不到span就用a
-        if (document.querySelector('.pagination span.active')) {
-            document.querySelector('.pagination span.active').className = '';
-        }
-        var activeEl = document.querySelector('.pagination a[onclick="showPage(' + n + ')"]');
-        if (activeEl) activeEl.className = 'active';
+        document.getElementById('btn-' + n).classList.add('active');
     }
+    // 默认显示第1页
+    showPage(1);
     </script>
 </body>
 </html>
