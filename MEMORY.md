@@ -68,6 +68,10 @@
 | **Raj** | 文档管理 | 项目文档索引，知识库维护 |
 | **Howard** | 运维Agent | 环境管理，CI/CD，发布，告警通知 |
 
+## NBA战报规则
+- **只爬今天**：NBA战报脚本 `scripts/nba-report.py` 只抓当天比赛，不历史存档
+- 不要在脚本里加每日存档功能，用户不需要
+
 ## 网站相关
 
 - **GitHub Pages 地址**: https://elliot-zzz.github.io/workspace/
