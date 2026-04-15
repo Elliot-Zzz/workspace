@@ -9,6 +9,7 @@ import subprocess
 import re
 import json
 import sys
+import os
 from datetime import datetime
 
 def fetch_nba_data(date_str):
@@ -139,10 +140,44 @@ def generate_report(matches, date_str):
 
     print("\n".join(lines))
 
+def save_daily_report(matches, date_str):
+    """保存每日NBA战报到 memory 目录"""
+    today_file = f"/home/elliot/.openclaw/workspace/memory/{date_str}-nba.md"
+    os.makedirs(os.path.dirname(today_file), exist_ok=True)
+
+    lines = []
+    lines.append(f"# NBA战报 {date_str}")
+    lines.append("")
+
+    if not matches:
+        lines.append("今日暂无NBA比赛数据")
+        with open(today_file, 'w') as f:
+            f.write('\n'.join(lines))
+        return
+
+    lines.append(f"## 比赛数据（共 {len(matches)} 场）")
+    lines.append("")
+    lines.append("| 主队 | 比分 | 客队 | 状态 |")
+    lines.append("|------|------|------|------|")
+
+    for m in matches:
+        try:
+            lg = int(m['leftGoal'])
+            rg = int(m['rightGoal'])
+        except:
+            lg, rg = 0, 0
+        status = m['status'].strip() if m['status'] else "-"
+        lines.append(f"| {m['left']} | {lg} - {rg} | {m['right']} | {status} |")
+
+    with open(today_file, 'w') as f:
+        f.write('\n'.join(lines))
+    print(f"[nba-report] 已保存到 {today_file}", file=sys.stderr)
+
 def main():
     today = datetime.now().strftime('%Y-%m-%d')
     data = fetch_nba_data(today)
     matches = extract_nba_matches(data)
+    save_daily_report(matches, today)
     generate_report(matches, today)
 
 if __name__ == '__main__':
