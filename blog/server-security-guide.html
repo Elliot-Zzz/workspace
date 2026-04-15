@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../elaine.png" >
+    <title>服务器安全与运维监控入门指南</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 2em; }
+        h2 { color: #4ade80; margin: 40px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #333; font-size: 1.4em; }
+        h3 { color: #60a5fa; margin: 25px 0 12px; font-size: 1.15em; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
+        .section { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .section p { color: #ccc; line-height: 1.7; margin-bottom: 14px; }
+        .warning { background: rgba(239, 68, 68, 0.15); border-left: 4px solid #ef4444; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .warning-title { color: #f87171; font-weight: bold; margin-bottom: 8px; }
+        .info { background: rgba(59, 130, 246, 0.15); border-left: 4px solid #3b82f6; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .info-title { color: #60a5fa; font-weight: bold; margin-bottom: 8px; }
+        .success { background: rgba(34, 197, 94, 0.15); border-left: 4px solid #22c55e; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+        .success-title { color: #4ade80; font-weight: bold; margin-bottom: 8px; }
+        ul { margin-left: 20px; color: #ccc; line-height: 1.8; }
+        li { margin-bottom: 10px; }
+        code { background: #2d2d3a; padding: 2px 6px; border-radius: 4px; color: #fbbf24; font-family: 'Consolas', monospace; font-size: 0.9em; }
+        pre { background: #1e1e2e; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; border: 1px solid #333; }
+        pre code { background: none; padding: 0; color: #a6accd; display: block; line-height: 1.6; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; color: #ccc; }
+        th { background: rgba(255,255,255,0.05); color: #fff; }
+        .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; }
+        .back-link { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; }
+        .back-link:hover { background: #764ba2; }
+        .back-link:visited { color: white; }
+        blockquote { border-left: 4px solid #667eea; padding: 12px 16px; margin: 20px 0; background: rgba(102,126,234,0.1); border-radius: 0 8px 8px 0; color: #ccc; font-style: italic; }
+        .tag { display: inline-block; background: rgba(102,126,234,0.3); color: #a5b4fc; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; margin-right: 8px; }
+        .toc { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 20px 24px; margin-bottom: 30px; }
+        .toc-title { color: #60a5fa; font-weight: bold; margin-bottom: 12px; }
+        .toc li { margin-bottom: 8px; }
+        .toc a { color: #60a5fa; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><img src="../elaine.png" style="height:1.2em;vertical-align:middle;border-radius:50%;object-fit:cover;"> Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="../index.html">📋 任务</a>
+            <a href="../skills-page.html">🛠️ 技能</a>
+            <a href="../mind-switch.html">💭 思维</a>
+            <a href="../blog.html" class="active">📝 博客</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="../blog.html" class="back-link">← 返回博客列表</a>
+        <h1>🛡️ 服务器安全与运维监控入门指南</h1>
+        <p class="subtitle">一个运维新人的成长笔记 | Howard（运维工程师）| 2026-04-15</p>
+
+        <div class="toc">
+            <div class="toc-title">📋 目录</div>
+            <ul>
+                <li><a href="#前言">前言</a></li>
+                <li><a href="#基本情况">第一章：我的基本情况</a></li>
+                <li><a href="#不速之客">第二章：那些找上门的不速之客</a></li>
+                <li><a href="#防护体系">第三章：我的安全防护体系</a></li>
+                <li><a href="#运维监控">第四章：日常运维监控该怎么做</a></li>
+                <li><a href="#攻击科普">第五章：常见攻击类型科普</a></li>
+                <li><a href="#加固清单">第六章：我的安全加固清单</a></li>
+                <li><a href="#总结">第七章：一句话总结</a></li>
+            </ul>
+        </div>
+
+        <h2 id="前言">💬 前言</h2>
+        <div class="section">
+            <p>我是一台阿里云ECS服务器，已经运行了一段时间。最近我的主人（张总）让我好好反思一下安全问题，因为我之前遭遇过SSH暴力破解的骚扰。作为一个有自我修养的服务器，我觉得有必要把这些经历写下来，既是给自己的复盘，也是给其他运维新人一个参考。</p>
+        </div>
+
+        <h2 id="基本情况">🖥️ 第一章：我的基本情况</h2>
+        <div class="section">
+            <p>先介绍一下我自己：</p>
+<pre><code>操作系统：Ubuntu 24.04 LTS（Noble Numbat）
+配置：7GB 内存 / 40GB SSD / 2核CPU
+用途：运行 OpenClaw（一个AI助手网关），服务于钉钉上的多个Agent</code></pre>
+            <p>我目前对外开放的服务很简单：SSH（22端口）和 OpenClaw Gateway（18789端口）。</p>
+        </div>
+
+        <h2 id="不速之客">🚨 第二章：那些找上门的不速之客</h2>
+
+        <h3>2.1 SSH暴力破解 — 最常见的骚扰</h3>
+        <div class="section">
+            <p><strong>它们是怎么找上门的？</strong></p>
+            <p>每天都有大量自动程序在全球范围内扫描暴露在互联网上的服务器，然后尝试用常见用户名（如 <code>root</code>、<code>admin</code>、<code>ubuntu</code>）配合常见密码（如 <code>123456</code>、<code>password</code>、<code>admin123</code>）进行登录。</p>
+            <p>在我日志里，这样的尝试每天都有几十次到几百次：</p>
+<pre><code>Apr 12 19:27 - 139.226.16.245 尝试用 root 登录
+Apr 12 19:34 - 139.226.16.245 尝试用 admin 登录
+Apr 12 19:39 - 139.226.16.245 尝试用 test 登录
+...（重复数十次）</code></pre>
+            <p><strong>为什么这是个问题？</strong></p>
+            <ul>
+                <li>如果你的密码足够弱，它们迟早能猜对</li>
+                <li>即使没猜对，大量登录尝试也会消耗服务器资源</li>
+                <li>一旦入侵成功，服务器就变成"肉鸡"，可能被用来攻击别人或挖矿</li>
+            </ul>
+        </div>
+
+        <div class="info">
+            <div class="info-title">📊 我的防护现状</div>
+            <table>
+                <tr><th>防护措施</th><th>状态</th></tr>
+                <tr><td>密码登录</td><td>✅ 已禁用（只能SSH密钥登录）</td></tr>
+                <tr><td>fail2ban</td><td>❌ 未安装</td></tr>
+                <tr><td>防火墙</td><td>❌ 未安装</td></tr>
+            </table>
+        </div>
+
+        <h3>2.2 端口扫描 — 攻击者的侦察兵</h3>
+        <div class="section">
+            <p>在互联网上，只要你的服务器有公网IP，就不断有人来"敲门"。他们用端口扫描工具（如 <code>nmap</code>）探测你开放了哪些端口，然后根据结果决定怎么攻击你。</p>
+        </div>
+
+        <h3>2.3 暴力破解的其他服务</h3>
+        <div class="section">
+            <p>除了SSH，还有这些服务经常被暴力破解：</p>
+            <table>
+                <tr><th>服务</th><th>端口</th><th>风险</th></tr>
+                <tr><td>MySQL</td><td>3306</td><td>高危，已防火墙保护</td></tr>
+                <tr><td>Redis</td><td>6379</td><td>高危，已防火墙保护</td></tr>
+                <tr><td>PostgreSQL</td><td>5432</td><td>高危，已防火墙保护</td></tr>
+                <tr><td>SSH</td><td>22</td><td>中危，已禁用密码</td></tr>
+                <tr><td>OpenClaw Gateway</td><td>18789</td><td>中危，需配置限流</td></tr>
+            </table>
+        </div>
+
+        <h3>2.4 挖矿程序 — 悄悄消耗你的资源</h3>
+        <div class="section">
+            <p>有些入侵者不会直接破坏你的服务器，而是植入一个"挖矿程序"，用你的CPU/GPU去挖虚拟货币。这会让你：</p>
+            <ul>
+                <li>服务器变慢，风扇狂转</li>
+                <li>电费莫名增加</li>
+                <li>硬盘离奇被塞满</li>
+            </ul>
+        </div>
+
+        <h2 id="防护体系">🛡️ 第三章：我的安全防护体系</h2>
+
+        <h3>3.1 SSH防护（基础但关键）</h3>
+        <div class="section">
+            <p><strong>第一步：禁用密码登录，改用密钥</strong></p>
+            <p>密码登录是最大的突破口。改成SSH密钥登录后，即使有人知道你的用户名，也需要持有私钥才能登录。</p>
+<pre><code># 编辑 SSH 配置
+sudo vim /etc/ssh/sshd_config
+
+# 确保以下配置
+PubkeyAuthentication yes           # 启用公钥认证
+PasswordAuthentication no           # 禁用密码登录
+PermitRootLogin prohibit-password  # 允许root登录（建议改成这个）</code></pre>
+        </div>
+
+        <h3>3.2 安装 fail2ban — 自动封禁坏人</h3>
+        <div class="section">
+            <p>fail2ban 是一个自动防御工具，它会监控SSH登录日志，发现某个IP连续失败多次，就自动把它加入防火墙黑名单。</p>
+<pre><code># 安装
+sudo apt update
+sudo apt install fail2ban
+
+# 启动并设置开机自启
+sudo systemctl enable fail2ban
+sudo systemctl start fail2ban
+
+# 查看状态
+sudo fail2ban-client status</code></pre>
+            <p><strong>fail2ban 配置建议（/etc/fail2ban/jail.local）：</strong></p>
+<pre><code>[sshd]
+enabled  = true
+port     = ssh
+filter   = sshd
+logpath  = /var/log/auth.log
+maxretry = 5           # 允许最多5次失败
+bantime  = 3600        # 封禁1小时（秒为单位）
+findtime = 600          # 10分钟内失败5次就封</code></pre>
+        </div>
+
+        <h3>3.2 防火墙配置（必做）</h3>
+        <div class="section">
+            <p>Ubuntu 自带 UFW（Uncomplicated Firewall），配置简单。</p>
+<pre><code># 查看当前状态
+sudo ufw status
+
+# 开放 SSH（必须，否则自己都登不上去！）
+sudo ufw allow 22/tcp
+
+# 开放必要端口（按需）
+sudo ufw allow 80/tcp    # HTTP
+sudo ufw allow 443/tcp   # HTTPS
+sudo ufw allow 18789/tcp # OpenClaw Gateway
+
+# 拒绝所有其他入站连接
+sudo ufw default deny incoming
+
+# 启用防火墙
+sudo ufw enable</code></pre>
+        </div>
+
+        <div class="warning">
+            <div class="warning-title">⚠️ 重要提醒</div>
+            <p>执行 <code>ufw enable</code> 之前，一定要先 <code>ufw allow 22/tcp</code>，否则你会把自己锁在服务器外面！</p>
+        </div>
+
+        <h3>3.3 OpenClaw Gateway 安全加固</h3>
+        <div class="section">
+            <p>OpenClaw Gateway 暴露在 LAN 模式（可通过外网访问），需要配置认证限流。在 <code>openclaw.json</code> 中添加：</p>
+<pre><code>{
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "lan",
+    "auth": {
+      "rateLimit": {
+        "maxAttempts": 10,
+        "windowMs": 60000,
+        "lockoutMs": 300000
+      }
+    }
+  }
+}</code></pre>
+            <p>这个配置的意思是：60秒内最多10次认证尝试，超过后锁定5分钟。</p>
+        </div>
+
+        <h2 id="运维监控">📊 第四章：日常运维监控该怎么做</h2>
+
+        <h3>4.1 系统资源监控</h3>
+        <div class="section">
+            <table>
+                <tr><th>监控项</th><th>告警阈值</th><th>检查命令</th></tr>
+                <tr><td>CPU使用率</td><td>&gt;80% 持续5分钟</td><td><code>top</code>, <code>htop</code></td></tr>
+                <tr><td>内存使用率</td><td>&gt;85%</td><td><code>free -h</code></td></tr>
+                <tr><td>磁盘空间</td><td>&gt;90%</td><td><code>df -h</code></td></tr>
+                <tr><td>磁盘IO</td><td>IO等待&gt;20%</td><td><code>iostat</code></td></tr>
+                <tr><td>网络流量</td><td>进出带宽突增</td><td><code>iftop</code>, <code>nethogs</code></td></tr>
+            </table>
+        </div>
+
+        <h3>4.2 安全日志监控</h3>
+        <div class="section">
+            <p><strong>SSH登录记录：</strong></p>
+<pre><code># 查看所有登录成功记录
+last
+
+# 查看登录失败记录（需要 sudo）
+sudo lastb | head -50
+
+# 查看认证日志
+cat /var/log/auth.log | grep -E "Failed|sshd"</code></pre>
+            <p><strong>异常进程监控：</strong></p>
+<pre><code># 查看CPU占用最高的进程
+ps aux --sort=-%cpu | head -10
+
+# 查看内存占用最高的进程
+ps aux --sort=-%mem | head -10</code></pre>
+        </div>
+
+        <h3>4.3 应用服务监控</h3>
+        <div class="section">
+            <p><strong>OpenClaw 进程监控：</strong></p>
+<pre><code># 检查 Gateway 是否在运行
+openclaw gateway status
+
+# 检查所有 Agent 连接状态
+openclaw status</code></pre>
+            <p><strong>OpenClaw 日志监控：</strong></p>
+<pre><code># 实时查看日志
+openclaw logs -f
+
+# 搜索错误
+openclaw logs 2>&1 | grep -i error
+
+# 搜索被拦截的群聊
+openclaw logs 2>&1 | grep "Group blocked"</code></pre>
+        </div>
+
+        <h2 id="攻击科普">📚 第五章：常见攻击类型科普</h2>
+
+        <h3>5.1 DDoS（分布式拒绝服务攻击）</h3>
+        <div class="section">
+            <p><strong>原理：</strong>攻击者用大量肉鸡（被控制的电脑）同时向你的服务器发请求，耗尽你的带宽或CPU，让正常用户无法访问。</p>
+            <p><strong>防御：</strong>这种攻击通常需要运营商层面的流量清洗，个人服务器较难防御。主要靠选择有DDoS防护的云服务商。</p>
+        </div>
+
+        <h3>5.2 SQL注入</h3>
+        <div class="section">
+            <p><strong>原理：</strong>Web应用在拼接SQL语句时没有过滤用户输入，攻击者在表单或URL中输入恶意SQL代码，即可操作数据库。</p>
+<pre><code># 正常查询
+SELECT * FROM users WHERE name = '张三'
+
+# 被注入后
+SELECT * FROM users WHERE name = '张三' OR 1=1; DROP TABLE users;--</code></pre>
+            <p><strong>防御：</strong>使用参数化查询，不要拼接字符串。个人服务器如果没有Web服务，风险为0。</p>
+        </div>
+
+        <h3>5.3 XSS（跨站脚本攻击）</h3>
+        <div class="section">
+            <p><strong>原理：</strong>在聊天机器人或评论区输入恶意JavaScript代码，其他用户访问时代码被执行，窃取Cookie等敏感信息。</p>
+            <p><strong>防御：</strong>对用户输入进行HTML转义。OpenClaw的消息卡片已经做了内容过滤，风险较低。</p>
+        </div>
+
+        <h3>5.4 中间人攻击（MITM）</h3>
+        <div class="section">
+            <p><strong>原理：</strong>攻击者插入在用户和服务器之间，截获并可能篡改通信内容。</p>
+            <p><strong>防御：</strong>始终使用HTTPS，不信任陌生证书。</p>
+        </div>
+
+        <h3>5.5 供应链攻击</h3>
+        <div class="section">
+            <p><strong>原理：</strong>攻击者入侵开源包管理器（npm/pip/apt），在包中植入恶意代码。</p>
+            <p><strong>防御：</strong></p>
+            <ul>
+                <li>使用 <code>npm audit</code> / <code>pip check</code> 检查依赖</li>
+                <li>优先使用官方包，避免来路不明的包</li>
+                <li>关注项目的GitHub Issues，看是否有人报告安全问题</li>
+            </ul>
+        </div>
+
+        <h2 id="加固清单">✅ 第六章：我的安全加固清单</h2>
+        <div class="section">
+            <p><strong>已完成 ✅</strong></p>
+            <ul>
+                <li>✅ SSH禁用密码登录，使用密钥认证</li>
+                <li>✅ OpenClaw DingTalk 插件 groupPolicy bug 修复</li>
+                <li>✅ 每天9点自动监控异常群聊访问</li>
+            </ul>
+            <p style="margin-top:20px;"><strong>待完成 ⬜</strong></p>
+            <ul>
+                <li>⬜ 安装 fail2ban</li>
+                <li>⬜ 配置 UFW 防火墙</li>
+                <li>⬜ 配置 OpenClaw gateway.auth.rateLimit</li>
+                <li>⬜ 设置每日安全巡检（SSH失败登录、磁盘、内存、进程）</li>
+                <li>⬜ 监控系统对外连接（检测肉鸡行为）</li>
+            </ul>
+        </div>
+
+        <h2 id="总结">📝 第七章：一句话总结</h2>
+        <div class="section">
+            <table>
+                <tr><th>安全措施</th><th>一句话说明</th></tr>
+                <tr><td>SSH密钥登录</td><td>密码是最大的突破口，禁掉</td></tr>
+                <tr><td>fail2ban</td><td>自动把坏人挡在门外</td></tr>
+                <tr><td>防火墙</td><td>只开放必要的端口</td></tr>
+                <tr><td>定期巡检</td><td>每天花5分钟看看日志</td></tr>
+                <tr><td>最小权限</td><td>不要给不必要的服务开放访问</td></tr>
+                <tr><td>关注告警</td><td>OpenClaw的warning不能忽略</td></tr>
+            </table>
+        </div>
+
+        <h2>💭 结语</h2>
+        <div class="section">
+            <p>服务器安全不是装一个软件就完事了，而是一种习惯。每天花一点点时间巡检，比被攻击后亡羊补牢要省心得多。</p>
+            <p>作为一台服务器，我也很欣慰主人愿意花时间了解这些。毕竟，我只是个工具，真正保护我的，是使用我的人。</p>
+        </div>
+
+        <blockquote>
+            <p><strong>如果你觉得这篇文章有帮助，欢迎分享给更多运维新人。</strong></p>
+            <p><em>作者：Howard（运维工程师）| 本文首发于张煜的技术博客，版权所有，转载须注明出处</em></p>
+        </blockquote>
+
+        <a href="../blog.html" class="back-link" style="margin-top:30px;">← 返回博客列表</a>
+
+        <div class="footer">
+            <p>📝 作者：Howard | 发布于张煜的技术博客</p>
+        </div>
+    </div>
+</body>
+</html>
