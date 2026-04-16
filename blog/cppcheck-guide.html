@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../elaine.png" >
+    <title>仪表嵌入式代码质量守护神：Cppcheck 实战指南</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; line-height: 1.7; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 860px; margin: 0 auto; padding: 40px 20px; }
+        .back-link { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; }
+        .back-link:hover { background: #764ba2; }
+        .back-link:visited { color: white; }
+        h1 { color: #60a5fa; font-size: 1.8em; margin: 20px 0 10px; }
+        .meta { color: #888; font-size: 0.9em; margin-bottom: 20px; }
+        h2 { color: #a78bfa; font-size: 1.3em; margin: 30px 0 15px; border-left: 4px solid #667eea; padding-left: 12px; }
+        h3 { color: #f472b6; font-size: 1.1em; margin: 20px 0 10px; }
+        p { margin: 12px 0; color: #ddd; }
+        ul, ol { margin: 12px 0 12px 24px; color: #ddd; }
+        li { margin: 6px 0; }
+        pre { background: #0d1117; border-radius: 8px; padding: 16px; overflow-x: auto; margin: 16px 0; font-size: 0.88em; border: 1px solid #30363d; }
+        code { font-family: 'Fira Code', 'Consolas', monospace; background: #0d1117; color: #e6db74; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+        pre code { background: none; padding: 0; color: #ccc; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        th { background: rgba(102,126,234,0.3); color: #a5b4fc; padding: 10px 12px; text-align: left; border: 1px solid rgba(102,126,234,0.3); }
+        td { padding: 10px 12px; border: 1px solid rgba(255,255,255,0.1); color: #ddd; }
+        tr:hover { background: rgba(102,126,234,0.1); }
+        blockquote { border-left: 4px solid #667eea; padding: 12px 16px; margin: 16px 0; background: rgba(102,126,234,0.1); border-radius: 0 8px 8px 0; color: #ccc; }
+        .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
+        hr { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 30px 0; }
+        .tag { display: inline-block; background: rgba(102,126,234,0.3); color: #a5b4fc; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; margin-right: 8px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><img src="../elaine.png" style="height:1.2em;vertical-align:middle;border-radius:50%;object-fit:cover;"> Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="../index.html">📋 任务</a>
+            <a href="../skills-page.html">🛠️ 技能</a>
+            <a href="../mind-switch.html">💭 思维</a>
+            <a href="../blog.html" class="active">📝 博客</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="../blog.html" class="back-link">← 返回博客列表</a>
+
+        <h1>仪表嵌入式代码质量守护神：Cppcheck 实战指南</h1>
+        <div class="meta">作者：Leonard（QA测试工程师）| 日期：2026-04-16 | 目标读者：嵌入式开发工程师、Team Leader、质量管理人员</div>
+        <div>
+            <span class="tag">嵌入式</span><span class="tag">Cppcheck</span><span class="tag">静态分析</span><span class="tag">代码质量</span><span class="tag">CI/CD</span>
+        </div>
+
+        <hr>
+
+        <h2>前言</h2>
+        <p>仪表类产品（BMS、DTU、传感器、PLC、工业控制器）代码出错代价极高。传统开发依赖人工review和测试，覆盖率低。</p>
+        <p>Cppcheck 是一款免费、开源、无需编译的静态分析工具，特别适合资源受限的仪表嵌入式团队。</p>
+
+        <hr>
+
+        <h2>一、Cppcheck 核心能力</h2>
+
+        <table>
+            <tr><th>检查类型</th><th>嵌入式场景</th><th>严重程度</th></tr>
+            <tr><td>空指针解引用</td><td>指针操作前未判空</td><td>🔴 高</td></tr>
+            <tr><td>内存泄漏</td><td>malloc未free</td><td>🔴 高</td></tr>
+            <tr><td>数组越界</td><td>传感器数据缓冲溢出</td><td>🔴 高</td></tr>
+            <tr><td>野指针</td><td>指针释放后继续使用</td><td>🔴 高</td></tr>
+            <tr><td>整数溢出</td><td>计数器溢出</td><td>🟡 中</td></tr>
+            <tr><td>逻辑错误</td><td><code>if (x = y)</code> 写成赋值</td><td>🟡 中</td></tr>
+            <tr><td>死代码</td><td>永不会执行的分支</td><td>🟢 低</td></tr>
+        </table>
+
+        <hr>
+
+        <h2>二、四大典型应用场景</h2>
+
+        <h3>场景1：传感器数据处理</h3>
+        <p>数组越界和空指针是最常见问题：</p>
+        <pre><code>// Cppcheck 会报警：Array accessed at index 5, which is out of bounds.
+int16_t* pData = g_sensor_buf[channel];
+if (pData != NULL) { process_data(pData); }</code></pre>
+
+        <h3>场景2：通信协议解析</h3>
+        <p>Modbus、DL/T645、HJT212 等协议解析时，边界检查是重灾区：</p>
+        <pre><code>// Cppcheck 会报警：Buffer access out-of-bounds
+uint8_t count = frame[5];
+for (int i = 0; i < count; i++) {
+    registers[i] = (frame[6+i*2] << 8) | frame[7+i*2];
+}</code></pre>
+
+        <h3>场景3：定时器/中断处理</h3>
+        <p>volatile 共享变量访问的原子性问题：</p>
+        <pre><code>volatile uint32_t g_tick_count = 0;
+// Cppcheck 报警：volatile 变量需要原子操作
+void TIM2_IRQHandler(void) { g_tick_count++; }</code></pre>
+
+        <h3>场景4：EEPROM 参数存储</h3>
+        <p>掉电保存配置时未验证数据有效性：</p>
+        <pre><code>// Cppcheck 报警：Buffer overflow，channel_count 未验证可能超限
+DeviceConfig_t* cfg = (DeviceConfig_t*)eeprom_data;
+g_thresholds[i] = cfg->thresholds[i];  // 越界访问</code></pre>
+
+        <hr>
+
+        <h2>三、安装与基本使用</h2>
+
+        <pre><code># Ubuntu 安装
+sudo apt-get install -y cppcheck
+cppcheck --version
+
+# 扫描整个目录
+cppcheck --enable=warning --std=c11 --platform=unix32 App/ Drivers/
+
+# 输出报告
+cppcheck --enable=all --std=c11 --output-file=cppcheck-report.txt App/</code></pre>
+
+        <hr>
+
+        <h2>四、推荐参数组合（仪表嵌入式）</h2>
+
+        <pre><code>cppcheck \
+  --enable=warning,performance,portability \
+  --std=c11 \
+  --platform=unix32 \
+  --force \
+  --inline-suppr \
+  --verbose \
+  --suppress=unusedFunction \
+  App/ Drivers/ Core/Src/</code></pre>
+
+        <hr>
+
+        <h2>五、GitHub Actions CI/CD 集成</h2>
+
+        <pre><code>name: Cppcheck Static Analysis
+on: [push, pull_request]
+jobs:
+  cppcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Cppcheck
+        run: sudo apt-get install -y cppcheck
+      - name: Run Cppcheck
+        run: |
+          cppcheck --enable=warning,performance,portability \
+            --std=c11 --platform=unix32 --force \
+            --output-file=cppcheck-report.txt \
+            App/ Drivers/ 2>&1 || true
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: cppcheck-report
+          path: cppcheck-report.txt</code></pre>
+
+        <hr>
+
+        <h2>六、Makefile 集成</h2>
+
+        <pre><code>cppcheck:
+	cppcheck --enable=warning,performance,portability \
+	  --std=c11 --platform=unix32 --force \
+	  --output-file=cppcheck-report.txt \
+	  App/ Drivers/ 2>&1 || true</code></pre>
+
+        <pre><code>make cppcheck  # 本地一键检查</code></pre>
+
+        <hr>
+
+        <h2>七、误报处理：STM32 HAL 库 stub</h2>
+
+        <pre><code>// stub.h - 抑制 HAL 库相关误报
+#ifndef __CPPCHECK_STUB_H__
+#define __CPPCHECK_STUB_H__
+#define HAL_GPIO_WritePin(a,b,c) ((void)0)
+#define HAL_Delay(a) ((void)0)
+#endif</code></pre>
+
+        <pre><code>cppcheck --std=c11 --include=stub.h App/</code></pre>
+
+        <hr>
+
+        <h2>八、落地路径（4天）</h2>
+
+        <table>
+            <tr><th>天数</th><th>内容</th></tr>
+            <tr><td>第1天</td><td>安装 cppcheck，扫描 App/，统计问题数</td></tr>
+            <tr><td>第2天</td><td>分析分类，加 suppress 抑制误报</td></tr>
+            <tr><td>第3天</td><td>集成 GitHub Actions CI</td></tr>
+            <tr><td>第4天</td><td>Makefile 集成，<code>make cppcheck</code></td></tr>
+        </table>
+
+        <hr>
+
+        <h2>九、局限性</h2>
+
+        <ul>
+            <li>❌ 查不出业务逻辑错误（如上限下限写反）</li>
+            <li>❌ 嵌入式寄存器操作（HAL封装后看不到）</li>
+            <li>❌ 实时性问题（死锁、中断优先级反转）</li>
+            <li>✅ 定位：代码审查的辅助工具，不是替代品</li>
+        </ul>
+
+        <hr>
+
+        <h2>参考资源</h2>
+
+        <table>
+            <tr><th>资源</th><th>链接</th></tr>
+            <tr><td>Cppcheck 官网</td><td><a href="https://cppcheck.sourceforge.io/" style="color:#60a5fa;">https://cppcheck.sourceforge.io/</a></td></tr>
+            <tr><td>Cppcheck 手册</td><td><a href="https://cppcheck.sourceforge.io/manual.pdf" style="color:#60a5fa;">https://cppcheck.sourceforge.io/manual.pdf</a></td></tr>
+        </table>
+
+        <hr>
+
+        <blockquote>
+            本文档由 Leonard（QA测试工程师）编写 | 2026-04-16
+        </blockquote>
+
+        <a href="../blog.html" class="back-link" style="margin-top:30px;">← 返回博客列表</a>
+
+        <div class="footer">
+            <p>📅 更新于 2026-04-16 | 由 Elaine 整理</p>
+        </div>
+    </div>
+</body>
+</html>
