@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../elaine.png" >
+    <title>嵌入式单片机 CI/CD 实战：从 STM32F103 工业温度计开始</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; line-height: 1.7; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 860px; margin: 0 auto; padding: 40px 20px; }
+        .back-link { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; }
+        .back-link:hover { background: #764ba2; }
+        .back-link:visited { color: white; }
+        h1 { color: #60a5fa; font-size: 1.8em; margin: 20px 0 10px; }
+        .meta { color: #888; font-size: 0.9em; margin-bottom: 20px; }
+        h2 { color: #a78bfa; font-size: 1.3em; margin: 30px 0 15px; border-left: 4px solid #667eea; padding-left: 12px; }
+        h3 { color: #f472b6; font-size: 1.1em; margin: 20px 0 10px; }
+        p { margin: 12px 0; color: #ddd; }
+        ul, ol { margin: 12px 0 12px 24px; color: #ddd; }
+        li { margin: 6px 0; }
+        pre { background: #0d1117; border-radius: 8px; padding: 16px; overflow-x: auto; margin: 16px 0; font-size: 0.88em; border: 1px solid #30363d; }
+        code { font-family: 'Fira Code', 'Consolas', monospace; background: #0d1117; color: #e6db74; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+        pre code { background: none; padding: 0; color: #ccc; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        th { background: rgba(102,126,234,0.3); color: #a5b4fc; padding: 10px 12px; text-align: left; border: 1px solid rgba(102,126,234,0.3); }
+        td { padding: 10px 12px; border: 1px solid rgba(255,255,255,0.1); color: #ddd; }
+        tr:hover { background: rgba(102,126,234,0.1); }
+        blockquote { border-left: 4px solid #667eea; padding: 12px 16px; margin: 16px 0; background: rgba(102,126,234,0.1); border-radius: 0 8px 8px 0; color: #ccc; }
+        .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
+        hr { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 30px 0; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><img src="../elaine.png" style="height:1.2em;vertical-align:middle;border-radius:50%;object-fit:cover;"> Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="../index.html">📋 任务</a>
+            <a href="../skills-page.html">🛠️ 技能</a>
+            <a href="../mind-switch.html">💭 思维</a>
+            <a href="../blog.html" class="active">📝 博客</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="../blog.html" class="back-link">← 返回博客列表</a>
+
+        <h1>📖 嵌入式单片机 CI/CD 实战：从 STM32F103 工业温度计开始</h1>
+        <div class="meta">作者：Leonard（QA测试工程师）| 日期：2026-04-16 | 目标读者：嵌入式开发工程师、Team Leader、想提升研发效率的团队</div>
+
+        <hr>
+
+        <h2>一、项目背景：工业温度计需求</h2>
+
+        <h3>硬件规格</h3>
+        <ul>
+            <li><strong>主控芯片</strong>：STM32F103C8T6（ARM Cortex-M3）</li>
+            <li><strong>温度传感器</strong>：DS18B20（-55°C ~ +125°C，精度±0.5°C）</li>
+            <li><strong>显示</strong>：0.96寸 OLED（I2C接口）</li>
+            <li><strong>通信</strong>：USART1（调试信息输出）</li>
+            <li><strong>供电</strong>：12V DC → 5V → 3.3V</li>
+        </ul>
+
+        <h3>功能需求</h3>
+        <ol>
+            <li>采集 DS18B20 温度，每秒刷新一次</li>
+            <li>OLED 实时显示温度值（保留1位小数）</li>
+            <li>温度超过阈值时，LED 报警</li>
+            <li>USART 输出温度日志</li>
+            <li>按键可设置报警阈值（上下限）</li>
+        </ol>
+
+        <h3>代码仓库结构</h3>
+        <pre><code>stm32-thermometer/
+├── Core/                  # HAL库核心文件（STM32CubeMX生成）
+├── Drivers/              # 外设驱动（含 DS18B20）
+├── App/                  # 应用层代码
+├── Tests/                # 单元测试（PC端，含 Unity 框架）
+├── Makefile
+└── .github/workflows/ci.yml</code></pre>
+
+        <hr>
+
+        <h2>二、整体架构：CI/CD 流水线</h2>
+
+        <table>
+            <tr><th>阶段</th><th>工具</th><th>做什么</th></tr>
+            <tr><td>编译构建</td><td>ARM GCC + Makefile</td><td>交叉编译，生成 .hex / .bin</td></tr>
+            <tr><td>单元测试</td><td>Unity (PC端)</td><td>测试纯C逻辑函数，不依赖硬件</td></tr>
+            <tr><td>集成测试</td><td>Python + 串口</td><td>自动化测试目标板功能</td></tr>
+            <tr><td>固件上传</td><td>stm32flash / OpenOCD</td><td>自动烧录（可选）</td></tr>
+            <tr><td>测试报告</td><td>CTest + JUnit XML</td><td>生成可视化报告</td></tr>
+        </table>
+
+        <hr>
+
+        <h2>三、环境准备：工具链安装（Ubuntu）</h2>
+
+        <pre><code>sudo apt-get update
+sudo apt-get install -y gcc-arm-none-eabi binutils-arm-none-eabi stm32flash openocd git
+sudo apt-get install -y python3 python3-pip
+pip3 install pyserial pytest pytest-html Jinja2</code></pre>
+
+        <hr>
+
+        <h2>四、核心代码实现</h2>
+
+        <h3>DS18B20 驱动（drivers/ds18b20.c）</h3>
+        <p>DS18B20 单总线驱动，通过 PA8 采集温度数据，12位分辨率，返回温度值×10（例如 250 = 25.0°C）。</p>
+
+        <h3>温度采集（app/temperature.c）</h3>
+        <ul>
+            <li>滑动平均滤波（窗口=5）</li>
+            <li>传感器状态检测（DS18B20 未连接返回 85°C）</li>
+            <li>日志输出格式：<code>[TEMP]  25.0C, status=0</code></li>
+        </ul>
+
+        <h3>报警模块（app/alarm.c）</h3>
+        <p>温度超限时触发 LED 和蜂鸣器，支持上下限阈值设置。</p>
+
+        <hr>
+
+        <h2>五、单元测试（PC端）</h2>
+
+        <p>使用 Unity 测试框架，在不连接硬件的情况下验证温度计算逻辑：</p>
+
+        <pre><code>cd Tests
+gcc -I unity -I .. -o test_runner test_temperature.c unity/unity.c -lm
+./test_runner</code></pre>
+
+        <p><strong>测试用例（共6个）：</strong></p>
+        <ul>
+            <li>test_DS18B20_normal_read：正常温度读取（25.0°C）</li>
+            <li>test_DS18B20_negative：零下温度（-10.5°C）</li>
+            <li>test_filter_smooth：滑动平均滤波</li>
+            <li>test_format_positive：正数格式化</li>
+            <li>test_format_negative：负数格式化</li>
+            <li>test_alarm_threshold：报警阈值判断</li>
+        </ul>
+
+        <hr>
+
+        <h2>六、GitHub Actions CI/CD 配置</h2>
+
+        <p>创建 <code>.github/workflows/ci.yml</code>，包含4个 Job：</p>
+
+        <ol>
+            <li><strong>build</strong> — ARM GCC 编译固件，上传 .hex / .bin</li>
+            <li><strong>unit-test</strong> — PC端单元测试，生成测试报告</li>
+            <li><strong>integration-test</strong> — Python + 串口集成测试（需要硬件）</li>
+            <li><strong>code-quality</strong> — cppcheck 静态代码分析</li>
+        </ol>
+
+        <hr>
+
+        <h2>七、集成测试（Python + 串口）</h2>
+
+        <p><code>Tests/hardware/test_integration.py</code> 包含：</p>
+        <ul>
+            <li>温度输出格式验证</li>
+            <li>温度值范围检查</li>
+            <li>传感器状态查询</li>
+            <li>报警功能测试</li>
+            <li>阈值设置与读取</li>
+            <li>固件版本查询</li>
+            <li>重启功能测试</li>
+        </ul>
+
+        <pre><code>python3 -m pytest test_integration.py -v --html=report.html --self-contained-html</code></pre>
+
+        <hr>
+
+        <h2>八、效果对比</h2>
+
+        <table>
+            <tr><th>阶段</th><th>测试方式</th><th>覆盖率</th><th>人工介入</th></tr>
+            <tr><td>Level 0</td><td>手动调试（kill）</td><td>~20%</td><td>100%</td></tr>
+            <tr><td>Level 1</td><td>PC端单元测试</td><td>~50%</td><td>50%</td></tr>
+            <tr><td>Level 2</td><td>PC端 + 集成测试</td><td>~80%</td><td>20%</td></tr>
+            <tr><td>Level 3</td><td>全自动CI/CD</td><td>~90%+</td><td>5%</td></tr>
+        </table>
+
+        <hr>
+
+        <h2>九、推荐落地路径</h2>
+
+        <ul>
+            <li><strong>第1周</strong>：搭建单元测试环境，接入 Unity 框架</li>
+            <li><strong>第2周</strong>：接入 GitHub Actions，实现编译+测试自动化</li>
+            <li><strong>第3周</strong>：编写 Python 集成测试脚本</li>
+            <li><strong>第4周</strong>：代码质量检查 + 测试报告优化</li>
+        </ul>
+
+        <hr>
+
+        <h2>十、参考资源</h2>
+
+        <table>
+            <tr><th>资源</th><th>链接</th></tr>
+            <tr><td>ARM GCC 工具链</td><td><a href="https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm" style="color:#60a5fa;">https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm</a></td></tr>
+            <tr><td>Unity 测试框架</td><td><a href="https://github.com/ThrowTheSwitch/Unity" style="color:#60a5fa;">https://github.com/ThrowTheSwitch/Unity</a></td></tr>
+            <tr><td>GitHub Actions 文档</td><td><a href="https://docs.github.com/en/actions" style="color:#60a5fa;">https://docs.github.com/en/actions</a></td></tr>
+            <tr><td>pytest 文档</td><td><a href="https://docs.pytest.org/" style="color:#60a5fa;">https://docs.pytest.org/</a></td></tr>
+        </table>
+
+        <hr>
+
+        <blockquote>
+            本文档由 Leonard（QA测试工程师）编写 | 2026-04-16
+        </blockquote>
+
+        <a href="../blog.html" class="back-link" style="margin-top:30px;">← 返回博客列表</a>
+
+        <div class="footer">
+            <p>📅 更新于 2026-04-16 | 由 Elaine 整理</p>
+        </div>
+    </div>
+</body>
+</html>
