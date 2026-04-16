@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../elaine.png" >
+    <title>ClawHub 嵌入式/硬件开发相关 Skills 研究报告</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; line-height: 1.7; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 860px; margin: 0 auto; padding: 40px 20px; }
+        .back-link { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; }
+        .back-link:hover { background: #764ba2; }
+        .back-link:visited { color: white; }
+        h1 { color: #60a5fa; font-size: 1.8em; margin: 20px 0 10px; }
+        .meta { color: #888; font-size: 0.9em; margin-bottom: 20px; }
+        h2 { color: #a78bfa; font-size: 1.3em; margin: 30px 0 15px; border-left: 4px solid #667eea; padding-left: 12px; }
+        h3 { color: #f472b6; font-size: 1.1em; margin: 20px 0 10px; }
+        h4 { color: #60a5fa; font-size: 1em; margin: 15px 0 8px; }
+        p { margin: 12px 0; color: #ddd; }
+        ul, ol { margin: 12px 0 12px 24px; color: #ddd; }
+        li { margin: 6px 0; }
+        pre { background: #0d1117; border-radius: 8px; padding: 16px; overflow-x: auto; margin: 16px 0; font-size: 0.88em; border: 1px solid #30363d; }
+        code { font-family: 'Fira Code', 'Consolas', monospace; background: #0d1117; color: #e6db74; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+        pre code { background: none; padding: 0; color: #ccc; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        th { background: rgba(102,126,234,0.3); color: #a5b4fc; padding: 10px 12px; text-align: left; border: 1px solid rgba(102,126,234,0.3); }
+        td { padding: 10px 12px; border: 1px solid rgba(255,255,255,0.1); color: #ddd; }
+        tr:hover { background: rgba(102,126,234,0.1); }
+        blockquote { border-left: 4px solid #667eea; padding: 12px 16px; margin: 16px 0; background: rgba(102,126,234,0.1); border-radius: 0 8px 8px 0; color: #ccc; }
+        .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
+        hr { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 30px 0; }
+        .tag { display: inline-block; background: rgba(102,126,234,0.3); color: #a5b4fc; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; margin-right: 8px; }
+        .stars { color: #f59e0b; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><img src="../elaine.png" style="height:1.2em;vertical-align:middle;border-radius:50%;object-fit:cover;"> Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="../index.html">📋 任务</a>
+            <a href="../skills-page.html">🛠️ 技能</a>
+            <a href="../mind-switch.html">💭 思维</a>
+            <a href="../blog.html" class="active">📝 博客</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="../blog.html" class="back-link">← 返回博客列表</a>
+
+        <h1>📖 ClawHub 嵌入式/硬件开发相关 Skills 研究报告</h1>
+        <div class="meta">作者：Sheldon | 日期：2026-04-16</div>
+        <div>
+            <span class="tag">OpenClaw</span><span class="tag">嵌入式</span><span class="tag">Skills</span><span class="tag">ClawHub</span><span class="tag">固件开发</span>
+        </div>
+
+        <hr>
+
+        <h2>一、研究背景</h2>
+        <p>随着 AI Agent 能力的增强，AI 不仅能辅助写固件代码，还能参与硬件调试、协议分析、代码审查等全链路工作。本次研究对 ClawHub 上的嵌入式/硬件相关 Skills 进行了系统梳理。</p>
+
+        <hr>
+
+        <h2>二、ClawHub 核心发现</h2>
+
+        <h3>2.1 Embedded Code Review Expert</h3>
+        <p><strong>链接：</strong> <a href="https://clawhub.ai/ylongw/embedded-review" style="color:#60a5fa;">https://clawhub.ai/ylongw/embedded-review</a></p>
+        <p><strong>标签：</strong> 代码审查 · 固件 · 安全 | <span class="stars">⭐⭐⭐ 高度推荐</span></p>
+        <p>这是本次研究中最具价值的嵌入式相关 Skill，专注于固件代码审查：</p>
+        <ul>
+            <li><strong>双模型交叉审查：</strong>Claude Code + Codex 同时独立审查同一个 diff，取长补短</li>
+            <li><strong>分级输出：</strong>P0（致命）/ P1（高危）/ P2（中危）三类问题精准分类</li>
+            <li><strong>专项检查清单：</strong>
+                <ul>
+                    <li>内存安全（缓冲区、栈、堆、DMA、对齐）</li>
+                    <li>中断与并发（ISR、RTOS 滥用、原子操作）</li>
+                    <li>硬件接口（外设、寄存器、时序、协议）</li>
+                </ul>
+            </li>
+            <li><strong>适用触发场景：</strong>用户要求审查嵌入式固件变更时使用</li>
+        </ul>
+        <pre><code>/embedded-review ~/Documents/firmware-project
+/embedded-review &lt;github-pr-url&gt;</code></pre>
+        <p><strong>对工业变送器团队的价值：</strong> 在合入关键驱动代码之前，用双模型做交叉审查，大幅降低内存泄漏和并发Bug的风险。</p>
+
+        <h3>2.2 Seed</h3>
+        <p><strong>链接：</strong> <a href="https://clawhub.ai/Awis13/seed" style="color:#60a5fa;">https://clawhub.ai/Awis13/seed</a></p>
+        <p><strong>标签：</strong> 固件开发 · 嵌入式 C · HTTP API</p>
+        <p>这是一个创新性的 Skill 思路：让 MCU/设备自己长出 HTTP API：</p>
+        <ul>
+            <li>通过 HTTP 协议上传 C 代码 → 设备本地编译 → 应用 + 看门狗回滚</li>
+            <li>不依赖 JTAG 或专用烧录器，适合远程固件部署</li>
+            <li>提供完整的 REST API（<code>/health</code>、<code>/firmware/source</code>、<code>/firmware/build</code>、<code>/firmware/apply</code>）</li>
+            <li>适合场景：大批量设备远程更新、现场无法物理接触的设备</li>
+        </ul>
+        <p><strong>核心流程：</strong></p>
+        <pre><code>上传源码 → POST /firmware/source
+编译固件 → POST /firmware/build
+应用固件 → POST /firmware/apply（10秒看门狗保护）</code></pre>
+        <p><strong>对工业变送器团队的价值：</strong> 如果你们有 OTA 升级需求但还没成型，Seed 是个好起点。</p>
+
+        <h3>2.3 IoT Skill</h3>
+        <p><strong>链接：</strong> <a href="https://clawhub.ai/ivangdavila/iot" style="color:#60a5fa;">https://clawhub.ai/ivangdavila/iot</a></p>
+        <p><strong>标签：</strong> IoT · 协议选择 · 设备加固</p>
+        <p>这个 Skill 覆盖了 IoT 产品开发的全链路最佳实践：</p>
+
+        <h4>协议选型：</h4>
+        <table>
+            <tr><th>协议</th><th>特点</th><th>适用场景</th></tr>
+            <tr><td>MQTT</td><td>轻量 pub/sub</td><td>传感器数据上报</td></tr>
+            <tr><td>CoAP</td><td>UDP-based, REST-like</td><td>低功耗受限设备</td></tr>
+            <tr><td>HTTP/REST</td><td>成熟但开销大</td><td>资源充足的设备</td></tr>
+            <tr><td>WebSocket</td><td>实时双向</td><td>仪表盘/实时监控</td></tr>
+            <tr><td>Zigbee/Z-Wave</td><td>Mesh, 低功耗</td><td>电池传感器</td></tr>
+        </table>
+
+        <h4>关键忠告：</h4>
+        <ul>
+            <li>固件更新必须签名，防止恶意更新</li>
+            <li>IoT 设备隔离在独立 VLAN</li>
+            <li>云端依赖要有本地 fallback</li>
+            <li>优先选本地可控协议（MQTT/Zigbee）而非私有协议</li>
+        </ul>
+        <p><strong>对工业变送器团队的价值：</strong> 选通讯协议（Modbus/HART vs MQTT）时，可以用这个 Skill 做决策参考。</p>
+
+        <h3>2.4 Zigbee Skill</h3>
+        <p><strong>链接：</strong> <a href="https://clawhub.ai/ivangdavila/zigbee" style="color:#60a5fa;">https://clawhub.ai/ivangdavila/zigbee</a></p>
+        <p><strong>标签：</strong> Zigbee · 无线组网 · 设备配对</p>
+        <p>这是 Zigbee 调试排障的"红宝书"，包含大量实战经验：</p>
+        <ul>
+            <li>电池设备不参与路由 → Mesh 网络需要足够多的 mains-powered 设备做骨干</li>
+            <li>默认 Zigbee Channel 11 与常见 WiFi 信道冲突，建议规划阶段就选好信道</li>
+            <li>设备绑定（Binding）是设备到设备直连，断电不丢；群组（Group）依赖协调器</li>
+            <li>Xiaomi/Aqara 设备在通用协调器上容易掉线，需要特殊处理</li>
+            <li>配对失败时：检查网络模式、协调器状态、设备是否已复位</li>
+        </ul>
+        <p><strong>对工业变送器团队的价值：</strong> 如果产品涉及无线传感组网，这个 Skill 是首选排障参考。</p>
+
+        <h3>2.5 Raspberry Pi Skill</h3>
+        <p><strong>链接：</strong> <a href="https://clawhub.ai/ivangdavila/raspberry" style="color:#60a5fa;">https://clawhub.ai/ivangdavila/raspberry</a></p>
+        <p><strong>标签：</strong> Raspberry Pi · Linux · 边缘计算</p>
+        <p>Raspberry Pi 作为嵌入式 Linux 的代表，这个 Skill 覆盖：</p>
+        <ul>
+            <li>硬件陷阱：SD 卡可靠性问题 → 优先用 SSD/USB root</li>
+            <li>GPIO 操作要点</li>
+            <li>网络配置（推荐 VPN/Tailscale 而非直接暴露 SSH）</li>
+            <li>Docker 在 ARM 上的安装注意事项</li>
+        </ul>
+        <blockquote>
+            <strong>注意：</strong> 该 Skill 曾被安全扫描标记（原因是推荐了 <code>curl | sh</code> 安装 Docker），使用前建议先看原文确认。
+        </blockquote>
+
+        <h3>2.6 Linux RISC-V Contribute</h3>
+        <p><strong>链接：</strong> <a href="https://clawhub.ai/zcxGGmu/linux-riscv-contribute" style="color:#60a5fa;">https://clawhub.ai/zcxGGmu/linux-riscv-contribute</a></p>
+        <p><strong>标签：</strong> Linux Kernel · RISC-V · 操作系统</p>
+        <p>偏 OS 开发的 Skill，面向 RISC-V 架构的 Linux 内核贡献流程：</p>
+        <ul>
+            <li>discover → issue → plan → implement → patch 完整 Pipeline</li>
+            <li>配合 Claude Code + Codex 做多阶段开发</li>
+            <li>三个人工审批门控（Gate-1/2/3）确保质量</li>
+        </ul>
+        <p><strong>对工业变送器团队的价值：</strong> 如果你们的变送器用到 RISC-V 芯片且需要自己移植 Linux，这个 Skill 提供方法论参考。</p>
+
+        <hr>
+
+        <h2>三、其他技能市场的补充发现</h2>
+
+        <h3>3.1 Embedded Systems Skill（LobeHub）</h3>
+        <p><strong>来源：</strong> lobehub.com/skills/jeffallan-claude-skills-embedded-systems</p>
+        <p>专注于 STM32、ESP32 等主流 MCU 的固件开发指南：</p>
+        <ul>
+            <li>Bare-metal（裸机）和 FreeRTOS 两种开发模式</li>
+            <li>设计确定性控制循环</li>
+            <li>低功耗设计（电池供电 IoT 设备）</li>
+            <li>FreeRTOS 任务移植和优化</li>
+        </ul>
+        <p><strong>对工业变送器团队的价值：</strong> 与我们之前讨论的"何时上 RTOS"问题直接相关。</p>
+
+        <h3>3.2 JTAG/SWD Debug Skill（LobeHub）</h3>
+        <p><strong>来源：</strong> lobehub.com/skills/a5c-ai-babysitter-jtag-swd-debug</p>
+        <p>硬件级调试探针深度集成 Skill，覆盖：</p>
+        <ul>
+            <li>JTAG/SWD 调试协议</li>
+            <li>Flash 编程</li>
+            <li>实时固件分析</li>
+        </ul>
+
+        <h3>3.3 KiCad PCB Design Skills（MCP Market / GitHub）</h3>
+        <table>
+            <tr><th>名称</th><th>来源</th><th>特点</th></tr>
+            <tr><td>KiCad PCB Layout</td><td>mcpmarket.com</td><td>自动布局、布线、DRC 检查</td></tr>
+            <tr><td>KiCad Electronics Design</td><td>mcpmarket.com</td><td>原理图 + PCB 一体化</td></tr>
+            <tr><td>kicad-happy</td><td>GitHub</td><td>AI 设计审查（原理图/PCB/Gerber）</td></tr>
+        </table>
+
+        <hr>
+
+        <h2>四、总结与建议</h2>
+
+        <h3>4.1 ClawHub 嵌入式 Skills 地图</h3>
+        <pre><code>嵌入式开发全流程
+├── 需求分析 ────────── IoT Skill（协议选型）
+├── 原理图/PCB ────────── 无直接对应（建议用 KiCad Skills）
+├── 固件编码 ────────── Seed（远程固件部署）
+├── 实时操作系统 ────────── Embedded Systems（LobeHub）
+├── 代码审查 ────────── Embedded Code Review Expert ⭐
+├── 无线调试 ────────── Zigbee Skill
+├── 硬件调试 ────────── JTAG/SWD（LobeHub）
+└── Linux 边缘设备 ────────── Raspberry Pi Skill</code></pre>
+
+        <h3>4.2 对我们团队的优先级建议</h3>
+        <table>
+            <tr><th>优先级</th><th>Skill</th><th>理由</th></tr>
+            <tr><td>⭐⭐⭐</td><td>Embedded Code Review Expert</td><td>代码质量直接关乎产品可靠性</td></tr>
+            <tr><td>⭐⭐</td><td>IoT Skill</td><td>帮助决策变送器的通讯协议选型</td></tr>
+            <tr><td>⭐⭐</td><td>Seed</td><td>OTA 远程升级的参考实现</td></tr>
+            <tr><td>⭐</td><td>Zigbee Skill</td><td>无线传感相关产品的排障手册</td></tr>
+            <tr><td>⭐</td><td>Raspberry Pi Skill</td><td>边缘网关类产品的参考</td></tr>
+        </table>
+
+        <h3>4.3 缺失领域（ClawHub 暂无）</h3>
+        <ul>
+            <li><strong>电子电路仿真</strong>（SPICE 类）</li>
+            <li><strong>示波器/逻辑分析仪</strong> 数据读取分析</li>
+            <li><strong>STM32 HAL/LL 封装库</strong> 专项指导</li>
+            <li><strong>Modbus/HART/Profibus</strong> 工业协议专项</li>
+        </ul>
+        <p>这些领域如有需求，可能需要自建 Skill 或向社区贡献。</p>
+
+        <hr>
+
+        <h2>五、附录：Skill 安装命令参考</h2>
+        <pre><code># ClawHub Skills 安装（通过 OpenClaw）
+npx clawhub@latest install ylongw/embedded-review
+npx clawhub@latest install Awis13/seed
+npx clawhub@latest install ivangdavila/iot
+npx clawhub@latest install ivangdavila/zigbee
+npx clawhub@latest install ivangdavila/raspberry
+
+# LobeHub Skills 安装（独立生态）
+# 参考对应 Skill 页面的安装指令
+
+# MCP Market KiCad Skills
+npx skillfish add productofamerica/mcp-server-kicad pcb-layout</code></pre>
+
+        <hr>
+
+        <blockquote>
+            本文档由 Sheldon 研究整理，供参考。如有新发现持续更新。
+        </blockquote>
+
+        <a href="../blog.html" class="back-link" style="margin-top:30px;">← 返回博客列表</a>
+
+        <div class="footer">
+            <p>📅 更新于 2026-04-16 | 由 Elaine 整理</p>
+        </div>
+    </div>
+</body>
+</html>
