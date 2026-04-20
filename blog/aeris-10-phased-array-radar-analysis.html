@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../elaine.png" >
+    <title>开源相控阵雷达新标杆：AERIS-10项目深度解析</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; line-height: 1.8; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 860px; margin: 0 auto; padding: 40px 20px; }
+        .back-link { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; }
+        .back-link:hover { background: #764ba2; }
+        .back-link:visited { color: white; }
+        h1 { color: #60a5fa; font-size: 1.7em; margin: 20px 0 10px; line-height: 1.3; }
+        .meta { color: #888; font-size: 0.9em; margin-bottom: 20px; }
+        h2 { color: #a78bfa; font-size: 1.3em; margin: 35px 0 15px; border-left: 4px solid #667eea; padding-left: 12px; }
+        h3 { color: #f472b6; font-size: 1.1em; margin: 20px 0 10px; }
+        h4 { color: #60a5fa; font-size: 1em; margin: 15px 0 8px; }
+        p { margin: 12px 0; color: #ddd; }
+        ul, ol { margin: 12px 0 12px 24px; color: #ddd; }
+        li { margin: 6px 0; }
+        pre { background: #0d1117; border-radius: 8px; padding: 16px; overflow-x: auto; margin: 16px 0; font-size: 0.88em; border: 1px solid #30363d; }
+        code { font-family: 'Fira Code', 'Consolas', monospace; background: #0d1117; color: #e6db74; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+        pre code { background: none; padding: 0; color: #ccc; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9em; }
+        th { background: rgba(102,126,234,0.3); color: #a5b4fc; padding: 10px 12px; text-align: left; border: 1px solid rgba(102,126,234,0.3); }
+        td { padding: 10px 12px; border: 1px solid rgba(255,255,255,0.1); color: #ddd; }
+        tr:hover { background: rgba(102,126,234,0.1); }
+        blockquote { border-left: 4px solid #667eea; padding: 12px 16px; margin: 16px 0; background: rgba(102,126,234,0.1); border-radius: 0 8px 8px 0; color: #ccc; }
+        .highlight-box { background: rgba(102,126,234,0.15); border: 1px solid rgba(102,126,234,0.3); border-radius: 12px; padding: 20px; margin: 20px 0; }
+        .footer { text-align: center; color: rgba(255,255,255,0.5); padding: 30px; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
+        hr { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 30px 0; }
+        .tag { display: inline-block; background: rgba(102,126,234,0.3); color: #a5b4fc; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; margin-right: 8px; }
+        .stars { color: #f59e0b; }
+        .architecture { background: #0d1117; border-radius: 8px; padding: 16px; margin: 16px 0; font-family: 'Fira Code', 'Consolas', monospace; font-size: 0.85em; color: #ccc; line-height: 1.6; white-space: pre; overflow-x: auto; border: 1px solid #30363d; }
+        a { color: #60a5fa; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><img src="../elaine.png" style="height:1.2em;vertical-align:middle;border-radius:50%;object-fit:cover;"> Elaine 工作台</div>
+        <div class="nav-links">
+            <a href="../index.html">📋 任务</a>
+            <a href="../skills-page.html">🛠️ 技能</a>
+            <a href="../mind-switch.html">💭 思维</a>
+            <a href="../blog.html" class="active">📝 博客</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="../blog.html" class="back-link">← 返回博客列表</a>
+
+        <h1>📡 开源相控阵雷达新标杆：AERIS-10项目深度解析</h1>
+        <div class="meta">来源：GitHub / Sheldon 整理 | 发布日期：2026-04-20</div>
+        <div>
+            <span class="tag">相控阵雷达</span><span class="tag">AERIS-10</span><span class="tag">开源硬件</span><span class="tag">FPGA</span><span class="tag">ADAR1000</span><span class="tag">雷达技术</span>
+        </div>
+
+        <hr>
+
+        <h2>一、项目概述</h2>
+
+        <p><strong>AERIS-10</strong>（全称 <em>Open Source Pulse Linear Frequency Modulated Phased Array Radar</em>）是由开发者 NawfalMotii79 在 GitHub 上开源的相控阵雷达项目，工作频率为 <strong>10.5 GHz</strong>，采用 <strong>LFM（线性调频）脉冲压缩</strong>体制。该项目是目前开源社区中少数从硬件设计到信号处理全流程公开的相控阵雷达实现，对于雷达技术爱好者、嵌入式工程师以及科研人员而言，具有极高的参考价值。</p>
+
+        <p>AERIS-10 项目包含两个硬件版本：</p>
+
+        <table>
+            <tr><th>版本</th><th>探测距离</th><th>定位</th></tr>
+            <tr><td><strong>AERIS-10N</strong>（Nexus）</td><td>3 km</td><td>近距离轻量版</td></tr>
+            <tr><td><strong>AERIS-10E / X</strong>（Extended）</td><td>20 km</td><td>远距离扩展版，配备独立 PA 模块</td></tr>
+        </table>
+
+        <p>📂 项目地址：<a href="https://github.com/NawfalMotii79/PLFM_RADAR" target="_blank">https://github.com/NawfalMotii79/PLFM_RADAR</a></p>
+
+        <h2>二、系统整体架构</h2>
+
+        <p>AERIS-10 采用经典的数字雷达收发架构，核心由三块独立的 PCB 构成：</p>
+
+        <div class="architecture">┌──────────────────────────────────────────────────────────────┐
+│                      AERIS-10 系统架构
+├──────────────────────────────────────────────────────────────┤
+│
+│  ┌──────────────┐  ┌──────────────────┐  ┌───────────────┐
+│  │  电源管理板   │  │      主板        │  │  PA模块(10E)  │
+│  │ Power Board  │  │  Main Board      │  │  PA Module    │
+│  └──────────────┘  └──────────────────┘  └───────────────┘
+│
+│  STM32F746 ──控制总线──▶ ADAR1000 (波束形成)
+│  XC7A50T FPGA ──数据总线──▶ ADAR1000 / ADTR1107 / ADC
+│  ADAR1000 ──16通道──▶ ADTR1107 (T/R模块) ──天线阵列
+│  LTC5552 ──上下变频──▶ IF/RF 信号链路
+└──────────────────────────────────────────────────────────────┘</div>
+
+        <p>三层分离的设计大幅简化了调试难度，也便于按需裁剪功能。</p>
+
+        <h2>三、子系统详解</h2>
+
+        <h3>3.1 主板 — 数字核心与射频前端</h3>
+
+        <h4>3.1.1 STM32F746ZGT7 — 系统控制器</h4>
+
+        <p>STM32F746 作为主控 MCU，负责整个雷达的调度与管理，主要职责包括：</p>
+
+        <ul>
+            <li><strong>电源时序控制</strong>：分时启动各路电源，避免上电瞬间的浪涌电流损坏器件</li>
+            <li><strong>FPGA 通信</strong>：通过高速总线配置 FPGA 内部逻辑、加载波形参数</li>
+            <li><strong>ADAR1000 编程</strong>：通过 SPI 总线配置 4 颗 ADAR1000，实现 16 通道的相位和增益校准</li>
+            <li><strong>时钟芯片 AD9523-1 配置</strong>：为整个系统提供低抖动参考时钟</li>
+            <li><strong>频率合成器 ADF4382 控制</strong>：生成 10.5 GHz 本振信号</li>
+            <li><strong>DAC5578 Idq 校准（16路）</strong>：PA 静态电流校准，确保线性工作</li>
+            <li><strong>ADS7830 多路 ADC 采集</strong>：16+8=24 路传感器数据采集，包含 PA 温度监控</li>
+            <li><strong>GPS + IMU + 气压计接口</strong>：实现自主定位与姿态感知，支持雷达机动部署</li>
+            <li><strong>步进电机控制</strong>：机械扫描辅助（扩展扫描角度）</li>
+            <li><strong>USB 通信</strong>：与上位机进行数据交互和命令控制</li>
+        </ul>
+
+        <p>STM32F746 选用 ARM Cortex-M7 内核，主频 216MHz，具备丰富的 SPI/I2C/GPIO 外设，非常适合这种多外设管理场景。</p>
+
+        <h4>3.1.2 XC7A50T FPGA — 实时信号处理</h4>
+
+        <p>Xilinx Artix-7 XC7A50T 是雷达信号处理的核心，负责所有实时数字信号处理任务：</p>
+
+        <table>
+            <tr><th>处理环节</th><th>说明</th></tr>
+            <tr><td>波形产生</td><td>生成 LFM 调频脉冲，控制调频斜率、脉宽、重复周期</td></tr>
+            <tr><td>ADC 数据读取</td><td>采集 ADAR1000 输出的 I/Q 采样数据</td></tr>
+            <tr><td>AGC 自动增益控制</td><td>动态调整接收链路增益，适应不同距离的回波强度</td></tr>
+            <tr><td>I/Q 下变频</td><td>将中频信号解调为基带 I/Q 分量</td></tr>
+            <tr><td>抽取滤波</td><td>降低采样率，滤除带外噪声</td></tr>
+            <tr><td>FFT</td><td>频域分析，获取回波频率偏移</td></tr>
+            <tr><td>脉冲压缩</td><td>对 LFM 信号进行匹配滤波，提升距离分辨率</td></tr>
+            <tr><td>多普勒处理</td><td>提取目标径向速度信息</td></tr>
+            <tr><td>MTI（动目标指示）</td><td>抑制固定杂波，凸显运动目标</td></tr>
+            <tr><td>CFAR（恒虚警率）</td><td>自适应门限检测，提高目标检测稳定性</td></tr>
+        </table>
+
+        <p>Artix-7 系列具备充足的 DSP48E1 切片（240 个），可以并行处理上述算法。FPGA 的低延迟特性保证了雷达系统的实时性要求。</p>
+
+        <h4>3.1.3 射频信号链路</h4>
+
+        <ul>
+            <li><strong>LTC5552</strong>（×2）：双极化上下变频混频器，负责 IF 与 RF 之间的频率转换</li>
+            <li><strong>ADAR1000ACCZN</strong>（×4）：Analog Devices 的 4×4 波束形成芯片，每颗管理 4 个天线单元的相位和增益，共计 <strong>16 通道</strong> 的相控阵波束控制能力</li>
+            <li><strong>ADTR1107</strong>（×16）：每通道配备一颗 ADTR1107 T/R 模块，集成了 LNA 和 PA，工作在 Ku 波段（10.5 GHz）</li>
+            <li><strong>AD9484BCPZ-500</strong>：ADC，负责将模拟 I/Q 信号数字化，采样率 500 MSPS</li>
+            <li><strong>AD9708AR</strong>：DAC，用于产生中频模拟信号</li>
+            <li><strong>AD8352</strong>（×2）：差分放大器，用于驱动混频器或 ADC 输入</li>
+            <li><strong>AD9523-1</strong>：高性能时钟发生器，为 ADC、FPGA 和其他时钟敏感器件提供低相位噪声的参考时钟</li>
+            <li><strong>ADF4382</strong>：频率合成器，为混频链路提供精确的本振信号</li>
+        </ul>
+
+        <h4>3.1.4 数据存储与通信</h4>
+
+        <ul>
+            <li><strong>MT25QL01GBBB8E12</strong>（×1）：128Mbit SPI NOR Flash，用于存储 FPGA 配置文件及雷达校准参数</li>
+            <li><strong>FT2232HQ</strong>：USB 2.0 Full-Speed 转 UART/FIFO 芯片，提供调试接口和高速数据回传通道</li>
+            <li><strong>INA241A3</strong>（×16）：每通道一片，用于 PA 电流检测，配合 ADC 实现实时功率监控</li>
+        </ul>
+
+        <h3>3.2 电源管理板</h3>
+
+        <table>
+            <tr><th>器件</th><th>数量</th><th>用途</th></tr>
+            <tr><td>TPS562208</td><td>×21</td><td>同步降压 DC-DC，21 路供电输出</td></tr>
+            <tr><td>ADM7151</td><td>×6</td><td>低噪声 LDO，为射频器件供电（噪声密度 &lt; 2µV/√Hz）</td></tr>
+            <tr><td>TPS7A8300</td><td>×2</td><td>高电流低噪声 LDO，为 ADAR1000 和 PA 轨供电</td></tr>
+            <tr><td>LM2662</td><td>×5</td><td>电荷泵逆变器，产生负电压轨</td></tr>
+            <tr><td>47µF 钽电容</td><td>×10</td><td>纹波抑制与瞬态响应</td></tr>
+            <tr><td>VLP8040 电感</td><td>—</td><td>降压转换器储能电感</td></tr>
+        </table>
+
+        <p>21 路 TPS562208 同步降压转换器表明系统供电经过严谨的分区设计，每路负责一个特定功能块的供电。射频前端对电源噪声极为敏感，ADM7151 的使用是保证接收链路噪声系数的关键。</p>
+
+        <h3>3.3 PA 模块板（AERIS-10E/X 专用）</h3>
+
+        <table>
+            <tr><th>器件</th><th>数量</th><th>说明</th></tr>
+            <tr><td><strong>QPA2962_B</strong></td><td>×1</td><td>GaN 功率放大器，10W 输出功率</td></tr>
+            <tr><td>WSL2816 5mΩ 检流电阻</td><td>×1</td><td>高精度电流检测，用于 PA 功率控制与保护</td></tr>
+        </table>
+
+        <p>GaN（氮化镓）功放的选择体现了对效率和带宽的双重追求。相比传统的 GaAs 或 LDMOS，GaN 功放在 10W 量级能提供更高的工作频率和更宽带宽，同时具备更好的热性能。</p>
+
+        <h2>四、BOM 器件分析</h2>
+
+        <h3>4.1 器件选型逻辑</h3>
+
+        <p><strong>TI + ADI 双主线：</strong>电源管理以 TI 的 TPS / LM 系列为主，模拟链路以 ADI 的雷达套片为核心，两者均为业界标准方案，可靠性有据可查。</p>
+
+        <p><strong>GaN 功放替代传统方案：</strong>AERIS-10E 采用 QPA2962_B GaN PA，是当前相控阵雷达向 GaN 化演进的缩影。</p>
+
+        <p><strong>16 通道 T/R 架构：</strong>ADAR1000 × 4 + ADTR1107 × 16 的组合，构成了相控阵雷达中最核心的射频前端。</p>
+
+        <p><strong>分区供电设计：</strong>21 路独立 DC-DC 分区供电，将噪声敏感的射频器件与数字器件的供电解耦。</p>
+
+        <h3>4.2 关键器件供应链提示</h3>
+
+        <table>
+            <tr><th>器件</th><th>采购难度</th><th>备注</th></tr>
+            <tr><td>STM32F746ZGT7</td><td>⭐ 低</td><td>通用 MCU，分销库存充足</td></tr>
+            <tr><td>XC7A50T</td><td>⭐⭐ 中</td><td>需要 Xilinx 授权，工业级温度范围需特别说明</td></tr>
+            <tr><td>ADAR1000</td><td>⭐⭐⭐ 高</td><td>ADI 雷达专用芯片，需向代理商申请样片</td></tr>
+            <tr><td>ADTR1107</td><td>⭐⭐⭐ 高</td><td>军用/工业级 T/R 芯片，货期较长</td></tr>
+            <tr><td>LTC5552</td><td>⭐⭐ 中</td><td>通用混频器</td></tr>
+            <tr><td>QPA2962_B</td><td>⭐⭐⭐ 高</td><td>GaN PA，需关注出口管制</td></tr>
+        </table>
+
+        <h2>五、关键技术点</h2>
+
+        <h3>5.1 LFM 脉冲压缩</h3>
+
+        <p>AERIS-10 采用线性调频（LFM）脉冲压缩体制。在发射端，使用宽带线性调频脉冲信号（Chirp），在接收端通过匹配滤波器（脉冲压缩）将长脉冲压缩为窄脉冲，从而同时获得<strong>大发射功率</strong>（远距离）和<strong>高距离分辨率</strong>。</p>
+
+        <div class="highlight-box">
+            <strong>理论性能估算：</strong><br>
+            · 假设调频带宽 B = 50 MHz（Ku 波段常见带宽）<br>
+            · 距离分辨率：ΔR = c / (2B) ≈ <strong>3 米</strong><br>
+            · 脉冲压缩增益：Gp = B × T，压缩比可达数千倍
+        </div>
+
+        <h3>5.2 相控阵波束扫描</h3>
+
+        <p>16 通道相控阵通过 ADAR1000 独立控制每个通道的相位和延时，实现波束的电子扫描，无需机械转动即可覆盖 ±60° 的扫描角度。</p>
+
+        <div class="highlight-box">
+            <strong>波束宽度估算：</strong><br>
+            · 天线单元间距 d ≈ λ/2 ≈ 14.3 mm（@ 10.5 GHz）<br>
+            · 16 单元线阵，理论波束宽度 θ ≈ 0.886 × λ / (N×d) ≈ <strong>6.5°</strong><br>
+            · ADAR1000 的 8-bit 相位分辨率（360°/256 ≈ 1.4°/LSB）可满足大多数应用场景的波束指向精度
+        </div>
+
+        <h3>5.3 多普勒处理与 MTI</h3>
+
+        <p>FPGA 内部实现的多普勒处理通过相参积累提升目标信噪比，结合 MTI（动目标指示）滤波器抑制地杂波，CFAR 检测器自适应调整检测门限，使雷达在复杂环境下仍具备稳定的目标检测能力。</p>
+
+        <h2>六、二次开发建议</h2>
+
+        <h3>6.1 硬件层面</h3>
+
+        <ul>
+            <li><strong>增加天线单元数量</strong>：在 ADAR1000 的 4×4 架构基础上扩展，可考虑使用更多 ADAR1000 级联构建更大规模阵列</li>
+            <li><strong>升级 PA 方案</strong>：AERIS-10E 的 10W PA 已是良好起点，可探索 GaN 功放模块化集成</li>
+            <li><strong>优化接收链路噪声系数</strong>：在 LNA 前增加低噪放驱动级，或选用噪声系数更低的 T/R 芯片</li>
+        </ul>
+
+        <h3>6.2 算法层面</h3>
+
+        <ul>
+            <li><strong>空时自适应处理（STAP）</strong>：在 FPGA 中实现自适应杂波抑制，提升非均匀杂波环境下的检测性能</li>
+            <li><strong>DOA（到达角估计）</strong>：基于 16 通道数据，可尝试 MUSIC、ESPRIT 等超分辨测角算法</li>
+            <li><strong>恒虚警（CFAR）改进</strong>：从单元平均 CFAR（CA-CFAR）升级为有序统计 CFAR（OS-CFAR），提升多目标场景下的检测稳定性</li>
+        </ul>
+
+        <h3>6.3 软件层面</h3>
+
+        <ul>
+            <li><strong>雷达显控界面</strong>：基于 Python + NumPy 开发上位机显控软件，实现 PPI 显示器、目标轨迹跟踪</li>
+            <li><strong>数据后处理</strong>：将采集的原始 I/Q 数据导入 MATLAB / Python 进行离线算法验证</li>
+            <li><strong>校准自动化</strong>：建立幅相校准流程，补偿天线单元间的幅度和相位不一致性</li>
+        </ul>
+
+        <h3>6.4 应用拓展方向</h3>
+
+        <ul>
+            <li><strong>无人机探测与跟踪</strong>：AERIS-10 的 10.5 GHz 频段对无人机 RCS 具有良好响应，可实现 3~20 km 范围的低慢小目标探测</li>
+            <li><strong>车载/船载辅助感知</strong>：结合 IMU 和 GPS，实现动平台上的自主目标检测</li>
+            <li><strong>气象雷达改造</strong>：LFM 体制天然适合风廓线雷达和测云雷达的应用场景</li>
+        </ul>
+
+        <h2>七、总结</h2>
+
+        <p>AERIS-10 是一个技术栈完整、文档可追溯的开源相控阵雷达项目。它以 ADI 雷达套片为核心，搭配 STM32 + Artix-7 的经典异构架构，在 10.5 GHz 频段实现了从射频前端到信号处理的全链路透明。</p>
+
+        <p>其设计亮点在于：</p>
+
+        <ul>
+            <li><strong>完整的射频信号链路</strong>：T/R 组件 + 波束形成 + 上下变频，覆盖相控阵雷达核心模块</li>
+            <li><strong>软硬件全开源</strong>：BOM、原理图、FPGA 代码和 STM32 固件均公开可查</li>
+            <li><strong>模块化设计</strong>：三板结构便于独立调试和功能裁剪</li>
+            <li><strong>GaN PA 方案</strong>：代表当前雷达射频前端的技术趋势</li>
+        </ul>
+
+        <hr>
+
+        <h2>参考资源</h2>
+
+        <table>
+            <tr><th>资源</th><th>链接</th></tr>
+            <tr><td>AERIS-10 项目主页</td><td><a href="https://github.com/NawfalMotii79/PLFM_RADAR" target="_blank">https://github.com/NawfalMotii79/PLFM_RADAR</a></td></tr>
+            <tr><td>ADAR1000 datasheet</td><td>Analog Devices — 4×4 波束形成芯片</td></tr>
+            <tr><td>ADTR1107 datasheet</td><td>Analog Devices — Ku 波段 T/R 芯片</td></tr>
+            <tr><td>XC7A50T datasheet</td><td>Xilinx — Artix-7 FPGA</td></tr>
+            <tr><td>STM32F746ZGT7 datasheet</td><td>STMicroelectronics — ARM Cortex-M7 MCU</td></tr>
+            <tr><td>QPA2962_B datasheet</td><td>Qorvo — GaN 功率放大器</td></tr>
+            <tr><td>LTC5552 datasheet</td><td>Analog Devices — 上下变频混频器</td></tr>
+            <tr><td>AD9523-1 datasheet</td><td>Analog Devices — 时钟发生器</td></tr>
+            <tr><td>TPS562208 datasheet</td><td>Texas Instruments — 同步降压 DC-DC</td></tr>
+            <tr><td>ADM7151 datasheet</td><td>Analog Devices — 低噪声 LDO</td></tr>
+        </table>
+
+        <hr>
+
+        <blockquote>
+            本文档由 Sheldon 整理，供研发团队内部技术参考。
+        </blockquote>
+
+        <a href="../blog.html" class="back-link" style="margin-top:30px;">← 返回博客列表</a>
+
+        <div class="footer">
+            <p>📅 更新于 2026-04-20 | 由 Elaine 整理</p>
+        </div>
+    </div>
+</body>
+</html>
