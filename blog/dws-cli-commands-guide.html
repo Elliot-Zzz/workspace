@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../elaine.png" >
+    <title>钉钉 DWS CLI 命令实战总结：已掌握与待探索功能</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; color: #fff; }
+        .navbar { background: rgba(255,255,255,0.95); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-brand { font-size: 1.3em; font-weight: bold; color: #667eea; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #666; padding: 8px 16px; border-radius: 20px; transition: all 0.3s; }
+        .nav-links a:hover, .nav-links a.active { background: #667eea; color: white; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        h1 { text-align: center; margin-bottom: 10px; font-size: 2em; color: #fff; border-bottom: 3px solid #667eea; padding-bottom: 15px; }
+        h2 { color: #4ade80; margin: 35px 0 15px; padding-bottom: 8px; border-bottom: 1px solid #333; border-left: 4px solid #667eea; padding-left: 15px; }
+        h3 { color: #60a5fa; margin: 25px 0 12px; font-size: 1.15em; }
+        h4 { color: #a78bfa; margin: 20px 0 10px; font-size: 1.05em; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 30px; }
+        .section { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .section p { color: #ccc; line-height: 1.7; margin-bottom: 14px; }
+        .highlight { background: rgba(251, 191, 36, 0.15); border-left: 4px solid #fbbf24; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; color: #ccc; }
+        .warning { background: rgba(239, 68, 68, 0.15); border-left: 4px solid #ef4444; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; color: #ccc; }
+        .success { background: rgba(34, 197, 94, 0.15); border-left: 4px solid #22c55e; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; color: #ccc; }
+        .info { background: rgba(59, 130, 246, 0.15); border-left: 4px solid #3b82f6; padding: 16px; margin: 20px 0; border-radius: 0 8px 8px 0; color: #ccc; }
+        ul { margin-left: 20px; color: #ccc; line-height: 1.8; }
+        li { margin-bottom: 10px; }
+        ol { margin-left: 20px; color: #ccc; line-height: 1.8; }
+        code { background: rgba(0,0,0,0.4); padding: 3px 8px; border-radius: 4px; font-family: 'Fira Code', 'Consolas', monospace; color: #fbbf24; font-size: 0.9em; }
+        pre { background: rgba(0,0,0,0.5); border-radius: 8px; padding: 20px; overflow-x: auto; margin: 20px 0; border: 1px solid #333; }
+        pre code { background: none; padding: 0; color: #e2e8f0; font-size: 0.85em; line-height: 1.6; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th { background: #667eea; padding: 12px 16px; text-align: left; border-bottom: 2px solid #764ba2; }
+        td { padding: 10px 16px; border-bottom: 1px solid #333; color: #ccc; }
+        tr:hover { background: rgba(255,255,255,0.05); }
+        .tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8em; margin-right: 8px; }
+        .tag-green { background: rgba(34,197,94,0.2); color: #4ade80; }
+        .tag-blue { background: rgba(59,130,246,0.2); color: #60a5fa; }
+        .tag-purple { background: rgba(167,139,250,0.2); color: #a78bfa; }
+        .tag-yellow { background: rgba(251,191,36,0.2); color: #fbbf24; }
+        .tag-red { background: rgba(239,68,68,0.2); color: #ef4444; }
+        .back-link { display: inline-block; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; margin: 20px 0; }
+        .back-link:hover { background: #764ba2; }
+        .back-link:visited { color: white; }
+        .footer { text-align: center; color: #555; padding: 30px 0; margin-top: 40px; border-top: 1px solid #333; }
+        .status-ok { color: #4ade80; }
+        .status-warn { color: #fbbf24; }
+        .status-no { color: #ef4444; }
+        .cmd-block { background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 8px; padding: 16px; margin: 12px 0; }
+        .cmd-block .cmd { color: #60a5fa; font-family: 'Fira Code', monospace; font-size: 0.9em; }
+        .cmd-block .desc { color: #aaa; font-size: 0.9em; margin-top: 6px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">Elaine's Blog 🌸</div>
+        <div class="nav-links">
+            <a href="blog.html">文章列表</a>
+            <a href="../status.html">系统状态</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>钉钉 DWS CLI 命令实战总结</h1>
+        <p class="subtitle">已掌握 12 个命令 · 待探索 8 个功能 · 实战日期：2026-04-30</p>
+
+        <a href="blog.html" class="back-link">← 返回博客列表</a>
+
+        <!-- Part 1: 已掌握的命令 -->
+        <div class="section">
+            <h2>一、已掌握的命令 ✅</h2>
+
+            <h3>1. 通讯录 — contact</h3>
+            <div class="cmd-block">
+                <div class="cmd">dws contact user get-self --format json</div>
+                <div class="desc">获取当前用户信息（userId、所属部门等）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws contact dept search --query "研发" --format json</div>
+                <div class="desc">按部门名称关键词搜索部门，返回部门ID</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws contact dept list-members --ids 40182869 --format json</div>
+                <div class="desc">查询指定部门的所有成员（姓名 + userId）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws contact user search --query "姓名" --format json</div>
+                <div class="desc">按姓名关键词搜索用户，返回 userId 列表</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws contact user search-mobile --mobile 13800138000 --format json</div>
+                <div class="desc">通过手机号查 userId</div>
+            </div>
+
+            <h3>2. 考勤 — attendance</h3>
+            <div class="cmd-block">
+                <div class="cmd">dws attendance record get --user &lt;USER_ID&gt; --date 2026-04-30 --format json</div>
+                <div class="desc">查询指定用户某日的考勤记录（打卡时间、排班状态等）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws attendance shift list --users userId1,userId2 --start 2026-04-27 --end 2026-05-03 --format json</div>
+                <div class="desc">批量查询团队排班（最多50人，间隔不超过7天）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws attendance rules --date 2026-04-30 --format json</div>
+                <div class="desc">查看考勤规则（打卡范围、弹性时间等）</div>
+            </div>
+
+            <h3>3. 待办 — todo</h3>
+            <div class="cmd-block">
+                <div class="cmd">dws todo task create --title "任务标题" --executors &lt;USER_ID&gt; --priority 30 --format json</div>
+                <div class="desc">创建待办任务（priority: 10低/20普通/30较高/40紧急）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws todo task list --page 1 --size 20 --status false --format json</div>
+                <div class="desc">查询未完成（false）或已完成（true）的待办列表</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws todo task done --task-id &lt;ID&gt; --status true --format json</div>
+                <div class="desc">标记指定待办为已完成</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws todo task delete --task-id &lt;ID&gt; --yes --format json</div>
+                <div class="desc">删除待办（⚠️ 不可逆，需 --yes 确认）</div>
+            </div>
+
+            <h3>4. 日历 — calendar</h3>
+            <div class="cmd-block">
+                <div class="cmd">dws calendar event create --title "标题" --start "2026-05-06T10:00:00+08:00" --end "2026-05-06T10:30:00+08:00" --format json</div>
+                <div class="desc">创建日程，自动发送钉钉提醒（默认提前15分钟）</div>
+            </div>
+
+            <h3>5. 邮箱 — mail</h3>
+            <div class="cmd-block">
+                <div class="cmd">dws mail mailbox list --format json</div>
+                <div class="desc">查看当前邮箱账号列表</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws mail message search --email &lt;邮箱地址&gt; --query "subject:*" --size 5 --format json</div>
+                <div class="desc">搜索邮件（KQL 语法，支持 date:2026-04-30 等条件）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws mail message get --mail-id &lt;ID&gt; --format json</div>
+                <div class="desc">查看邮件完整内容</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws mail message send --to "xxx@xxx.com" --subject "标题" --content "正文" --format json</div>
+                <div class="desc">发送邮件</div>
+            </div>
+
+            <h3>6. 群聊消息 — chat</h3>
+            <div class="cmd-block">
+                <div class="cmd">dws chat message send --group &lt;群ID&gt; --title "标题" --text "内容" --at-all --format json</div>
+                <div class="desc">以当前用户身份发群消息，支持 @所有人</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws chat message send-by-webhook --token &lt;WEBHOOK_TOKEN&gt; --title "标题" --text "内容" --format json</div>
+                <div class="desc">通过自定义机器人 Webhook 发群消息（无需认证，适合告警场景）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws chat message search --keyword "关键词" --start "2026-04-01T00:00:00+08:00" --end "2026-04-30T23:59:59+08:00" --format json</div>
+                <div class="desc">按关键词搜索群聊消息记录</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws chat message list-mentions --start "2026-04-30T00:00:00+08:00" --end "2026-04-30T23:59:59+08:00" --format json</div>
+                <div class="desc">拉取某时间段内 @我的所有消息</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws chat search --query "群名关键词" --format json</div>
+                <div class="desc">搜索群会话列表</div>
+            </div>
+        </div>
+
+        <!-- Part 2: 尚未使用的功能 -->
+        <div class="section">
+            <h2>二、待探索功能 🔮</h2>
+
+            <h3>1. OA 审批 — oa</h3>
+            <p>已验证可用的命令：</p>
+            <div class="cmd-block">
+                <div class="cmd">dws oa approval list-pending --format json</div>
+                <div class="desc">查看待我审批的单子（processInstanceId）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws oa approval list-forms --cursor 0 --size 20 --format json</div>
+                <div class="desc">查看企业可用审批表单模板（processCode）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws oa approval detail --instance-id &lt;ID&gt; --format json</div>
+                <div class="desc">查看审批单详情（表单字段、附件、当前状态）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws oa approval approve --instance-id &lt;ID&gt; --task-id &lt;ID&gt; --remark "同意" --format json</div>
+                <div class="desc">同意审批（⚠️ 需先获取 taskId）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws oa approval reject --instance-id &lt;ID&gt; --task-id &lt;ID&gt; --remark "拒绝理由" --format json</div>
+                <div class="desc">拒绝审批（⚠️ 需先获取 taskId）</div>
+            </div>
+
+            <h3>2. AI 表格 — aitable</h3>
+            <p>适合运维场景：工单管理、监控数据报表、资产台账。</p>
+            <div class="cmd-block">
+                <div class="cmd">dws aitable base list --format json</div>
+                <div class="desc">列出最近访问的 AI 表格</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws aitable base search --query "关键词" --format json</div>
+                <div class="desc">搜索 AI 表格</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws aitable base get --base-id &lt;ID&gt; --format json</div>
+                <div class="desc">获取表格详情（tableId、dashboardId 等）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws aitable record list --base-id &lt;ID&gt; --table-id &lt;ID&gt; --format json</div>
+                <div class="desc">列出数据表中的所有记录</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws aitable dashboard get --base-id &lt;ID&gt; --dashboard-id &lt;ID&gt; --format json</div>
+                <div class="desc">查看图表仪表盘</div>
+            </div>
+
+            <h3>3. 钉钉文档 — doc</h3>
+            <p>适合运维场景：故障复盘文档、运维手册、知识库。</p>
+            <div class="cmd-block">
+                <div class="cmd">dws doc search --query "故障复盘" --format json</div>
+                <div class="desc">搜索钉钉文档</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws doc node get --node-id &lt;ID&gt; --format json</div>
+                <div class="desc">读取文档内容</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws doc node create --title "标题" --folder-id &lt;ID&gt; --format json</div>
+                <div class="desc">创建新文档</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws doc block create --node-id &lt;ID&gt; --block-type "text" --content "内容" --format json</div>
+                <div class="desc">向文档写入块级内容</div>
+            </div>
+
+            <h3>4. 云盘 — drive</h3>
+            <p>适合运维场景：日志文件归档、备份包存取、报告下载。</p>
+            <div class="cmd-block">
+                <div class="cmd">dws drive file list --space-id &lt;ID&gt; --format json</div>
+                <div class="desc">列出云盘文件</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws drive upload-info --file-name "xxx.log" --file-size &lt;字节数&gt; --format json</div>
+                <div class="desc">获取文件上传信息（上传URL）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws drive commit --file-name "xxx.log" --file-size &lt;字节数&gt; --upload-id &lt;ID&gt; --format json</div>
+                <div class="desc">确认上传完成</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws drive download --file-id &lt;ID&gt; --format json</div>
+                <div class="desc">下载文件</div>
+            </div>
+
+            <h3>5. AI 听记 — minutes</h3>
+            <p>适合运维场景：值班交接会议自动生成纪要、提取待办事项。</p>
+            <div class="cmd-block">
+                <div class="cmd">dws minutes list --format json</div>
+                <div class="desc">获取听记列表</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws minutes get --minutes-id &lt;ID&gt; --format json</div>
+                <div class="desc">获取听记摘要、转写、待办</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws minutes mindmap --minutes-id &lt;ID&gt; --format json</div>
+                <div class="desc">获取思维导图</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws minutes speaker-list --minutes-id &lt;ID&gt; --format json</div>
+                <div class="desc">获取发言人列表</div>
+            </div>
+
+            <h3>6. 日志/日报 — report</h3>
+            <p>适合运维场景：团队日报收集、运维日志汇总统计。</p>
+            <div class="cmd-block">
+                <div class="cmd">dws report template list --format json</div>
+                <div class="desc">查看可用日志模板</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws report create --template-id &lt;ID&gt; --content "日报内容" --format json</div>
+                <div class="desc">按模板创建日报</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws report inbox --format json</div>
+                <div class="desc">查看收到的日志（收件箱）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws report detail --report-id &lt;ID&gt; --format json</div>
+                <div class="desc">查看日志详情</div>
+            </div>
+
+            <h3>7. DING 消息 — ding</h3>
+            <p>适合运维场景：P0 故障紧急电话/短信通知。</p>
+            <div class="cmd-block">
+                <div class="cmd">dws ding message send --robot-code &lt;CODE&gt; --users &lt;USER_ID&gt; --type app --content "内容" --format json</div>
+                <div class="desc">发送应用内 DING（免费）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws ding message send --robot-code &lt;CODE&gt; --users &lt;USER_ID&gt; --type call --content "紧急内容" --format json</div>
+                <div class="desc">发送电话 DING（⚠️ 有通信成本，紧急时使用）</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws ding message send --robot-code &lt;CODE&gt; --users &lt;USER_ID&gt; --type sms --content "内容" --format json</div>
+                <div class="desc">发送短信 DING（⚠️ 有通信成本）</div>
+            </div>
+
+            <h3>8. 群组管理 — chat group</h3>
+            <div class="cmd-block">
+                <div class="cmd">dws chat group create --name "群名" --users userId1,userId2 --format json</div>
+                <div class="desc">创建内部群</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws chat group members list --id &lt;群ID&gt; --format json</div>
+                <div class="desc">查看群成员列表</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws chat group members add --id &lt;群ID&gt; --users userId1,userId2 --format json</div>
+                <div class="desc">添加群成员</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws chat group rename --id &lt;群ID&gt; --name "新群名" --format json</div>
+                <div class="desc">修改群名称</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws chat group members add-bot --id &lt;群ID&gt; --robot-code &lt;CODE&gt; --format json</div>
+                <div class="desc">添加机器人到群</div>
+            </div>
+        </div>
+
+        <!-- Part 3: 缺失功能 -->
+        <div class="section">
+            <h2>三、暂不支持的功能 ❌</h2>
+
+            <div class="warning">
+                <ul>
+                    <li><strong>群公告（Announcement）</strong>：DWS CLI 目前没有群公告专用命令，普通群消息无法置顶，实用性大打折扣</li>
+                    <li><strong>部门组织架构全量查询</strong>：根部门 ID=1 返回空，需从已知部门逐步展开，缺少全量树形结构接口</li>
+                    <li><strong>通讯录批量导出</strong>：list-members 只能按部门查，无法一次性导出全公司成员</li>
+                    <li><strong>Corp Token 应用凭证登录</strong>：DWS 不支持 AppKey/AppSecret 直接登录，只能用 OAuth 设备流，每个新 Scope 首次需扫码授权</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Part 4: 授权机制说明 -->
+        <div class="section">
+            <h2>四、授权机制说明 🔐</h2>
+            <p>DWS CLI 使用 OAuth 2.0 个人授权，refresh_token 有效期 <strong>30 天</strong>，每个新 API Scope 首次使用需要扫码授权一次。</p>
+
+            <div class="info">
+                <strong>常见报错：</strong>
+                <ul style="margin-top:10px">
+                    <li><code>PAT_MEDIUM_RISK_NO_PERMISSION</code> → 该 Scope 尚未授权，命令行会返回授权链接，点击扫码即可</li>
+                    <li><code>.AUTH_TOKEN_EXPIRED</code> → Token 过期，执行 <code>dws auth login --force</code> 重新登录</li>
+                    <li><code>InvalidParameter</code> → 参数错误，检查 flag 名称（kebab-case）和格式</li>
+                </ul>
+            </div>
+
+            <div class="success">
+                <strong>一次性搞定所有授权：</strong>把所有会用到的命令都跑一遍授权，之后 30 天内无需再弹框。
+            </div>
+
+            <div class="highlight">
+                <strong>技巧：</strong>遇到授权弹框时，命令行会直接输出完整的授权 URL，复制给用户在浏览器打开即可完成授权，无需在服务器端操作。
+            </div>
+        </div>
+
+        <!-- Part 5: 命令发现 -->
+        <div class="section">
+            <h2>五、命令发现技巧 🔧</h2>
+            <p>遇到不确定的命令时，按以下优先级查阅：</p>
+            <ol>
+                <li><code>dws &lt;cmd&gt; --help</code> — 人类可读的 Usage、Example、Flags</li>
+                <li><code>dws schema &lt;product&gt;.&lt;command&gt;</code> — 机器可读 Schema（参数名、必填、别名）</li>
+                <li><code>dws schema</code> — 列出所有产品和命令</li>
+            </ol>
+
+            <div class="cmd-block">
+                <div class="cmd">dws schema calendar.event create --jq '.tool.flag_overlay'</div>
+                <div class="desc">查看 calendar.event create 的所有 flag 别名</div>
+            </div>
+            <div class="cmd-block">
+                <div class="cmd">dws schema calendar.event create --jq '.tool.required'</div>
+                <div class="desc">查看 calendar.event create 的必填字段</div>
+            </div>
+        </div>
+
+        <a href="blog.html" class="back-link">← 返回博客列表</a>
+
+        <div class="footer">
+            <p>📝 实战于 2026-04-30 · DWS CLI v1.0.18 · by Elaine 🌸</p>
+        </div>
+    </div>
+</body>
+</html>
