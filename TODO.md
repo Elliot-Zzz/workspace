@@ -4,6 +4,7 @@
 - [x] 搭建 XFCE 桌面 + VNC 服务
 - [x] 搭建 FTP 服务器
 - [x] 搭建编程环境 (本地 VSCode + Remote SSH) + OpenCode
+- [x] 建立 Kilo Code / Open Code 嵌入式调试 SKILL
 - [x] 科学上网配置
 - [x] 打通 GitHub，搭建静态页面展示工作成果
 - [x] 排查 OpenClaw Dashboard 无法远程访问的问题
@@ -20,7 +21,8 @@
 - [ ] 打通华为智能家居设备
 - [ ] 打通邮件收发功能
 - [ ] 打通淘宝购物
-- [ ] 打通钉钉
+- [x] 打通钉钉
+  - [x] DWS CLI 连接配置
   - [ ] 后期用钉钉取代飞书
   - [ ] 研究反向控制钉钉的管理接口
 
